@@ -106,6 +106,12 @@ impl<K, V, C> Default for TreeMap<K, V, C> where C: Compare<K> + Default {
     fn default() -> TreeMap<K, V, C> { TreeMap::with_cmp(Default::default()) }
 }
 
+impl<K, V, C> Extend<(K, V)> for TreeMap<K, V, C> where C: Compare<K> {
+    fn extend<I: ::std::iter::IntoIterator<Item=(K, V)>>(&mut self, it: I) {
+        for (k, v) in it { self.insert(k, v); }
+    }
+}
+
 impl<K, V, C, Q: ?Sized> ops::Index<Q> for TreeMap<K, V, C>
     where C: Compare<K> + Compare<Q, K> {
 
