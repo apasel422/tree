@@ -1,12 +1,17 @@
+mod iter;
+
 use collect::compare::Compare;
 use std::cmp::Ordering::*;
 use std::mem;
+
+pub use self::iter::{Iter, IterMut};
 
 pub type Link<K, V> = Option<Box<Node<K, V>>>;
 
 pub trait LinkExt: Sized {
     type K;
     type V;
+    fn as_node_ref(&self) -> Option<&Node<Self::K, Self::V>>;
     fn key_value(&self) -> Option<(&Self::K, &Self::V)>;
     fn key_value_mut(&mut self) -> Option<(&Self::K, &mut Self::V)>;
 }
@@ -14,6 +19,10 @@ pub trait LinkExt: Sized {
 impl<K, V> LinkExt for Link<K, V> {
     type K = K;
     type V = V;
+
+    fn as_node_ref(&self) -> Option<&Node<K, V>> {
+        self.as_ref().map(|node| &**node)
+    }
 
     fn key_value(&self) -> Option<(&K, &V)> {
         self.as_ref().map(|node| (&node.key, &node.value))
@@ -101,37 +110,37 @@ pub fn get<'a, L: LinkRef<'a>, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
 }
 
 trait Dir: ::std::marker::MarkerTrait {
-    fn forward<L, R, T>(left: L, right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T;
+    fn forward<T, L, R, U>(t: T, l: L, r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U;
 
-    fn reverse<L, R, T>(left: L, right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T;
+    fn reverse<T, L, R, U>(t: T, l: L, r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U;
 }
 
 pub enum Left {}
 
 impl Dir for Left {
-    fn forward<L, R, T>(left: L, _right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T { left() }
+    fn forward<T, L, R, U>(t: T, l: L, _r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U { l(t) }
 
-    fn reverse<L, R, T>(_left: L, right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T { right() }
+    fn reverse<T, L, R, U>(t: T, _l: L, r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U { r(t) }
 }
 
 pub enum Right {}
 
 impl Dir for Right {
-    fn forward<L, R, T>(_left: L, right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T { right() }
+    fn forward<T, L, R, U>(t: T, _l: L, r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U { r(t) }
 
-    fn reverse<L, R, T>(left: L, _right: R) -> T
-        where L: FnOnce() -> T, R: FnOnce() -> T { left() }
+    fn reverse<T, L, R, U>(t: T, l: L, _r: R) -> U
+        where L: FnOnce(T) -> U, R: FnOnce(T) -> U { l(t) }
 }
 
 pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
     link.with(|mut link| {
         while let Some(ref node) = *link {
-            let child = <D as Dir>::forward(|| &node.left, || &node.right);
+            let child = <D as Dir>::forward(node, |node| &node.left, |node| &node.right);
             if child.is_some() { link = child; } else { break; }
         }
 
