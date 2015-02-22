@@ -99,3 +99,42 @@ pub fn get<'a, L: LinkRef<'a>, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
         }
     })
 }
+
+trait Dir: ::std::marker::MarkerTrait {
+    fn forward<L, R, T>(left: L, right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T;
+
+    fn reverse<L, R, T>(left: L, right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T;
+}
+
+pub enum Left {}
+
+impl Dir for Left {
+    fn forward<L, R, T>(left: L, _right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T { left() }
+
+    fn reverse<L, R, T>(_left: L, right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T { right() }
+}
+
+pub enum Right {}
+
+impl Dir for Right {
+    fn forward<L, R, T>(_left: L, right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T { right() }
+
+    fn reverse<L, R, T>(left: L, _right: R) -> T
+        where L: FnOnce() -> T, R: FnOnce() -> T { left() }
+}
+
+pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
+    link.with(|mut link| {
+        while let Some(ref node) = *link {
+            let child = <D as Dir>::forward(|| &node.left, || &node.right);
+            if child.is_some() { link = child; } else { break; }
+        }
+
+        link
+    })
+}
