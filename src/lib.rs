@@ -1,4 +1,5 @@
 #![feature(box_patterns, box_syntax)]
+#![feature(core)]
 
 extern crate collect;
 
@@ -6,6 +7,7 @@ mod node;
 
 use collect::compare::{self, Compare, Natural};
 use node::LinkExt;
+use std::ops;
 
 /// An ordered map based on a binary search tree.
 #[derive(Clone)]
@@ -96,5 +98,20 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         where C: Compare<Q, K> {
 
         node::get(&mut self.root, &self.cmp, key).key_value_mut().map(|e| e.1)
+    }
+}
+
+impl<K, V, C, Q: ?Sized> ops::Index<Q> for TreeMap<K, V, C>
+    where C: Compare<K> + Compare<Q, K> {
+
+    type Output = V;
+    fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
+}
+
+impl<K, V, C, Q: ?Sized> ops::IndexMut<Q> for TreeMap<K, V, C>
+    where C: Compare<K> + Compare<Q, K> {
+
+    fn index_mut(&mut self, key: &Q) -> &mut V {
+        self.get_mut(key).expect("key not found")
     }
 }
