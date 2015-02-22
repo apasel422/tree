@@ -1,8 +1,11 @@
+#![feature(box_patterns, box_syntax)]
+
 extern crate collect;
 
 mod node;
 
 use collect::compare::{self, Compare, Natural};
+use node::LinkExt;
 
 /// An ordered map based on a binary search tree.
 #[derive(Clone)]
@@ -31,4 +34,67 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
 
     /// Returns a reference to the map's comparator.
     pub fn cmp(&self) -> &C { &self.cmp }
+
+    /// Inserts an entry into the map, returning the previous value, if any, associated
+    /// with the key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert_eq!(map.insert(1, "a"), None);
+    /// assert_eq!(map.get(&1), Some(&"a"));
+    /// assert_eq!(map.insert(1, "b"), Some("a"));
+    /// assert_eq!(map.get(&1), Some(&"b"));
+    /// ```
+    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+        let old_value = node::insert(&mut self.root, &self.cmp, key, value);
+        if old_value.is_none() { self.len += 1; }
+        old_value
+    }
+
+    /// Returns a reference to the value associated with the given key, or `None` if the
+    /// map does not contain the key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert_eq!(map.get(&1), None);
+    /// map.insert(1, "a");
+    /// assert_eq!(map.get(&1), Some(&"a"));
+    /// ```
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V> where C: Compare<Q, K> {
+        node::get(&self.root, &self.cmp, key).key_value().map(|e| e.1)
+    }
+
+    /// Returns a mutable reference to the value associated with the given key, or `None`
+    /// if the map does not contain the key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert_eq!(map.get(&1), None);
+    /// map.insert(1, "a");
+    ///
+    /// {
+    ///     let value = map.get_mut(&1).unwrap();
+    ///     assert_eq!(*value, "a");
+    ///     *value = "b";
+    /// }
+    ///
+    /// assert_eq!(map.get(&1), Some(&"b"));
+    /// ```
+    pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
+        where C: Compare<Q, K> {
+
+        node::get(&mut self.root, &self.cmp, key).key_value_mut().map(|e| e.1)
+    }
 }
