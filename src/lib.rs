@@ -8,6 +8,7 @@ mod node;
 use collect::compare::{self, Compare, Natural};
 use node::LinkExt;
 use std::default::Default;
+use std::iter::{self, IntoIterator};
 use std::ops;
 
 /// An ordered map based on a binary search tree.
@@ -107,8 +108,18 @@ impl<K, V, C> Default for TreeMap<K, V, C> where C: Compare<K> + Default {
 }
 
 impl<K, V, C> Extend<(K, V)> for TreeMap<K, V, C> where C: Compare<K> {
-    fn extend<I: ::std::iter::IntoIterator<Item=(K, V)>>(&mut self, it: I) {
+    fn extend<I: IntoIterator<Item=(K, V)>>(&mut self, it: I) {
         for (k, v) in it { self.insert(k, v); }
+    }
+}
+
+impl<K, V, C> iter::FromIterator<(K, V)> for TreeMap<K, V, C>
+    where C: Compare<K> + Default {
+
+    fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> TreeMap<K, V, C> {
+        let mut map: TreeMap<K, V, C> = Default::default();
+        map.extend(it);
+        map
     }
 }
 
