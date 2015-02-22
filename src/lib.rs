@@ -7,6 +7,7 @@ mod node;
 
 use collect::compare::{self, Compare, Natural};
 use node::LinkExt;
+use std::default::Default;
 use std::ops;
 
 /// An ordered map based on a binary search tree.
@@ -99,6 +100,10 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
 
         node::get(&mut self.root, &self.cmp, key).key_value_mut().map(|e| e.1)
     }
+}
+
+impl<K, V, C> Default for TreeMap<K, V, C> where C: Compare<K> + Default {
+    fn default() -> TreeMap<K, V, C> { TreeMap::with_cmp(Default::default()) }
 }
 
 impl<K, V, C, Q: ?Sized> ops::Index<Q> for TreeMap<K, V, C>
