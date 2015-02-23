@@ -22,3 +22,4 @@ optional = true
 
 quickcheck = "*"
 quickcheck_macros = "*"
+rand = "*"
