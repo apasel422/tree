@@ -202,6 +202,75 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         node::extremum::<_, Left>(&mut self.root).key_value_mut()
     }
 
+    /// Returns a reference to the greatest key that is strictly less than the given key and a
+    /// reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn pred<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Left>(&self.root, &self.cmp, key, false).key_value()
+    }
+
+    /// Returns a reference to the greatest key that is strictly less than the given key and a
+    /// mutable reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Left>(&mut self.root, &self.cmp, key, false).key_value_mut()
+    }
+
+    /// Returns a reference to the greatest key that is less than or equal to the given key and a
+    /// reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn pred_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Left>(&self.root, &self.cmp, key, true).key_value()
+    }
+
+    /// Returns a reference to the greatest key that is less than or equal to the given key and a
+    /// mutable reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn pred_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
+        where C: Compare<Q, K> {
+
+        node::closest::<_, _, _, Left>(&mut self.root, &self.cmp, key, true).key_value_mut()
+    }
+
+    /// Returns a reference to the smallest key that is strictly greater than the given key and a
+    /// reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn succ<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Right>(&self.root, &self.cmp, key, false).key_value()
+    }
+
+    /// Returns a reference to the smallest key that is strictly greater than the given key and a
+    /// mutable reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, false).key_value_mut()
+    }
+
+    /// Returns a reference to the smallest key that is greater than or equal to the given key and
+    /// a reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn succ_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
+        node::closest::<_, _, _, Right>(&self.root, &self.cmp, key, true).key_value()
+    }
+
+    /// Returns a reference to the smallest key that is greater than or equal to the given key and
+    /// a mutable reference to its associated value, or `None` if no such key is present in the
+    /// map.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn succ_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
+        where C: Compare<Q, K> {
+
+        node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, true).key_value_mut()
+    }
+
     /// Returns an iterator that consumes the map in ascending order.
     ///
     /// # Examples

@@ -71,3 +71,23 @@ fn iter_ascends(m: M) -> bool {
 fn rev_iter_descends(m: M) -> bool {
     m.rev_iter().zip(m.rev_iter().skip(1)).all(|(e2, e1)| m.cmp().compares_gt(e2.0, e1.0))
 }
+
+#[quickcheck]
+fn pred_consistent_with_rev_iter(m: M, k: K) -> bool {
+    m.pred(&k) == m.rev_iter().find(|e| m.cmp().compares_lt(e.0, &k))
+}
+
+#[quickcheck]
+fn pred_or_eq_consistent_with_rev_iter(m: M, k: K) -> bool {
+    m.pred_or_eq(&k) == m.rev_iter().find(|e| m.cmp().compares_le(e.0, &k))
+}
+
+#[quickcheck]
+fn succ_consistent_with_iter(m: M, k: K) -> bool {
+    m.succ(&k) == m.iter().find(|e| m.cmp().compares_gt(e.0, &k))
+}
+
+#[quickcheck]
+fn succ_or_eq_consistent_with_iter(m: M, k: K) -> bool {
+    m.succ_or_eq(&k) == m.iter().find(|e| m.cmp().compares_ge(e.0, &k))
+}
