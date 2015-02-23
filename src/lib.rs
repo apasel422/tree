@@ -8,6 +8,7 @@ mod node;
 use collect::compare::{self, Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
 use std::default::Default;
+use std::fmt::{self, Debug};
 use std::iter::{self, IntoIterator};
 use std::ops;
 
@@ -325,6 +326,21 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// ```
     pub fn rev_iter_mut(&mut self) -> RevIterMut<K, V> {
         RevIterMut(node::IterMut::new(&mut self.root, self.len))
+    }
+}
+
+impl<K, V, C> Debug for TreeMap<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        try!(write!(f, "{{"));
+
+        let mut it = self.iter();
+
+        if let Some((k, v)) = it.next() {
+            try!(write!(f, "{:?}: {:?}", k, v));
+            for (k, v) in it { try!(write!(f, ", {:?}: {:?}", k, v)); }
+        }
+
+        write!(f, "}}")
     }
 }
 
