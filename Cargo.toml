@@ -6,6 +6,18 @@ authors = ["Andrew Paseltiner <apaseltiner@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
 
+[features]
+
+default = ["quickcheck"]
+
 [dependencies]
 
 collect = "*"
+
+[dependencies.quickcheck]
+
+optional = true
+
+[dev-dependencies]
+
+quickcheck = "*"

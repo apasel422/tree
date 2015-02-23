@@ -5,6 +5,9 @@ extern crate collect;
 
 mod node;
 
+#[cfg(feature = "quickcheck")]
+mod quickcheck;
+
 use collect::compare::{self, Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
 use std::default::Default;
