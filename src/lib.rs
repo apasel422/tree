@@ -425,6 +425,29 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         IterMut(node::IterMut::new(&mut self.root, self.len))
     }
 
+    /// Returns an iterator that consumes the map in descending order.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// let mut it = map.rev_into_iter();
+    /// assert_eq!(it.next(), Some((3, "c")));
+    /// assert_eq!(it.next(), Some((2, "b")));
+    /// assert_eq!(it.next(), Some((1, "a")));
+    /// assert_eq!(it.next(), None);
+    /// ```
+    pub fn rev_into_iter(mut self) -> RevIntoIter<K, V> {
+        RevIntoIter(node::Iter::new(self.root.take(), self.len))
+    }
+
     /// Returns an iterator over the map's entries in descending order.
     ///
     /// # Examples
@@ -584,6 +607,17 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
 }
 
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
+
+/// An iterator that consumes the map in descending order.
+pub struct RevIntoIter<K, V>(node::Iter<Box<Node<K, V>>, Right>);
+
+impl<K, V> Iterator for RevIntoIter<K, V> {
+    type Item = (K, V);
+    fn next(&mut self) -> Option<(K, V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+}
+
+impl<K, V> ExactSizeIterator for RevIntoIter<K, V> {}
 
 /// An iterator over the map's entries in descending order.
 pub struct RevIter<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>, Right>);
