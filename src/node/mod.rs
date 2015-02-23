@@ -37,8 +37,38 @@ impl<K, V> LinkExt for Link<K, V> {
 pub struct Node<K, V> {
     left: Link<K, V>,
     right: Link<K, V>,
+    level: usize,
     key: K,
     value: V,
+}
+
+impl<K, V> Node<K, V> {
+    // Remove left horizontal link by rotating right
+    //
+    // From https://github.com/Gankro/collect-rs/tree/map.rs
+    fn skew(&mut self) {
+        if self.left.as_ref().map_or(false, |x| x.level == self.level) {
+            let mut save = self.left.take().unwrap();
+            mem::swap(&mut self.left, &mut save.right); // save.right now None
+            mem::swap(self, &mut save);
+            self.right = Some(save);
+        }
+    }
+
+    // Remove dual horizontal link by rotating left and increasing level of
+    // the parent
+    //
+    // From https://github.com/Gankro/collect-rs/tree/map.rs
+    fn split(&mut self) {
+        if self.right.as_ref().map_or(false,
+          |x| x.right.as_ref().map_or(false, |y| y.level == self.level)) {
+            let mut save = self.right.take().unwrap();
+            mem::swap(&mut self.right, &mut save.left); // save.left now None
+            save.level += 1;
+            mem::swap(self, &mut save);
+            self.left = Some(save);
+        }
+    }
 }
 
 pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Option<V>
@@ -46,16 +76,22 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
 
     match *link {
         None => {
-            *link = Some(box Node { left: None, right: None, key: key, value: value });
+            *link = Some(box Node { left: None, right: None, level: 1, key: key, value: value });
             None
         }
-        Some(ref mut node) => match cmp.compare(&key, &node.key) {
-            Equal => {
-                node.key = key;
-                Some(mem::replace(&mut node.value, value))
-            }
-            Less => insert(&mut node.left, cmp, key, value),
-            Greater => insert(&mut node.right, cmp, key, value),
+        Some(ref mut node) => {
+            let old_value = match cmp.compare(&key, &node.key) {
+                Equal => {
+                    node.key = key;
+                    return Some(mem::replace(&mut node.value, value));
+                }
+                Less => insert(&mut node.left, cmp, key, value),
+                Greater => insert(&mut node.right, cmp, key, value),
+            };
+
+            node.skew();
+            node.split();
+            old_value
         },
     }
 }
