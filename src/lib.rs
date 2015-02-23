@@ -12,6 +12,7 @@ use collect::compare::{self, Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
 use std::default::Default;
 use std::fmt::{self, Debug};
+use std::hash::{self, Hash};
 use std::iter::{self, IntoIterator};
 use std::ops;
 
@@ -534,6 +535,12 @@ impl<K, V, C> iter::FromIterator<(K, V)> for TreeMap<K, V, C>
         let mut map: TreeMap<K, V, C> = Default::default();
         map.extend(it);
         map
+    }
+}
+
+impl<K, V, C> Hash for TreeMap<K, V, C> where K: Hash, V: Hash, C: Compare<K> {
+    fn hash<H: hash::Hasher>(&self, h: &mut H) {
+        for e in self.iter() { e.hash(h); }
     }
 }
 
