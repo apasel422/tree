@@ -43,6 +43,12 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// Returns a reference to the map's comparator.
     pub fn cmp(&self) -> &C { &self.cmp }
 
+    /// Removes all entries from the map.
+    pub fn clear(&mut self) {
+        self.root = None;
+        self.len = 0;
+    }
+
     /// Inserts an entry into the map, returning the previous value, if any, associated
     /// with the key.
     ///
