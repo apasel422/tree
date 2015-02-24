@@ -117,6 +117,27 @@ macro_rules! map_find_seq_bench {
     )
 }
 
+macro_rules! map_iter_bench {
+    ($name: ident, $n: expr) => (
+        #[bench]
+        pub fn $name(b: &mut Bencher) {
+            let mut map = TreeMap::<u32, u32>::new();
+            let n: usize = $n;
+            let mut rng = weak_rng();
+
+            for _ in 0..n {
+                map.insert(rng.gen(), rng.gen());
+            }
+
+            b.iter(|| {
+                for entry in map.iter() {
+                    black_box(entry);
+                }
+            });
+        }
+    )
+}
+
 map_insert_rand_bench!{insert_rand_100,    100}
 map_insert_rand_bench!{insert_rand_10_000, 10_000}
 
@@ -128,3 +149,7 @@ map_find_rand_bench!{find_rand_10_000, 10_000}
 
 map_find_seq_bench!{find_seq_100,    100}
 map_find_seq_bench!{find_seq_10_000, 10_000}
+
+map_iter_bench!{iter_20,      20}
+map_iter_bench!{iter_1000,    1000}
+map_iter_bench!{iter_100_000, 100_000}
