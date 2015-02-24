@@ -31,6 +31,29 @@ impl<K, V> TreeMap<K, V> where K: Ord {
 
 impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// Creates an empty map ordered according to the given comparator.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # extern crate collect;
+    /// # extern crate tree;
+    /// # fn main() {
+    /// use collect::compare::{CompareExt, natural};
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::with_cmp(natural().rev());
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// let mut it = map.iter();
+    /// assert_eq!(it.next(), Some((&3, &"c")));
+    /// assert_eq!(it.next(), Some((&2, &"b")));
+    /// assert_eq!(it.next(), Some((&1, &"a")));
+    /// assert_eq!(it.next(), None);
+    /// # }
+    /// ```
     pub fn with_cmp(cmp: C) -> TreeMap<K, V, C> {
         TreeMap { root: None, len: 0, cmp: cmp }
     }
