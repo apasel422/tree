@@ -63,6 +63,8 @@ impl<N: NodeRef, D> Iterator for Iter<N, D> where D: Dir {
             node.item()
         })
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) { (self.size, Some(self.size)) }
 }
 
 pub struct IterMut<'a, K: 'a, V: 'a, D> where D: Dir {
