@@ -26,7 +26,7 @@ pub struct Iter<N, D> where N: NodeRef, D: Dir {
     stack: Vec<N>,
     node: Option<N>,
     size: usize,
-    _dir: PhantomData<*mut D>,
+    _dir: PhantomData<D>,
 }
 
 impl<N, D> Iter<N, D> where N: NodeRef, D: Dir {
