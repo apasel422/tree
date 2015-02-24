@@ -15,12 +15,13 @@ extern crate test;
 extern crate tree;
 
 use rand::{Rng, weak_rng};
+use test::{Bencher, black_box};
 use tree::TreeMap;
 
 macro_rules! map_insert_rand_bench {
     ($name: ident, $n: expr) => (
         #[bench]
-        pub fn $name(b: &mut ::test::Bencher) {
+        pub fn $name(b: &mut Bencher) {
             let n: usize = $n;
             let mut map = TreeMap::new();
             // setup
@@ -37,7 +38,7 @@ macro_rules! map_insert_rand_bench {
                 map.insert(k, k);
                 //map.remove(&k);
             });
-            ::test::black_box(map);
+            black_box(map);
         }
     )
 }
@@ -45,7 +46,7 @@ macro_rules! map_insert_rand_bench {
 macro_rules! map_insert_seq_bench {
     ($name: ident, $n: expr) => (
         #[bench]
-        pub fn $name(b: &mut ::test::Bencher) {
+        pub fn $name(b: &mut Bencher) {
             let mut map = TreeMap::new();
             let n: usize = $n;
             // setup
@@ -60,7 +61,7 @@ macro_rules! map_insert_seq_bench {
                 //map.remove(&i);
                 i = (i + 2) % n;
             });
-            ::test::black_box(map);
+            black_box(map);
         }
     )
 }
@@ -68,7 +69,7 @@ macro_rules! map_insert_seq_bench {
 macro_rules! map_find_rand_bench {
     ($name: ident, $n: expr) => (
         #[bench]
-        pub fn $name(b: &mut ::test::Bencher) {
+        pub fn $name(b: &mut Bencher) {
             let mut map = TreeMap::new();
             let n: usize = $n;
 
@@ -87,7 +88,7 @@ macro_rules! map_find_rand_bench {
             b.iter(|| {
                 let t = map.get(&keys[i]);
                 i = (i + 1) % n;
-                ::test::black_box(t);
+                black_box(t);
             })
         }
     )
@@ -96,7 +97,7 @@ macro_rules! map_find_rand_bench {
 macro_rules! map_find_seq_bench {
     ($name: ident, $n: expr) => (
         #[bench]
-        pub fn $name(b: &mut ::test::Bencher) {
+        pub fn $name(b: &mut Bencher) {
             let mut map = TreeMap::new();
             let n: usize = $n;
 
@@ -110,7 +111,7 @@ macro_rules! map_find_seq_bench {
             b.iter(|| {
                 let x = map.get(&i);
                 i = (i + 1) % n;
-                ::test::black_box(x);
+                black_box(x);
             })
         }
     )
