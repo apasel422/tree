@@ -67,7 +67,7 @@ impl<N: NodeRef, D> Iterator for Iter<N, D> where D: Dir {
 
 pub struct IterMut<'a, K: 'a, V: 'a, D> where D: Dir {
     iter: Iter<&'a Node<K, V>, D>,
-    _mut: PhantomData<*mut V>,
+    _mut: PhantomData<&'a mut V>,
 }
 
 impl<'a, K, V, D> IterMut<'a, K, V, D> where D: Dir {
