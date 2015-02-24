@@ -2,7 +2,7 @@ mod iter;
 
 use collect::compare::Compare;
 use std::cmp::Ordering::*;
-use std::mem;
+use std::mem::{self, replace, swap};
 
 pub use self::iter::{Iter, IterMut};
 
@@ -49,8 +49,8 @@ impl<K, V> Node<K, V> {
     fn skew(&mut self) {
         if self.left.as_ref().map_or(false, |x| x.level == self.level) {
             let mut save = self.left.take().unwrap();
-            mem::swap(&mut self.left, &mut save.right); // save.right now None
-            mem::swap(self, &mut save);
+            swap(&mut self.left, &mut save.right); // save.right now None
+            swap(self, &mut save);
             self.right = Some(save);
         }
     }
@@ -63,9 +63,9 @@ impl<K, V> Node<K, V> {
         if self.right.as_ref().map_or(false,
           |x| x.right.as_ref().map_or(false, |y| y.level == self.level)) {
             let mut save = self.right.take().unwrap();
-            mem::swap(&mut self.right, &mut save.left); // save.left now None
+            swap(&mut self.right, &mut save.left); // save.left now None
             save.level += 1;
-            mem::swap(self, &mut save);
+            swap(self, &mut save);
             self.left = Some(save);
         }
     }
@@ -94,6 +94,89 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
             old_value
         },
     }
+}
+
+// Adapted from https://github.com/Gankro/collect-rs/tree/map.rs
+pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
+    -> Option<(K, V)> where C: Compare<Q, K> {
+
+    fn heir_swap<K, V>(node: &mut Node<K, V>, child: &mut Link<K, V>) {
+        if let Some(ref mut x) = *child {
+            let mut x = x;
+
+            loop {
+                let x_curr = x;
+
+                x = match x_curr.right {
+                    None => break,
+                    Some(ref mut right) => right,
+                };
+            }
+
+            swap(&mut node.key, &mut x.key);
+            swap(&mut node.value, &mut x.value);
+        }
+    }
+
+    if let Some(ref mut save) = *node {
+        let (old, rebalance) = match cmp.compare(key, &save.key) {
+            Less => (remove(&mut save.left, cmp, key), true),
+            Greater => (remove(&mut save.right, cmp, key), true),
+            Equal => {
+                if let Some(mut left) = save.left.take() {
+                    if save.right.is_some() {
+                        if left.right.is_some() {
+                            heir_swap(save, &mut left.right);
+                        } else {
+                            swap(&mut save.key, &mut left.key);
+                            swap(&mut save.value, &mut left.value);
+                        }
+
+                        save.left = Some(left);
+                        (remove(&mut save.left, cmp, key), true)
+                    } else {
+                        let box Node { key, value, .. } = replace(save, left);
+                        *save = save.left.take().unwrap();
+                        (Some((key, value)), true)
+                    }
+                } else if let Some(new) = save.right.take() {
+                    let box Node { key, value, .. } = replace(save, new);
+                    (Some((key, value)), true)
+                } else {
+                    (None, false)
+                }
+            }
+        };
+
+        if rebalance {
+            let left_level = save.left.as_ref().map_or(0, |node| node.level);
+            let right_level = save.right.as_ref().map_or(0, |node| node.level);
+
+            // re-balance, if necessary
+            if left_level < save.level - 1 || right_level < save.level - 1 {
+                save.level -= 1;
+
+                if right_level > save.level {
+                    let save_level = save.level;
+                    if let Some(ref mut x) = save.right { x.level = save_level; }
+                }
+
+                save.skew();
+
+                if let Some(ref mut right) = save.right {
+                    right.skew();
+                    if let Some(ref mut x) = right.right { x.skew() };
+                }
+
+                save.split();
+                if let Some(ref mut x) = save.right { x.split(); }
+            }
+
+            return old;
+        }
+    }
+
+    node.take().map(|box node| (node.key, node.value))
 }
 
 trait LinkRef<'a>: Sized {

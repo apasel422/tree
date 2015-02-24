@@ -53,6 +53,20 @@ fn reinsert_returns_old_val(mut m: M, k: K, v1: V, v2: V) -> bool {
 }
 
 #[quickcheck]
+fn remove_returns_entry(mut m: M, k: K, v: V) -> bool {
+    m.insert(k, v);
+    m.remove(&k) == Some((k, v))
+}
+
+#[quickcheck]
+fn remove_decs_len(mut m: M, k: K, v: V) -> bool {
+    m.insert(k, v);
+    let old_len = m.len();
+    m.remove(&k);
+    m.len() == old_len - 1
+}
+
+#[quickcheck]
 fn max_consistent_with_rev_iter(m: M) -> bool {
     m.max() == m.rev_iter().next()
 }

@@ -70,6 +70,16 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         old_value
     }
 
+    /// Removes and returns the entry whose key is equal to the given key, returning
+    /// `None` if the map does not contain the key.
+    pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
+        where C: Compare<Q, K> {
+
+        let key_value = node::remove(&mut self.root, &self.cmp, key);
+        if key_value.is_some() { self.len -= 1; }
+        key_value
+    }
+
     /// Returns a reference to the value associated with the given key, or `None` if the
     /// map does not contain the key.
     ///
