@@ -45,6 +45,26 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     pub fn cmp(&self) -> &C { &self.cmp }
 
     /// Removes all entries from the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.len(), 3);
+    /// assert_eq!(map.iter().next(), Some((&1, &"a")));
+    ///
+    /// map.clear();
+    ///
+    /// assert_eq!(map.len(), 0);
+    /// assert_eq!(map.iter().next(), None);
+    /// ```
     pub fn clear(&mut self) {
         self.root = None;
         self.len = 0;
@@ -72,6 +92,26 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
 
     /// Removes and returns the entry whose key is equal to the given key, returning
     /// `None` if the map does not contain the key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.len(), 3);
+    /// assert_eq!(map.get(&1), Some(&"a"));
+    /// assert_eq!(map.remove(&1), Some((1, "a")));
+    ///
+    /// assert_eq!(map.len(), 2);
+    /// assert_eq!(map.get(&1), None);
+    /// assert_eq!(map.remove(&1), None);
+    /// ```
     pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
