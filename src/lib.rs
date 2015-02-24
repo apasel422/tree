@@ -26,6 +26,24 @@ pub struct TreeMap<K, V, C = Natural<K>> where C: Compare<K> {
 
 impl<K, V> TreeMap<K, V> where K: Ord {
     /// Creates an empty map ordered according to the natural order of its keys.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// let mut it = map.iter();
+    /// assert_eq!(it.next(), Some((&1, &"a")));
+    /// assert_eq!(it.next(), Some((&2, &"b")));
+    /// assert_eq!(it.next(), Some((&3, &"c")));
+    /// assert_eq!(it.next(), None);
+    /// ```
     pub fn new() -> TreeMap<K, V> { TreeMap::with_cmp(compare::natural()) }
 }
 
