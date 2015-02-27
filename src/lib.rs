@@ -56,7 +56,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # extern crate collect;
     /// # extern crate tree;
     /// # fn main() {
-    /// use collect::compare::{CompareExt, natural};
+    /// use collect::compare::{Compare, natural};
     /// use tree::TreeMap;
     ///
     /// let mut map = TreeMap::with_cmp(natural().rev());
@@ -114,7 +114,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # extern crate collect;
     /// # extern crate tree;
     /// # fn main() {
-    /// use collect::compare::{Compare, CompareExt, natural};
+    /// use collect::compare::{Compare, natural};
     /// use tree::TreeMap;
     ///
     /// let map: TreeMap<i32, &str> = TreeMap::new();
