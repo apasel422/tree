@@ -1,7 +1,7 @@
 extern crate quickcheck;
 
 use collect::compare::Compare;
-use self::quickcheck::{Arbitrary, Gen, Shrinker};
+use self::quickcheck::{Arbitrary, Gen};
 use std::default::Default;
 use super::TreeMap;
 
@@ -13,7 +13,7 @@ impl<K, V, C> Arbitrary for TreeMap<K, V, C>
         vec.into_iter().collect()
     }
 
-    fn shrink(&self) -> Box<Shrinker<TreeMap<K, V, C>> + 'static> {
+    fn shrink(&self) -> Box<Iterator<Item=TreeMap<K, V, C>>> {
         let vec: Vec<(K, V)> = self.clone().into_iter().collect();
         box vec.shrink().map(|vec| vec.into_iter().collect())
     }
