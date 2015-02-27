@@ -67,6 +67,13 @@ fn remove_decs_len(mut m: M, k: K, v: V) -> bool {
 }
 
 #[quickcheck]
+fn remove_removes(mut m: M, k: K, v: V) -> bool {
+    m.insert(k, v);
+    m.remove(&k);
+    m.get(&k).is_none()
+}
+
+#[quickcheck]
 fn max_consistent_with_rev_iter(m: M) -> bool {
     m.max() == m.rev_iter().next()
 }
@@ -104,4 +111,22 @@ fn succ_consistent_with_iter(m: M, k: K) -> bool {
 #[quickcheck]
 fn succ_or_eq_consistent_with_iter(m: M, k: K) -> bool {
     m.succ_or_eq(&k) == m.iter().find(|e| m.cmp().compares_ge(e.0, &k))
+}
+
+#[quickcheck]
+fn clear_empties(mut m: M) -> bool {
+    m.clear();
+    m.is_empty()
+}
+
+#[quickcheck]
+fn clear_zeroes_len(mut m: M) -> bool {
+    m.clear();
+    m.len() == 0
+}
+
+#[quickcheck]
+fn clear_clears(mut m: M) -> bool {
+    m.clear();
+    m.iter().next().is_none()
 }
