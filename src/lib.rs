@@ -77,12 +77,53 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     }
 
     /// Checks if the map is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert!(map.is_empty());
+    ///
+    /// map.insert(2, "b");
+    /// assert!(!map.is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool { self.root.is_none() }
 
     /// Returns the number of entries in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert_eq!(map.len(), 0);
+    ///
+    /// map.insert(2, "b");
+    /// assert_eq!(map.len(), 1);
+    /// ```
     pub fn len(&self) -> usize { self.len }
 
     /// Returns a reference to the map's comparator.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # extern crate collect;
+    /// # extern crate tree;
+    /// # fn main() {
+    /// use collect::compare::{Compare, CompareExt, natural};
+    /// use tree::TreeMap;
+    ///
+    /// let map: TreeMap<i32, &str> = TreeMap::new();
+    /// assert!(map.cmp().compares_lt(&1, &2));
+    ///
+    /// let map: TreeMap<i32, &str, _> = TreeMap::with_cmp(natural().rev());
+    /// assert!(map.cmp().compares_gt(&1, &2));
+    /// # }
+    /// ```
     pub fn cmp(&self) -> &C { &self.cmp }
 
     /// Removes all entries from the map.
