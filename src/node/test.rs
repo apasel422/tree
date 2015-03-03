@@ -23,6 +23,13 @@ impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
             Op::Remove(Arbitrary::arbitrary(gen))
         }
     }
+
+    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+        match *self {
+            Op::Insert(ref key) => box key.shrink().map(Op::Insert),
+            Op::Remove(index) => box index.shrink().map(Op::Remove),
+        }
+    }
 }
 
 impl<K> Op<K> where K: Clone + Ord {
