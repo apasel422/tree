@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `TreeMap` struct in crate `tree`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, TreeMap">
+
+    <title>tree::TreeMap - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='index.html'>tree</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.IntoIter.html' title='An iterator that consumes the map in ascending order.'>IntoIter</a><a class='struct ' href='struct.Iter.html' title='An iterator over the map&#39;s entries in ascending order.'>Iter</a><a class='struct ' href='struct.IterMut.html' title='An iterator over the map&#39;s entries in ascending order with mutable references to the values.'>IterMut</a><a class='struct ' href='struct.RevIntoIter.html' title='An iterator that consumes the map in descending order.'>RevIntoIter</a><a class='struct ' href='struct.RevIter.html' title='An iterator over the map&#39;s entries in descending order.'>RevIter</a><a class='struct ' href='struct.RevIterMut.html' title='An iterator over the map&#39;s entries in descending order with mutable references to the values.'>RevIterMut</a><a class='struct current' href='struct.TreeMap.html' title='An ordered map based on a binary search tree.'>TreeMap</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>tree</a>::<wbr><a class='struct' href=''>TreeMap</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-2136' href='../src/tree/lib.rs.html#21-25'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct TreeMap&lt;K, V, C = Natural&lt;K&gt;&gt; <span class='where'>where C: Compare&lt;K&gt;</span> {
+    // some fields omitted
+}</pre><div class='docblock'><p>An ordered map based on a binary search tree.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K, V&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Creates an empty map ordered according to the natural order of its keys.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div></div><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K, V, C&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.with_cmp' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.with_cmp' class='fnname'>with_cmp</a>(cmp: C) -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;</code></h4>
+<div class='docblock'><p>Creates an empty map ordered according to the given comparator.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>collect</span>::<span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>with_cmp</span>(<span class='ident'>natural</span>().<span class='ident'>rev</span>());
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.is_empty' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Checks if the map is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>is_empty</span>());
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>map</span>.<span class='ident'>is_empty</span>());
+</pre>
+</div><h4 id='method.len' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.len' class='fnname'>len</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
+<div class='docblock'><p>Returns the number of entries in the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>0</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>1</span>);
+</pre>
+</div><h4 id='method.cmp' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.cmp' class='fnname'>cmp</a>(&amp;self) -&gt; &amp;C</code></h4>
+<div class='docblock'><p>Returns a reference to the map&#39;s comparator.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>collect</span>::<span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='ident'>map</span>: <span class='ident'>TreeMap</span><span class='op'>&lt;</span><span class='ident'>i32</span>, <span class='kw-2'>&amp;</span><span class='ident'>str</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>cmp</span>().<span class='ident'>compares_lt</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>));
+
+<span class='kw'>let</span> <span class='ident'>map</span>: <span class='ident'>TreeMap</span><span class='op'>&lt;</span><span class='ident'>i32</span>, <span class='kw-2'>&amp;</span><span class='ident'>str</span>, _<span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>with_cmp</span>(<span class='ident'>natural</span>().<span class='ident'>rev</span>());
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>cmp</span>().<span class='ident'>compares_gt</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>));
+</pre>
+</div><h4 id='method.clear' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Removes all entries from the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>3</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+
+<span class='ident'>map</span>.<span class='ident'>clear</span>();
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>0</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.insert' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self, key: K, value: V) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;V&gt;</code></h4>
+<div class='docblock'><p>Inserts an entry into the map, returning the previous value, if any, associated
+with the key.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;b&quot;</span>), <span class='prelude-val'>Some</span>(<span class='string'>&quot;a&quot;</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>));
+</pre>
+</div><h4 id='method.remove' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove' class='fnname'>remove</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Removes and returns the entry whose key is equal to the given key, returning
+<code>None</code> if the map does not contain the key.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>3</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>((<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>)));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>2</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.get' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.get' class='fnname'>get</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;V&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the value associated with the given key, or <code>None</code> if the
+map does not contain the key.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>));
+</pre>
+</div><h4 id='method.get_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.get_mut' class='fnname'>get_mut</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;mut V&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a mutable reference to the value associated with the given key, or <code>None</code>
+if the map does not contain the key.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+
+{
+    <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>get_mut</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>).<span class='ident'>unwrap</span>();
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>value</span>, <span class='string'>&quot;a&quot;</span>);
+    <span class='op'>*</span><span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;b&quot;</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>));
+</pre>
+</div><h4 id='method.max' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.max' class='fnname'>max</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the map&#39;s maximum key and a reference to its associated
+value, or <code>None</code> if the map is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>max</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>max</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+</pre>
+</div><h4 id='method.max_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.max_mut' class='fnname'>max_mut</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the map&#39;s maximum key and a mutable reference to its
+associated value, or <code>None</code> if the map is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>max</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+{
+    <span class='kw'>let</span> <span class='ident'>max</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>max_mut</span>().<span class='ident'>unwrap</span>();
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>max</span>, (<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='string'>&quot;c&quot;</span>));
+    <span class='op'>*</span><span class='ident'>max</span>.<span class='number'>1</span> <span class='op'>=</span> <span class='string'>&quot;cc&quot;</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>max</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;cc&quot;</span>)));
+</pre>
+</div><h4 id='method.min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min' class='fnname'>min</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the map&#39;s minimum key and a reference to its associated
+value, or <code>None</code> if the map is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>min</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>min</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+</pre>
+</div><h4 id='method.min_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min_mut' class='fnname'>min_mut</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the map&#39;s minimum key and a mutable reference to its
+associated value, or <code>None</code> if the map is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>min</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+{
+    <span class='kw'>let</span> <span class='ident'>min</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>min_mut</span>().<span class='ident'>unwrap</span>();
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>min</span>, (<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='string'>&quot;a&quot;</span>));
+    <span class='op'>*</span><span class='ident'>min</span>.<span class='number'>1</span> <span class='op'>=</span> <span class='string'>&quot;aa&quot;</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>min</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;aa&quot;</span>)));
+</pre>
+</div><h4 id='method.pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred' class='fnname'>pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest key that is strictly less than the given key and a
+reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+</pre>
+</div><h4 id='method.pred_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_mut' class='fnname'>pred_mut</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest key that is strictly less than the given key and a
+mutable reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.pred_or_eq' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_or_eq' class='fnname'>pred_or_eq</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest key that is less than or equal to the given key and a
+reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+</pre>
+</div><h4 id='method.pred_or_eq_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_or_eq_mut' class='fnname'>pred_or_eq_mut</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest key that is less than or equal to the given key and a
+mutable reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ' class='fnname'>succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest key that is strictly greater than the given key and a
+reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.succ_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_mut' class='fnname'>succ_mut</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest key that is strictly greater than the given key and a
+mutable reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.succ_or_eq' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_or_eq' class='fnname'>succ_or_eq</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest key that is greater than or equal to the given key and
+a reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.succ_or_eq_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_or_eq_mut' class='fnname'>succ_or_eq_mut</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;mut V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest key that is greater than or equal to the given key and
+a mutable reference to its associated value, or <code>None</code> if no such key is present in the
+map.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../tree/struct.IntoIter.html' title='tree::IntoIter'>IntoIter</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator that consumes the map in ascending order.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>into_iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter' class='fnname'>iter</a>(&amp;self) -&gt; <a class='struct' href='../tree/struct.Iter.html' title='tree::Iter'>Iter</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries in ascending order.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.iter_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter_mut' class='fnname'>iter_mut</a>(&amp;mut self) -&gt; <a class='struct' href='../tree/struct.IterMut.html' title='tree::IterMut'>IterMut</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries in ascending order with mutable
+references to the values.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>1</span>;
+
+<span class='kw'>for</span> (_, <span class='ident'>value</span>) <span class='kw'>in</span> <span class='ident'>map</span>.<span class='ident'>iter_mut</span>() {
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>i</span>, <span class='op'>*</span><span class='ident'>value</span>);
+    <span class='op'>*</span><span class='ident'>value</span> <span class='op'>*=</span> <span class='number'>2</span>;
+    <span class='ident'>i</span> <span class='op'>+=</span> <span class='number'>1</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;c&quot;</span>], <span class='number'>6</span>);
+</pre>
+</div><h4 id='method.rev_into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_into_iter' class='fnname'>rev_into_iter</a>(self) -&gt; <a class='struct' href='../tree/struct.RevIntoIter.html' title='tree::RevIntoIter'>RevIntoIter</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator that consumes the map in descending order.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>rev_into_iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.rev_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_iter' class='fnname'>rev_iter</a>(&amp;self) -&gt; <a class='struct' href='../tree/struct.RevIter.html' title='tree::RevIter'>RevIter</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries in descending order.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>rev_iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.rev_iter_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_iter_mut' class='fnname'>rev_iter_mut</a>(&amp;mut self) -&gt; <a class='struct' href='../tree/struct.RevIterMut.html' title='tree::RevIterMut'>RevIterMut</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries in descending order with mutable
+references to the values.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>3</span>;
+
+<span class='kw'>for</span> (_, <span class='ident'>value</span>) <span class='kw'>in</span> <span class='ident'>map</span>.<span class='ident'>rev_iter_mut</span>() {
+    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>i</span>, <span class='op'>*</span><span class='ident'>value</span>);
+    <span class='op'>*</span><span class='ident'>value</span> <span class='op'>*=</span> <span class='number'>2</span>;
+    <span class='ident'>i</span> <span class='op'>-=</span> <span class='number'>1</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;c&quot;</span>], <span class='number'>6</span>);
+</pre>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html' title='quickcheck::arbitrary::Arbitrary'>Arbitrary</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where K: <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html' title='quickcheck::arbitrary::Arbitrary'>Arbitrary</a>, V: <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html' title='quickcheck::arbitrary::Arbitrary'>Arbitrary</a>, C: 'static + <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + Compare&lt;K&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a></span></code></h3><div class='impl-items'><h4 id='method.arbitrary' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.arbitrary' class='fnname'>arbitrary</a>&lt;G: <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Gen.html' title='quickcheck::arbitrary::Gen'>Gen</a>&gt;(gen: &amp;mut G) -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;</code></h4>
+<h4 id='method.shrink' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.shrink' class='fnname'>shrink</a>(&amp;self) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a>&lt;Item=<a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;&gt;&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, V: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='http://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a></span></code></h3><div class='impl-items'><h4 id='method.default' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.default' class='fnname'>default</a>() -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Extend.html' title='core::iter::Extend'>Extend</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt; for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.extend' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.extend' class='fnname'>extend</a>&lt;I: <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a>&lt;Item=<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt;&gt;(&amp;mut self, it: I)</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.FromIterator.html' title='core::iter::FromIterator'>FromIterator</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt; for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a></span></code></h3><div class='impl-items'><h4 id='method.from_iter' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.from_iter' class='fnname'>from_iter</a>&lt;I: <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a>&lt;Item=<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt;&gt;(it: I) -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a>, V: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a>, C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.hash' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.hash' class='fnname'>hash</a>&lt;H: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a>&gt;(&amp;self, h: &amp;mut H)</code></h4>
+<h4 id='method.hash_slice' class='tymethod'><a class='stability Unstable' title='Unstable: module was recently redesigned'></a><code>fn <a href='#tymethod.hash_slice' class='fnname'>hash_slice</a>&lt;H&gt;(data: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[Self]</a>, state: &amp;mut H) <span class='where'>where H: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a></span></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C, Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>&lt;Q&gt; for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt; + Compare&lt;Q, K&gt;</span></code></h3><div class='impl-items'><h4 id='assoc_type.Output' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Output = V</code></h4>
+<h4 id='method.index' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.index' class='fnname'>index</a>(&amp;self, key: &amp;Q) -&gt; &amp;V</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C, Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;Q&gt; for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt; + Compare&lt;Q, K&gt;</span></code></h3><div class='impl-items'><h4 id='method.index_mut' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.index_mut' class='fnname'>index_mut</a>(&amp;mut self, key: &amp;Q) -&gt; &amp;mut V</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a></code></h4>
+<h4 id='assoc_type.IntoIter' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type IntoIter = <a class='struct' href='../tree/struct.IntoIter.html' title='tree::IntoIter'>IntoIter</a>&lt;K, V&gt;</code></h4>
+<h4 id='method.into_iter' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../tree/struct.IntoIter.html' title='tree::IntoIter'>IntoIter</a>&lt;K, V&gt;</code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, V: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, C: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../tree/struct.TreeMap.html' title='tree::TreeMap'>TreeMap</a>&lt;K, V, C&gt;</code></h4>
+<h4 id='method.clone_from' class='tymethod'><a class='stability Unstable' title='Unstable: this function is rarely used'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "tree";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>
