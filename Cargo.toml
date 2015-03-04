@@ -5,6 +5,7 @@ version = "0.0.1"
 authors = ["Andrew Paseltiner <apaseltiner@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
+documentation = "https://apasel422.github.io/tree/tree"
 
 [features]
 
