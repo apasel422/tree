@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='index.html'>tree</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.IntoIter.html' title='An iterator that consumes the map in ascending order.'>IntoIter</a><a class='struct ' href='struct.Iter.html' title='An iterator over the map&#39;s entries in ascending order.'>Iter</a><a class='struct ' href='struct.IterMut.html' title='An iterator over the map&#39;s entries in ascending order with mutable references to the values.'>IterMut</a><a class='struct ' href='struct.RevIntoIter.html' title='An iterator that consumes the map in descending order.'>RevIntoIter</a><a class='struct ' href='struct.RevIter.html' title='An iterator over the map&#39;s entries in descending order.'>RevIter</a><a class='struct ' href='struct.RevIterMut.html' title='An iterator over the map&#39;s entries in descending order with mutable references to the values.'>RevIterMut</a><a class='struct current' href='struct.TreeMap.html' title='An ordered map based on a binary search tree.'>TreeMap</a></div>
+        <p class='location'><a href='index.html'>tree</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.IntoIter.html' title='An iterator that consumes the map.'>IntoIter</a><a class='struct ' href='struct.Iter.html' title='An iterator over the map&#39;s entries with immutable references to the values.'>Iter</a><a class='struct ' href='struct.IterMut.html' title='An iterator over the map&#39;s entries with mutable references to the values.'>IterMut</a><a class='struct current' href='struct.TreeMap.html' title='An ordered map based on a binary search tree.'>TreeMap</a></div>
     </section>
 
     <nav class="sub">
@@ -43,7 +43,7 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>tree</a>::<wbr><a class='struct' href=''>TreeMap</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2136' href='../src/tree/lib.rs.html#21-25'>[src]</a></span></h1>
+        </span><a id='src-2462' href='../src/tree/lib.rs.html#21-25'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct TreeMap&lt;K, V, C = Natural&lt;K&gt;&gt; <span class='where'>where C: Compare&lt;K&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered map based on a binary search tree.</p>
@@ -406,7 +406,7 @@ map.</p>
 
 <p>The given key need not itself be present in the map.</p>
 </div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../tree/struct.IntoIter.html' title='tree::IntoIter'>IntoIter</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator that consumes the map in ascending order.</p>
+<div class='docblock'><p>Returns an iterator that consumes the map.</p>
 
 <h1 id="examples" class='section-header'><a
                            href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
@@ -425,7 +425,7 @@ map.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
 </pre>
 </div><h4 id='method.iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter' class='fnname'>iter</a>(&amp;self) -&gt; <a class='struct' href='../tree/struct.Iter.html' title='tree::Iter'>Iter</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries in ascending order.</p>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries with immutable references to the values.</p>
 
 <h1 id="examples" class='section-header'><a
                            href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
@@ -444,8 +444,7 @@ map.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
 </pre>
 </div><h4 id='method.iter_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter_mut' class='fnname'>iter_mut</a>(&amp;mut self) -&gt; <a class='struct' href='../tree/struct.IterMut.html' title='tree::IterMut'>IterMut</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries in ascending order with mutable
-references to the values.</p>
+<div class='docblock'><p>Returns an iterator over the map&#39;s entries with mutable references to the values.</p>
 
 <h1 id="examples" class='section-header'><a
                            href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
@@ -463,70 +462,6 @@ references to the values.</p>
     <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>i</span>, <span class='op'>*</span><span class='ident'>value</span>);
     <span class='op'>*</span><span class='ident'>value</span> <span class='op'>*=</span> <span class='number'>2</span>;
     <span class='ident'>i</span> <span class='op'>+=</span> <span class='number'>1</span>;
-}
-
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;c&quot;</span>], <span class='number'>6</span>);
-</pre>
-</div><h4 id='method.rev_into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_into_iter' class='fnname'>rev_into_iter</a>(self) -&gt; <a class='struct' href='../tree/struct.RevIntoIter.html' title='tree::RevIntoIter'>RevIntoIter</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator that consumes the map in descending order.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>rev_into_iter</span>();
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
-</pre>
-</div><h4 id='method.rev_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_iter' class='fnname'>rev_iter</a>(&amp;self) -&gt; <a class='struct' href='../tree/struct.RevIter.html' title='tree::RevIter'>RevIter</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries in descending order.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>map</span>.<span class='ident'>rev_iter</span>();
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>)));
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
-</pre>
-</div><h4 id='method.rev_iter_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.rev_iter_mut' class='fnname'>rev_iter_mut</a>(&amp;mut self) -&gt; <a class='struct' href='../tree/struct.RevIterMut.html' title='tree::RevIterMut'>RevIterMut</a>&lt;K, V&gt;</code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries in descending order with mutable
-references to the values.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>3</span>;
-
-<span class='kw'>for</span> (_, <span class='ident'>value</span>) <span class='kw'>in</span> <span class='ident'>map</span>.<span class='ident'>rev_iter_mut</span>() {
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>i</span>, <span class='op'>*</span><span class='ident'>value</span>);
-    <span class='op'>*</span><span class='ident'>value</span> <span class='op'>*=</span> <span class='number'>2</span>;
-    <span class='ident'>i</span> <span class='op'>-=</span> <span class='number'>1</span>;
 }
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
