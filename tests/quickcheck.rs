@@ -74,8 +74,8 @@ fn remove_removes(mut m: M, k: K, v: V) -> bool {
 }
 
 #[quickcheck]
-fn max_consistent_with_rev_iter(m: M) -> bool {
-    m.max() == m.rev_iter().next()
+fn max_consistent_with_iter(m: M) -> bool {
+    m.max() == m.iter().next_back()
 }
 
 #[quickcheck]
@@ -89,18 +89,18 @@ fn iter_ascends(m: M) -> bool {
 }
 
 #[quickcheck]
-fn rev_iter_descends(m: M) -> bool {
-    m.rev_iter().zip(m.rev_iter().skip(1)).all(|(e2, e1)| m.cmp().compares_gt(e2.0, e1.0))
+fn iter_rev_descends(m: M) -> bool {
+    m.iter().rev().zip(m.iter().rev().skip(1)).all(|(e2, e1)| m.cmp().compares_gt(e2.0, e1.0))
 }
 
 #[quickcheck]
-fn pred_consistent_with_rev_iter(m: M, k: K) -> bool {
-    m.pred(&k) == m.rev_iter().find(|e| m.cmp().compares_lt(e.0, &k))
+fn pred_consistent_with_iter_rev(m: M, k: K) -> bool {
+    m.pred(&k) == m.iter().rev().find(|e| m.cmp().compares_lt(e.0, &k))
 }
 
 #[quickcheck]
-fn pred_or_eq_consistent_with_rev_iter(m: M, k: K) -> bool {
-    m.pred_or_eq(&k) == m.rev_iter().find(|e| m.cmp().compares_le(e.0, &k))
+fn pred_or_eq_consistent_with_iter_rev(m: M, k: K) -> bool {
+    m.pred_or_eq(&k) == m.iter().rev().find(|e| m.cmp().compares_le(e.0, &k))
 }
 
 #[quickcheck]

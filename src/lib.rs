@@ -482,7 +482,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, true).key_value_mut()
     }
 
-    /// Returns an iterator that consumes the map in ascending order.
+    /// Returns an iterator that consumes the map.
     ///
     /// # Examples
     ///
@@ -505,7 +505,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         IntoIter(node::Iter::new(self.root.take(), self.len))
     }
 
-    /// Returns an iterator over the map's entries in ascending order.
+    /// Returns an iterator over the map's entries with immutable references to the values.
     ///
     /// # Examples
     ///
@@ -528,8 +528,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         Iter(node::Iter::new(self.root.as_node_ref(), self.len))
     }
 
-    /// Returns an iterator over the map's entries in ascending order with mutable
-    /// references to the values.
+    /// Returns an iterator over the map's entries with mutable references to the values.
     ///
     /// # Examples
     ///
@@ -556,82 +555,6 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<K, V> {
         IterMut(node::IterMut::new(&mut self.root, self.len))
-    }
-
-    /// Returns an iterator that consumes the map in descending order.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
-    ///
-    /// let mut it = map.rev_into_iter();
-    /// assert_eq!(it.next(), Some((3, "c")));
-    /// assert_eq!(it.next(), Some((2, "b")));
-    /// assert_eq!(it.next(), Some((1, "a")));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    pub fn rev_into_iter(mut self) -> RevIntoIter<K, V> {
-        RevIntoIter(node::Iter::new(self.root.take(), self.len))
-    }
-
-    /// Returns an iterator over the map's entries in descending order.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
-    ///
-    /// let mut it = map.rev_iter();
-    /// assert_eq!(it.next(), Some((&3, &"c")));
-    /// assert_eq!(it.next(), Some((&2, &"b")));
-    /// assert_eq!(it.next(), Some((&1, &"a")));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    pub fn rev_iter(&self) -> RevIter<K, V> {
-        RevIter(node::Iter::new(self.root.as_node_ref(), self.len))
-    }
-
-    /// Returns an iterator over the map's entries in descending order with mutable
-    /// references to the values.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
-    ///
-    /// map.insert("b", 2);
-    /// map.insert("a", 1);
-    /// map.insert("c", 3);
-    ///
-    /// let mut i = 3;
-    ///
-    /// for (_, value) in map.rev_iter_mut() {
-    ///     assert_eq!(i, *value);
-    ///     *value *= 2;
-    ///     i -= 1;
-    /// }
-    ///
-    /// assert_eq!(map["a"], 2);
-    /// assert_eq!(map["b"], 4);
-    /// assert_eq!(map["c"], 6);
-    /// ```
-    pub fn rev_iter_mut(&mut self) -> RevIterMut<K, V> {
-        RevIterMut(node::IterMut::new(&mut self.root, self.len))
     }
 }
 
@@ -709,7 +632,7 @@ impl<K, V, C> IntoIterator for TreeMap<K, V, C> where C: Compare<K> {
     fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
 }
 
-/// An iterator that consumes the map in ascending order.
+/// An iterator that consumes the map.
 ///
 /// # Examples
 ///
@@ -729,7 +652,7 @@ impl<K, V, C> IntoIterator for TreeMap<K, V, C> where C: Compare<K> {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct IntoIter<K, V>(node::Iter<Box<Node<K, V>>, Left>);
+pub struct IntoIter<K, V>(node::Iter<Box<Node<K, V>>>);
 
 impl<K, V> Iterator for IntoIter<K, V> {
     type Item = (K, V);
@@ -737,9 +660,13 @@ impl<K, V> Iterator for IntoIter<K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
+impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
+    fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
+}
+
 impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
 
-/// An iterator over the map's entries in ascending order.
+/// An iterator over the map's entries with immutable references to the values.
 ///
 /// # Examples
 ///
@@ -758,7 +685,7 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>, Left>);
+pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
 
 impl<'a, K, V> Clone for Iter<'a, K, V> {
     fn clone(&self) -> Iter<'a, K, V> { Iter(self.0.clone()) }
@@ -770,10 +697,13 @@ impl<'a, K, V> Iterator for Iter<'a, K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
+impl<'a, K, V> DoubleEndedIterator for Iter<'a, K, V> {
+    fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
+}
+
 impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {}
 
-/// An iterator over the map's entries in ascending order with mutable references to the
-/// values.
+/// An iterator over the map's entries with mutable references to the values.
 ///
 /// # Examples
 ///
@@ -793,7 +723,7 @@ impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {}
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct IterMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V, Left>);
+pub struct IterMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V>);
 
 impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
@@ -801,54 +731,8 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
+impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
+    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
+}
+
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
-
-/// An iterator that consumes the map in descending order.
-///
-/// # Examples
-///
-/// Acquire through [`TreeMap::rev_into_iter`](struct.TreeMap.html#method.rev_into_iter).
-pub struct RevIntoIter<K, V>(node::Iter<Box<Node<K, V>>, Right>);
-
-impl<K, V> Iterator for RevIntoIter<K, V> {
-    type Item = (K, V);
-    fn next(&mut self) -> Option<(K, V)> { self.0.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
-}
-
-impl<K, V> ExactSizeIterator for RevIntoIter<K, V> {}
-
-/// An iterator over the map's entries in descending order.
-///
-/// # Examples
-///
-/// Acquire through [`TreeMap::rev_iter`](struct.TreeMap.html#method.rev_iter).
-pub struct RevIter<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>, Right>);
-
-impl<'a, K, V> Clone for RevIter<'a, K, V> {
-    fn clone(&self) -> RevIter<'a, K, V> { RevIter(self.0.clone()) }
-}
-
-impl<'a, K, V> Iterator for RevIter<'a, K, V> {
-    type Item = (&'a K, &'a V);
-    fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
-}
-
-impl<'a, K, V> ExactSizeIterator for RevIter<'a, K, V> {}
-
-/// An iterator over the map's entries in descending order with mutable references to the
-/// values.
-///
-/// # Examples
-///
-/// Acquire through [`TreeMap::rev_iter_mut`](struct.TreeMap.html#method.rev_iter_mut).
-pub struct RevIterMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V, Right>);
-
-impl<'a, K, V> Iterator for RevIterMut<'a, K, V> {
-    type Item = (&'a K, &'a mut V);
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
-}
-
-impl<'a, K, V> ExactSizeIterator for RevIterMut<'a, K, V> {}

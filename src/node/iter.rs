@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::collections::VecDeque;
 use super::{Dir, Link, LinkExt, Node};
 
 trait NodeRef {
@@ -22,63 +23,122 @@ impl<K, V> NodeRef for Box<Node<K, V>> {
     fn right(&mut self) -> Link<K, V> { self.right.take() }
 }
 
-pub struct Iter<N, D> where N: NodeRef, D: Dir {
-    stack: Vec<N>,
-    node: Option<N>,
+#[derive(Clone)]
+pub struct Iter<N> where N: NodeRef {
+    visits: VecDeque<Visit<N>>,
     size: usize,
-    _dir: PhantomData<D>,
 }
 
-impl<N, D> Iter<N, D> where N: NodeRef, D: Dir {
-    pub fn new(node: Option<N>, size: usize) -> Iter<N, D> {
-        Iter { stack: vec![], node: node, size: size, _dir: PhantomData }
+impl<N> Iter<N> where N: NodeRef {
+    pub fn new(root: Option<N>, size: usize) -> Iter<N> {
+        Iter { visits: root.into_iter().map(Visit::new).collect(), size: size }
     }
 }
 
-impl<N, D> Clone for Iter<N, D> where N: Clone + NodeRef, D: Dir {
-    fn clone(&self) -> Iter<N, D> {
-        Iter {
-            stack: self.stack.clone(),
-            node: self.node.clone(),
-            size: self.size,
-            _dir: PhantomData,
-        }
-    }
-}
-
-impl<N: NodeRef, D> Iterator for Iter<N, D> where D: Dir {
+impl<N> Iterator for Iter<N> where N: NodeRef {
     type Item = N::Item;
 
     fn next(&mut self) -> Option<N::Item> {
-        while let Some(mut node) = self.node.take() {
-            self.node =
-                <D as Dir>::forward(&mut node, |node| node.left(), |node| node.right());
-            self.stack.push(node);
-        }
+        loop {
+            let op = match self.visits.back_mut() {
+                None => return None,
+                Some(visit) => match visit.seen {
+                    Seen::N => { visit.seen = Seen::L; Op::Push(visit.node.left()) }
+                    Seen::L => { visit.seen = Seen::B; Op::PopPush(visit.node.right()) }
+                    Seen::R => { visit.seen = Seen::B; Op::Push(visit.node.left()) }
+                    Seen::B => Op::Pop,
+                }
+            };
 
-        self.stack.pop().map(|mut node| {
-            self.size -= 1;
-            self.node =
-                <D as Dir>::reverse(&mut node, |node| node.left(), |node| node.right());
-            node.item()
-        })
+            match op {
+                Op::Push(node_ref) =>
+                    if let Some(node) = node_ref { self.visits.push_back(Visit::new(node)); },
+                Op::PopPush(node_ref) => {
+                    self.size -= 1;
+                    let visit = self.visits.pop_back().unwrap();
+                    if let Some(node) = node_ref { self.visits.push_back(Visit::new(node)); }
+                    return Some(visit.node.item());
+                }
+                Op::Pop => {
+                    self.size -= 1;
+                    let visit = self.visits.pop_back().unwrap();
+                    return Some(visit.node.item());
+                }
+            }
+        }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) { (self.size, Some(self.size)) }
 }
 
-pub struct IterMut<'a, K: 'a, V: 'a, D> where D: Dir {
-    iter: Iter<&'a Node<K, V>, D>,
+impl<N> DoubleEndedIterator for Iter<N> where N: NodeRef {
+    fn next_back(&mut self) -> Option<N::Item> {
+        loop {
+            let op = match self.visits.front_mut() {
+                None => return None,
+                Some(visit) => match visit.seen {
+                    Seen::N => { visit.seen = Seen::R; Op::Push(visit.node.right()) }
+                    Seen::R => { visit.seen = Seen::B; Op::PopPush(visit.node.left()) }
+                    Seen::L => { visit.seen = Seen::B; Op::Push(visit.node.right()) }
+                    Seen::B => Op::Pop,
+                }
+            };
+
+            match op {
+                Op::Push(node_ref) =>
+                    if let Some(node) = node_ref { self.visits.push_front(Visit::new(node)); },
+                Op::PopPush(node_ref) => {
+                    self.size -= 1;
+                    let visit = self.visits.pop_front().unwrap();
+                    if let Some(node) = node_ref { self.visits.push_front(Visit::new(node)); }
+                    return Some(visit.node.item());
+                }
+                Op::Pop => {
+                    self.size -= 1;
+                    let visit = self.visits.pop_front().unwrap();
+                    return Some(visit.node.item());
+                }
+            }
+        }
+    }
+}
+
+#[derive(Clone)]
+struct Visit<N> where N: NodeRef {
+    node: N,
+    seen: Seen,
+}
+
+impl<N> Visit<N> where N: NodeRef {
+    fn new(node: N) -> Visit<N> { Visit { node: node, seen: Seen::N } }
+}
+
+#[derive(Clone)]
+enum Seen {
+    N,
+    L,
+    R,
+    B,
+}
+
+enum Op<T> {
+    Push(Option<T>),
+    PopPush(Option<T>),
+    Pop,
+}
+
+pub struct IterMut<'a, K: 'a, V: 'a> {
+    iter: Iter<&'a Node<K, V>>,
     _mut: PhantomData<&'a mut V>,
 }
 
-impl<'a, K, V, D> IterMut<'a, K, V, D> where D: Dir {
-    pub fn new(node: &'a mut Link<K, V>, size: usize) -> IterMut<'a, K, V, D> {
+impl<'a, K, V> IterMut<'a, K, V> {
+    pub fn new(node: &'a mut Link<K, V>, size: usize) -> IterMut<'a, K, V> {
         IterMut { iter: Iter::new(node.as_node_ref(), size), _mut: PhantomData }
     }
 }
 
-impl<'a, K, V, D> Iterator for IterMut<'a, K, V, D> where D: Dir {
+impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
 
     fn next(&mut self) -> Option<(&'a K, &'a mut V)> {
@@ -89,4 +149,11 @@ impl<'a, K, V, D> Iterator for IterMut<'a, K, V, D> where D: Dir {
     fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
 }
 
-impl<'a, K, V, D> ExactSizeIterator for IterMut<'a, K, V, D> where D: Dir {}
+impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
+    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
+        let next_back = self.iter.next_back();
+        unsafe { ::std::mem::transmute(next_back) }
+    }
+}
+
+impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
