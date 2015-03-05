@@ -44,7 +44,7 @@ impl<N> Iterator for Iter<N> where N: NodeRef {
                 None => return None,
                 Some(visit) => match visit.seen {
                     Seen::N => { visit.seen = Seen::L; Op::Push(visit.node.left()) }
-                    Seen::L => { visit.seen = Seen::B; Op::PopPush(visit.node.right()) }
+                    Seen::L => Op::PopPush(visit.node.right()),
                     Seen::R => { visit.seen = Seen::B; Op::Push(visit.node.left()) }
                     Seen::B => Op::Pop,
                 }
@@ -78,7 +78,7 @@ impl<N> DoubleEndedIterator for Iter<N> where N: NodeRef {
                 None => return None,
                 Some(visit) => match visit.seen {
                     Seen::N => { visit.seen = Seen::R; Op::Push(visit.node.right()) }
-                    Seen::R => { visit.seen = Seen::B; Op::PopPush(visit.node.left()) }
+                    Seen::R => Op::PopPush(visit.node.left()),
                     Seen::L => { visit.seen = Seen::B; Op::Push(visit.node.right()) }
                     Seen::B => Op::Pop,
                 }
