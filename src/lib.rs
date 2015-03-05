@@ -10,6 +10,7 @@ mod quickcheck;
 
 use collect::compare::{self, Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
+use std::cmp::Ordering;
 use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
@@ -630,6 +631,26 @@ impl<K, V, C> IntoIterator for TreeMap<K, V, C> where C: Compare<K> {
     type Item = (K, V);
     type IntoIter = IntoIter<K, V>;
     fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
+}
+
+impl<K, V> PartialEq for TreeMap<K, V> where K: Ord, V: PartialEq {
+    fn eq(&self, other: &TreeMap<K, V>) -> bool {
+        self.len() == other.len() && iter::order::eq(self.iter(), other.iter())
+    }
+}
+
+impl<K, V> Eq for TreeMap<K, V> where K: Ord, V: Eq {}
+
+impl<K, V> PartialOrd for TreeMap<K, V> where K: Ord, V: PartialOrd {
+    fn partial_cmp(&self, other: &TreeMap<K, V>) -> Option<Ordering> {
+        iter::order::partial_cmp(self.iter(), other.iter())
+    }
+}
+
+impl<K, V> Ord for TreeMap<K, V> where K: Ord, V: Ord {
+    fn cmp(&self, other: &TreeMap<K, V>) -> Ordering {
+        iter::order::cmp(self.iter(), other.iter())
+    }
 }
 
 /// An iterator that consumes the map.
