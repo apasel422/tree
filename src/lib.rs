@@ -372,6 +372,26 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// mutable reference to its associated value, or `None` if no such key is present in the map.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let pred = map.pred_mut(&2).unwrap();
+    ///     assert_eq!(pred, (&1, &mut "a"));
+    ///     *pred.1 = "aa";
+    /// }
+    ///
+    /// assert_eq!(map.pred(&2), Some((&1, &"aa")));
+    /// ```
     pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
         node::closest::<_, _, _, Left>(&mut self.root, &self.cmp, key, false).key_value_mut()
     }
@@ -406,6 +426,33 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// mutable reference to its associated value, or `None` if no such key is present in the map.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let pred_or_eq = map.pred_or_eq_mut(&1).unwrap();
+    ///     assert_eq!(pred_or_eq, (&1, &mut "a"));
+    ///     *pred_or_eq.1 = "aa";
+    /// }
+    ///
+    /// {
+    ///     let pred_or_eq = map.pred_or_eq_mut(&4).unwrap();
+    ///     assert_eq!(pred_or_eq, (&3, &mut "c"));
+    ///     *pred_or_eq.1 = "cc";
+    /// }
+    ///
+    /// assert_eq!(map.pred_or_eq(&1), Some((&1, &"aa")));
+    /// assert_eq!(map.pred_or_eq(&4), Some((&3, &"cc")));
+    /// ```
     pub fn pred_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
@@ -442,6 +489,26 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// mutable reference to its associated value, or `None` if no such key is present in the map.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let succ = map.succ_mut(&2).unwrap();
+    ///     assert_eq!(succ, (&3, &mut "c"));
+    ///     *succ.1 = "cc";
+    /// }
+    ///
+    /// assert_eq!(map.succ(&2), Some((&3, &"cc")));
+    /// ```
     pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
         node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, false).key_value_mut()
     }
@@ -477,6 +544,33 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// map.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let succ_or_eq = map.succ_or_eq_mut(&0).unwrap();
+    ///     assert_eq!(succ_or_eq, (&1, &mut "a"));
+    ///     *succ_or_eq.1 = "aa";
+    /// }
+    ///
+    /// {
+    ///     let succ_or_eq = map.succ_or_eq_mut(&3).unwrap();
+    ///     assert_eq!(succ_or_eq, (&3, &mut "c"));
+    ///     *succ_or_eq.1 = "cc";
+    /// }
+    ///
+    /// assert_eq!(map.succ_or_eq(&0), Some((&1, &"aa")));
+    /// assert_eq!(map.succ_or_eq(&3), Some((&3, &"cc")));
+    /// ```
     pub fn succ_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
