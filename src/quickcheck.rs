@@ -1,6 +1,6 @@
 extern crate quickcheck;
 
-use collect::compare::Compare;
+use compare::Compare;
 use self::quickcheck::{Arbitrary, Gen};
 use std::default::Default;
 use super::TreeMap;

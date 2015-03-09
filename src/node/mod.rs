@@ -3,7 +3,7 @@ mod iter;
 #[cfg(test)]
 mod test;
 
-use collect::compare::Compare;
+use compare::Compare;
 use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
 

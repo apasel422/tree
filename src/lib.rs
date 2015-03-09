@@ -1,14 +1,14 @@
 #![feature(box_patterns, box_syntax)]
 #![feature(core)]
 
-extern crate collect;
+extern crate compare;
 
 mod node;
 
 #[cfg(feature = "quickcheck")]
 mod quickcheck;
 
-use collect::compare::{self, Compare, Natural};
+use compare::{Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
 use std::cmp::Ordering;
 use std::default::Default;
@@ -54,10 +54,10 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```rust
-    /// # extern crate collect;
+    /// # extern crate compare;
     /// # extern crate tree;
     /// # fn main() {
-    /// use collect::compare::{Compare, natural};
+    /// use compare::{Compare, natural};
     /// use tree::TreeMap;
     ///
     /// let mut map = TreeMap::with_cmp(natural().rev());
@@ -112,10 +112,10 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```rust
-    /// # extern crate collect;
+    /// # extern crate compare;
     /// # extern crate tree;
     /// # fn main() {
-    /// use collect::compare::{Compare, natural};
+    /// use compare::{Compare, natural};
     /// use tree::TreeMap;
     ///
     /// let map: TreeMap<i32, &str> = TreeMap::new();

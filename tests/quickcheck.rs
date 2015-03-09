@@ -2,11 +2,11 @@
 #![feature(plugin)]
 #![plugin(quickcheck_macros)]
 
-extern crate collect;
+extern crate compare;
 extern crate quickcheck;
 extern crate tree;
 
-use collect::compare::Compare;
+use compare::Compare;
 use quickcheck::TestResult;
 
 type K = u32;

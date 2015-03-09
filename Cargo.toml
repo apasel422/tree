@@ -13,7 +13,7 @@ default = ["quickcheck"]
 
 [dependencies]
 
-collect = "*"
+compare = "*"
 
 [dependencies.quickcheck]
 
