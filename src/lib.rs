@@ -203,6 +203,22 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         key_value
     }
 
+    /// Checks if the map contains the given key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    /// assert!(!map.contains_key(&1));
+    /// map.insert(1, "a");
+    /// assert!(map.contains_key(&1));
+    /// ```
+    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool where C: Compare<Q, K> {
+        node::get(&self.root, &self.cmp, key).is_some()
+    }
+
     /// Returns a reference to the value associated with the given key, or `None` if the
     /// map does not contain the key.
     ///
