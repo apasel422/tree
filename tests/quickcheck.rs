@@ -1,13 +1,18 @@
+#![feature(box_syntax)]
+#![feature(collections, core)]
 #![feature(custom_attribute)]
 #![feature(plugin)]
 #![plugin(quickcheck_macros)]
 
 extern crate compare;
 extern crate quickcheck;
+extern crate rand;
 extern crate tree;
 
 use compare::Compare;
-use quickcheck::TestResult;
+use quickcheck::{Arbitrary, Gen, TestResult};
+use std::collections::Bound as StdBound;
+use std::iter::order;
 
 type K = u32;
 type V = u16;
@@ -130,4 +135,85 @@ fn clear_zeroes_len(mut m: M) -> bool {
 fn clear_clears(mut m: M) -> bool {
     m.clear();
     m.iter().next().is_none()
+}
+
+#[derive(Clone, Debug)]
+enum Bound<T> {
+    Included(T),
+    Excluded(T),
+    Unbounded,
+}
+
+impl<T> Bound<T> {
+    fn as_ref(&self) -> Bound<&T> {
+        match *self {
+            Bound::Included(ref t) => Bound::Included(t),
+            Bound::Excluded(ref t) => Bound::Excluded(t),
+            Bound::Unbounded => Bound::Unbounded,
+        }
+    }
+
+    fn to_std_bound(self) -> StdBound<T> {
+        match self {
+            Bound::Included(t) => StdBound::Included(t),
+            Bound::Excluded(t) => StdBound::Excluded(t),
+            Bound::Unbounded => StdBound::Unbounded,
+        }
+    }
+}
+
+impl<T> Arbitrary for Bound<T> where T: Arbitrary {
+    fn arbitrary<G: Gen>(gen: &mut G) -> Bound<T> {
+        match gen.gen_range(0, 3) {
+            0 => Bound::Included(Arbitrary::arbitrary(gen)),
+            1 => Bound::Excluded(Arbitrary::arbitrary(gen)),
+            _ => Bound::Unbounded,
+        }
+    }
+
+    fn shrink(&self) -> Box<Iterator<Item=Bound<T>>> {
+        match *self {
+            Bound::Included(ref t) => box t.shrink().map(Bound::Included),
+            Bound::Excluded(ref t) => box t.shrink().map(Bound::Excluded),
+            Bound::Unbounded => box None.into_iter(),
+        }
+    }
+}
+
+#[quickcheck]
+fn range(m: M, min: Bound<K>, max: Bound<K>) -> bool {
+    let r = m.range(min.as_ref().to_std_bound(), max.as_ref().to_std_bound());
+
+    let i = m.iter()
+        .skip_while(|e| match min {
+            Bound::Included(ref t) => e.0 < t,
+            Bound::Excluded(ref t) => e.0 <= t,
+            Bound::Unbounded => false,
+        })
+        .take_while(|e| match max {
+            Bound::Included(ref t) => e.0 <= t,
+            Bound::Excluded(ref t) => e.0 < t,
+            Bound::Unbounded => true,
+        });
+
+    order::equals(r, i)
+}
+
+#[quickcheck]
+fn range_rev(m: M, min: Bound<K>, max: Bound<K>) -> bool {
+    let r = m.range(min.as_ref().to_std_bound(), max.as_ref().to_std_bound()).rev();
+
+    let i = m.iter().rev()
+        .skip_while(|e| match max {
+            Bound::Included(ref t) => e.0 > t,
+            Bound::Excluded(ref t) => e.0 >= t,
+            Bound::Unbounded => false,
+        })
+        .take_while(|e| match min {
+            Bound::Included(ref t) => e.0 >= t,
+            Bound::Excluded(ref t) => e.0 > t,
+            Bound::Unbounded => true,
+        });
+
+    order::equals(r, i)
 }

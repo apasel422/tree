@@ -1,4 +1,5 @@
 #![feature(box_patterns, box_syntax)]
+#![feature(collections)]
 #![feature(core)]
 
 extern crate compare;
@@ -11,6 +12,7 @@ mod quickcheck;
 use compare::{Compare, Natural};
 use node::{Left, LinkExt, Node, Right};
 use std::cmp::Ordering;
+use std::collections::Bound;
 use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
@@ -667,6 +669,67 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     pub fn iter_mut(&mut self) -> IterMut<K, V> {
         IterMut(node::IterMut::new(&mut self.root, self.len))
     }
+
+    /// Returns an iterator over the map's entries whose keys lie in the given range with immutable
+    /// references to the values.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use std::collections::Bound::{Included, Excluded, Unbounded};
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert("b", 2);
+    /// map.insert("a", 1);
+    /// map.insert("c", 3);
+    ///
+    /// assert_eq!(map.range(Unbounded, Unbounded).collect::<Vec<_>>(),
+    ///     [(&"a", &1), (&"b", &2), (&"c", &3)]);
+    /// assert_eq!(map.range(Excluded(&"a"), Included(&"f")).collect::<Vec<_>>(),
+    ///     [(&"b", &2), (&"c", &3)]);
+    /// assert_eq!(map.range(Included(&"a"), Excluded(&"b")).collect::<Vec<_>>(),
+    ///     [(&"a", &1)]);
+    /// ```
+    pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
+        -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+
+        Range(node::Iter::range(self.root.as_node_ref(), self.len, &self.cmp, min, max))
+    }
+
+    /// Returns an iterator over the map's entries whose keys lie in the given range with mutable
+    /// references to the values.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use std::collections::Bound;
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert("b", 2);
+    /// map.insert("a", 1);
+    /// map.insert("c", 3);
+    ///
+    /// let mut i = 1;
+    ///
+    /// for (_, value) in map.range_mut(Bound::Unbounded, Bound::Excluded(&"c")) {
+    ///     assert_eq!(i, *value);
+    ///     *value *= 2;
+    ///     i += 1;
+    /// }
+    ///
+    /// assert_eq!(map["a"], 2);
+    /// assert_eq!(map["b"], 4);
+    /// assert_eq!(map["c"], 3);
+    /// ```
+    pub fn range_mut<Min: ?Sized, Max: ?Sized>(&mut self, min: Bound<&Min>, max: Bound<&Max>)
+        -> RangeMut<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+
+        RangeMut(node::IterMut::range(&mut self.root, self.len, &self.cmp, min, max))
+    }
 }
 
 impl<K, V, C> Debug for TreeMap<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
@@ -867,3 +930,39 @@ impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
 }
 
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
+
+/// An iterator over the map's entries whose keys lie in a given range with immutable references to
+/// the values.
+///
+/// Acquire through [`TreeMap::range`](struct.TreeMap.html#method.range).
+pub struct Range<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
+
+impl<'a, K, V> Clone for Range<'a, K, V> {
+    fn clone(&self) -> Range<'a, K, V> { Range(self.0.clone()) }
+}
+
+impl<'a, K, V> Iterator for Range<'a, K, V> {
+    type Item = (&'a K, &'a V);
+    fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+}
+
+impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
+    fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
+}
+
+/// An iterator over the map's entries whose keys lie in a given range with mutable references to
+/// the values.
+///
+/// Acquire through [`TreeMap::range_mut`](struct.TreeMap.html#method.range_mut).
+pub struct RangeMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V>);
+
+impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
+    type Item = (&'a K, &'a mut V);
+    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+}
+
+impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
+    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
+}
