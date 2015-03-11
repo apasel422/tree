@@ -5,5 +5,7 @@
 extern crate compare;
 
 pub use map::TreeMap;
+pub use set::TreeSet;
 
 pub mod map;
+pub mod set;
