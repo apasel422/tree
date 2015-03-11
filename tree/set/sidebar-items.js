@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["IntoIter","An iterator that consumes the set."],["Iter","An iterator over the set."],["Range","An iterator over the set's items that lie in a given range."],["TreeSet","An ordered set based on a binary search tree."]]});

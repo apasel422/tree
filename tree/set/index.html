@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `tree` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, tree">
+    <meta name="description" content="API documentation for the Rust `set` mod in crate `tree`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, set">
 
-    <title>tree - Rust</title>
+    <title>tree::set - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
     
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'tree', ty: 'mod', relpath: '../'};</script>
+        <p class='location'><a href='../index.html'>tree</a></p><script>window.sidebarCurrent = {name: 'set', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -41,22 +41,37 @@
     </nav>
 
     <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>tree</a><wbr></span><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>tree</a>::<wbr><a class='mod' href=''>set</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-0' href='../src/tree/lib.rs.html#1-11'>[src]</a></span></h1>
-<h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use map::<a class='struct' href='../tree/map/struct.TreeMap.html' title='tree::map::TreeMap'>TreeMap</a>;</code></td></tr><tr><td><code>pub use set::<a class='struct' href='../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+        </span><a id='src-5074' href='../../src/tree/set.rs.html#1-555'>[src]</a></span></h1>
+<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='map/index.html'
-                               title='tree::map'>map</a></td>
-                        <td class='docblock short'></td>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.IntoIter.html'
+                               title='tree::set::IntoIter'>IntoIter</a></td>
+                        <td class='docblock short'><p>An iterator that consumes the set.</p>
+</td>
                     </tr>
                 
                     <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='set/index.html'
-                               title='tree::set'>set</a></td>
-                        <td class='docblock short'></td>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Iter.html'
+                               title='tree::set::Iter'>Iter</a></td>
+                        <td class='docblock short'><p>An iterator over the set.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Range.html'
+                               title='tree::set::Range'>Range</a></td>
+                        <td class='docblock short'><p>An iterator over the set&#39;s items that lie in a given range.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.TreeSet.html'
+                               title='tree::set::TreeSet'>TreeSet</a></td>
+                        <td class='docblock short'><p>An ordered set based on a binary search tree.</p>
+</td>
                     </tr>
                 </table></section>
     <section id='search' class="content hidden"></section>
@@ -97,13 +112,13 @@
     
 
     <script>
-        window.rootPath = "../";
+        window.rootPath = "../../";
         window.currentCrate = "tree";
         window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script async src="../../search-index.js"></script>
 </body>
 </html>

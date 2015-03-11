@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `TreeSet` struct in crate `tree`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, TreeSet">
+
+    <title>tree::set::TreeSet - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a></p><script>window.sidebarCurrent = {name: 'TreeSet', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a>::<wbr><a class='struct' href=''>TreeSet</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+            <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
+        </span><a id='src-5094' href='../../src/tree/set.rs.html#12-14'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct TreeSet&lt;T, C = Natural&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;T&gt;</span> {
+    // some fields omitted
+}</pre><div class='docblock'><p>An ordered set based on a binary search tree.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;T&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Creates an empty set ordered according to the natural order of its items.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>set</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div></div><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;T, C&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.with_cmp' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.with_cmp' class='fnname'>with_cmp</a>(cmp: C) -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt;</code></h4>
+<div class='docblock'><p>Creates an empty set ordered according to the given comparator.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>with_cmp</span>(<span class='ident'>natural</span>().<span class='ident'>rev</span>());
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>set</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.is_empty' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Checks if the set is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>is_empty</span>());
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>is_empty</span>());
+</pre>
+</div><h4 id='method.len' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.len' class='fnname'>len</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
+<div class='docblock'><p>Returns the number of items in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>0</span>);
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>1</span>);
+</pre>
+</div><h4 id='method.cmp' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.cmp' class='fnname'>cmp</a>(&amp;self) -&gt; &amp;C</code></h4>
+<div class='docblock'><p>Returns a reference to the set&#39;s comparator.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>cmp</span>().<span class='ident'>compares_lt</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>));
+
+<span class='kw'>let</span> <span class='ident'>set</span>: <span class='ident'>TreeSet</span><span class='op'>&lt;</span>_, _<span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>with_cmp</span>(<span class='ident'>natural</span>().<span class='ident'>rev</span>());
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>cmp</span>().<span class='ident'>compares_gt</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>));
+</pre>
+</div><h4 id='method.clear' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.clear' class='fnname'>clear</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Removes all items from the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>3</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+
+<span class='ident'>set</span>.<span class='ident'>clear</span>();
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>0</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.insert' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.insert' class='fnname'>insert</a>(&amp;mut self, item: T) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Inserts an item into the set, returning <code>true</code> if the set did not already contain the item.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>));
+</pre>
+</div><h4 id='method.remove' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove' class='fnname'>remove</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Removes the given item from the set, returning <code>true</code> if the set contained the item.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>3</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>2</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+</pre>
+</div><h4 id='method.contains' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.contains' class='fnname'>contains</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Checks if the set contains the given item.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+</pre>
+</div><h4 id='method.max' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.max' class='fnname'>max</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the set&#39;s maximum item, or <code>None</code> if the set is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>max</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>max</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+</pre>
+</div><h4 id='method.min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min' class='fnname'>min</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt;</code></h4>
+<div class='docblock'><p>Returns a reference to the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>min</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>min</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+</pre>
+</div><h4 id='method.pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred' class='fnname'>pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest item that is strictly less than the given item, or
+<code>None</code> if no such item is present in the set.</p>
+
+<p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+</pre>
+</div><h4 id='method.pred_or_eq' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_or_eq' class='fnname'>pred_or_eq</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the greatest item that is less than or equal to the given item, or
+<code>None</code> if no such item is present in the ste.</p>
+
+<p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+</pre>
+</div><h4 id='method.succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ' class='fnname'>succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest item that is strictly greater than the given item, or
+<code>None</code> if no such item is present in the set.</p>
+
+<p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.succ_or_eq' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_or_eq' class='fnname'>succ_or_eq</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns a reference to the smallest item that is greater than or equal to the given item,
+or <code>None</code> if no such item is present in the set.</p>
+
+<p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ_or_eq</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../../tree/set/struct.IntoIter.html' title='tree::set::IntoIter'>IntoIter</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator that consumes the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>set</span>.<span class='ident'>into_iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.iter' class='fnname'>iter</a>(&amp;self) -&gt; <a class='struct' href='../../tree/set/struct.Iter.html' title='tree::set::Iter'>Iter</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Returns an iterator over the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>set</span>.<span class='ident'>iter</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>it</span>.<span class='ident'>next</span>(), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.range' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.range' class='fnname'>range</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/set/struct.Range.html' title='tree::set::Range'>Range</a>&lt;T&gt; <span class='where'>where C: Compare&lt;Min, T&gt; + Compare&lt;Max, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns an iterator over the set&#39;s items that lie in the given range.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bound</span>::{<span class='ident'>Included</span>, <span class='ident'>Excluded</span>, <span class='ident'>Unbounded</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeSet</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>TreeSet</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>range</span>(<span class='ident'>Unbounded</span>, <span class='ident'>Unbounded</span>).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(), [<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='number'>3</span>]);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>range</span>(<span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='ident'>Included</span>(<span class='kw-2'>&amp;</span><span class='number'>5</span>)).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(), [<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='kw-2'>&amp;</span><span class='number'>3</span>]);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>range</span>(<span class='ident'>Included</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>)).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(), [<span class='kw-2'>&amp;</span><span class='number'>1</span>]);
+</pre>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='http://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a></span></code></h3><div class='impl-items'><h4 id='method.default' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.default' class='fnname'>default</a>() -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Extend.html' title='core::iter::Extend'>Extend</a>&lt;T&gt; for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.extend' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.extend' class='fnname'>extend</a>&lt;I: <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a>&lt;Item=T&gt;&gt;(&amp;mut self, it: I)</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.FromIterator.html' title='core::iter::FromIterator'>FromIterator</a>&lt;T&gt; for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a></span></code></h3><div class='impl-items'><h4 id='method.from_iter' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.from_iter' class='fnname'>from_iter</a>&lt;I: <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a>&lt;Item=T&gt;&gt;(it: I) -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a>, C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.hash' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.hash' class='fnname'>hash</a>&lt;H: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a>&gt;(&amp;self, h: &amp;mut H)</code></h4>
+<h4 id='method.hash_slice' class='tymethod'><a class='stability Unstable' title='Unstable: module was recently redesigned'></a><code>fn <a href='#tymethod.hash_slice' class='fnname'>hash_slice</a>&lt;H&gt;(data: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[Self]</a>, state: &amp;mut H) <span class='where'>where H: <a class='trait' href='http://doc.rust-lang.org/nightly/core/hash/trait.Hasher.html' title='core::hash::Hasher'>Hasher</a></span></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.eq' class='fnname'>eq</a>(&amp;self, other: &amp;<a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt;) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ne' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.ne' class='fnname'>ne</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.assert_receiver_is_total_eq' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.assert_receiver_is_total_eq' class='fnname'>assert_receiver_is_total_eq</a>(&amp;self)</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.partial_cmp' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.partial_cmp' class='fnname'>partial_cmp</a>(&amp;self, other: &amp;<a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt;) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='enum' href='http://doc.rust-lang.org/nightly/core/cmp/enum.Ordering.html' title='core::cmp::Ordering'>Ordering</a>&gt;</code></h4>
+<h4 id='method.lt' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.lt' class='fnname'>lt</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.le' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.le' class='fnname'>le</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.gt' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.gt' class='fnname'>gt</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<h4 id='method.ge' class='tymethod'><a class='stability Stable' title='Stable'></a><code>fn <a href='#tymethod.ge' class='fnname'>ge</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.cmp' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.cmp' class='fnname'>cmp</a>(&amp;self, other: &amp;<a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt;) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/cmp/enum.Ordering.html' title='core::cmp::Ordering'>Ordering</a></code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = T</code></h4>
+<h4 id='assoc_type.IntoIter' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type IntoIter = <a class='struct' href='../../tree/set/struct.IntoIter.html' title='tree::set::IntoIter'>IntoIter</a>&lt;T&gt;</code></h4>
+<h4 id='method.into_iter' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../../tree/set/struct.IntoIter.html' title='tree::set::IntoIter'>IntoIter</a>&lt;T&gt;</code></h4>
+</div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, C: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T, C&gt;</code></h4>
+<h4 id='method.clone_from' class='tymethod'><a class='stability Unstable' title='Unstable: this function is rarely used'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "tree";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>

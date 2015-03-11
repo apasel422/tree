@@ -7,9 +7,9 @@
     <meta name="description" content="API documentation for the Rust `RangeMut` struct in crate `tree`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, RangeMut">
 
-    <title>tree::RangeMut - Rust</title>
+    <title>tree::map::RangeMut - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
     
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='index.html'>tree</a></p><script>window.sidebarCurrent = {name: 'RangeMut', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a></p><script>window.sidebarCurrent = {name: 'RangeMut', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -41,17 +41,17 @@
     </nav>
 
     <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>tree</a>::<wbr><a class='struct' href=''>RangeMut</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>RangeMut</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-4982' href='../src/tree/lib.rs.html#958'>[src]</a></span></h1>
+        </span><a id='src-4986' href='../../src/tree/map/mod.rs.html#952'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct RangeMut&lt;'a, K: 'a, V: 'a&gt;(_);</pre><div class='docblock'><p>An iterator over the map&#39;s entries whose keys lie in a given range with mutable references to
 the values.</p>
 
 <p>Acquire through <a href="struct.TreeMap.html#method.range_mut"><code>TreeMap::range_mut</code></a>.</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;'a, K, V&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a> for <a class='struct' href='../tree/struct.RangeMut.html' title='tree::RangeMut'>RangeMut</a>&lt;'a, K, V&gt;</code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;'a K, &amp;'a mut V)</a></code></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;'a, K, V&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a> for <a class='struct' href='../../tree/map/struct.RangeMut.html' title='tree::map::RangeMut'>RangeMut</a>&lt;'a, K, V&gt;</code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;'a K, &amp;'a mut V)</a></code></h4>
 <h4 id='method.next' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.next' class='fnname'>next</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;'a K, &amp;'a mut V)</a>&gt;</code></h4>
 <h4 id='method.size_hint' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.size_hint' class='fnname'>size_hint</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;)</a></code></h4>
-</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;'a, K, V&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.DoubleEndedIterator.html' title='core::iter::DoubleEndedIterator'>DoubleEndedIterator</a> for <a class='struct' href='../tree/struct.RangeMut.html' title='tree::RangeMut'>RangeMut</a>&lt;'a, K, V&gt;</code></h3><div class='impl-items'><h4 id='method.next_back' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.next_back' class='fnname'>next_back</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;'a K, &amp;'a mut V)</a>&gt;</code></h4>
+</div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;'a, K, V&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.DoubleEndedIterator.html' title='core::iter::DoubleEndedIterator'>DoubleEndedIterator</a> for <a class='struct' href='../../tree/map/struct.RangeMut.html' title='tree::map::RangeMut'>RangeMut</a>&lt;'a, K, V&gt;</code></h3><div class='impl-items'><h4 id='method.next_back' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.next_back' class='fnname'>next_back</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;'a K, &amp;'a mut V)</a>&gt;</code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -91,13 +91,13 @@ the values.</p>
     
 
     <script>
-        window.rootPath = "../";
+        window.rootPath = "../../";
         window.currentCrate = "tree";
         window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script async src="../../search-index.js"></script>
 </body>
 </html>
