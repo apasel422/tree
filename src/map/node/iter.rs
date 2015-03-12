@@ -3,7 +3,7 @@ use std::cmp::Ordering::*;
 use std::collections::{Bound, VecDeque};
 use std::marker::PhantomData;
 use self::visit::{Seen, Visit};
-use super::{Dir, Link, LinkExt, Node};
+use super::{Link, LinkExt, Node};
 
 trait NodeRef {
     type Key;
