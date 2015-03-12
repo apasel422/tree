@@ -134,36 +134,43 @@ impl<N> Iter<N> where N: NodeRef {
     }
 }
 
+macro_rules! next {
+    ($iter:expr,
+     $seen_pre:ident,
+     $seen_post:ident,
+     $pre:ident,
+     $post:ident,
+     $mut_:ident,
+     $pop:ident,
+     $push:ident) => {
+        loop {
+            let (pop, push) = match $iter.visits.$mut_() {
+                None => return None,
+                Some(visit) => match visit.seen() {
+                    Seen::N | Seen::$seen_post => (false, visit.$pre()),
+                    Seen::$seen_pre => (true, visit.$post()),
+                    Seen::B => (true, None),
+                }
+            };
+
+            let item = if pop {
+                $iter.size -= 1;
+                $iter.visits.$pop().map(Visit::item)
+            } else {
+                None
+            };
+
+            if let Some(node) = push { $iter.visits.$push(Visit::new(node)); }
+            if item.is_some() { return item; }
+        }
+    }
+}
+
 impl<N> Iterator for Iter<N> where N: NodeRef {
     type Item = N::Item;
 
     fn next(&mut self) -> Option<N::Item> {
-        loop {
-            let op = match self.visits.back_mut() {
-                None => return None,
-                Some(visit) => match visit.seen() {
-                    Seen::N | Seen::R => Op::Push(visit.left()),
-                    Seen::L => Op::PopPush(visit.right()),
-                    Seen::B => Op::Pop,
-                }
-            };
-
-            match op {
-                Op::Push(node_ref) =>
-                    if let Some(node) = node_ref { self.visits.push_back(Visit::new(node)); },
-                Op::PopPush(node_ref) => {
-                    self.size -= 1;
-                    let visit = self.visits.pop_back().unwrap();
-                    if let Some(node) = node_ref { self.visits.push_back(Visit::new(node)); }
-                    return Some(visit.item());
-                }
-                Op::Pop => {
-                    self.size -= 1;
-                    let visit = self.visits.pop_back().unwrap();
-                    return Some(visit.item());
-                }
-            }
-        }
+        next!(self, L, R, left, right, back_mut, pop_back, push_back)
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) { (self.size, Some(self.size)) }
@@ -171,32 +178,7 @@ impl<N> Iterator for Iter<N> where N: NodeRef {
 
 impl<N> DoubleEndedIterator for Iter<N> where N: NodeRef {
     fn next_back(&mut self) -> Option<N::Item> {
-        loop {
-            let op = match self.visits.front_mut() {
-                None => return None,
-                Some(visit) => match visit.seen() {
-                    Seen::N | Seen::L => Op::Push(visit.right()),
-                    Seen::R => Op::PopPush(visit.left()),
-                    Seen::B => Op::Pop,
-                }
-            };
-
-            match op {
-                Op::Push(node_ref) =>
-                    if let Some(node) = node_ref { self.visits.push_front(Visit::new(node)); },
-                Op::PopPush(node_ref) => {
-                    self.size -= 1;
-                    let visit = self.visits.pop_front().unwrap();
-                    if let Some(node) = node_ref { self.visits.push_front(Visit::new(node)); }
-                    return Some(visit.item());
-                }
-                Op::Pop => {
-                    self.size -= 1;
-                    let visit = self.visits.pop_front().unwrap();
-                    return Some(visit.item());
-                }
-            }
-        }
+        next!(self, R, L, right, left, front_mut, pop_front, push_front)
     }
 }
 
@@ -240,12 +222,6 @@ mod visit {
         R,
         B,
     }
-}
-
-enum Op<T> {
-    Push(Option<T>),
-    PopPush(Option<T>),
-    Pop,
 }
 
 pub struct IterMut<'a, K: 'a, V: 'a> {
