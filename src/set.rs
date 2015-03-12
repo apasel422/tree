@@ -1,3 +1,5 @@
+//! An ordered set based on a binary search tree.
+
 use compare::{Compare, Natural};
 use std::cmp::Ordering;
 use std::collections::Bound;

@@ -1,3 +1,5 @@
+//! An ordered map based on a binary search tree.
+
 mod node;
 
 #[cfg(feature = "quickcheck")]

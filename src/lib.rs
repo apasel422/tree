@@ -1,3 +1,5 @@
+//! A collection based on a binary search tree.
+
 #![feature(box_patterns, box_syntax)]
 #![feature(collections)]
 #![feature(core)]
