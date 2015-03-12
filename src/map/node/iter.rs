@@ -38,6 +38,52 @@ pub struct Iter<N> where N: NodeRef {
     size: usize,
 }
 
+macro_rules! bound {
+    ($iter:expr,
+     $cmp:expr,
+     $bound:expr,
+     $ordering_pre:ident,
+     $ordering_post:ident,
+     $pre:ident,
+     $post:ident,
+     $mut_:ident,
+     $pop:ident,
+     $push:ident
+    ) => {
+        if let Some((key, inc)) = bound_to_opt($bound) {
+            loop {
+                let op = match $iter.visits.$mut_() {
+                    None => break,
+                    Some(visit) => match $cmp.compare(key, visit.key()) {
+                        Equal =>
+                            if inc {
+                                if visit.$pre().is_some() { $iter.size -= 1; }
+                                break;
+                            } else {
+                                Op::PopPush(visit.$post(), true)
+                            },
+                        $ordering_post => Op::PopPush(visit.$post(), false),
+                        $ordering_pre => Op::Push(visit.$pre()),
+                    },
+                };
+
+                match op {
+                    Op::Push(node_ref) => match node_ref {
+                        None => break,
+                        Some(node) => $iter.visits.$push(Visit::new(node)),
+                    },
+                    Op::PopPush(node_ref, terminate) => {
+                        $iter.visits.$pop();
+                        $iter.size -= 1;
+                        if let Some(node) = node_ref { $iter.visits.$push(Visit::new(node)); }
+                        if terminate { break; }
+                    }
+                }
+            }
+        }
+    }
+}
+
 impl<N> Iter<N> where N: NodeRef {
     pub fn new(root: Option<N>, size: usize) -> Iter<N> {
         Iter { visits: root.into_iter().map(Visit::new).collect(), size: size }
@@ -62,69 +108,8 @@ impl<N> Iter<N> where N: NodeRef {
 
         let mut it = Iter::new(root, size);
 
-        if let Some((min, inc)) = bound_to_opt(min) {
-            loop {
-                let op = match it.visits.back_mut() {
-                    None => break,
-                    Some(visit) => match cmp.compare(min, visit.key()) {
-                        Equal =>
-                            if inc {
-                                if visit.left().is_some() { it.size -= 1; }
-                                break;
-                            } else {
-                                Op::PopPush(visit.right(), true)
-                            },
-                        Greater => Op::PopPush(visit.right(), false),
-                        Less => Op::Push(visit.left()),
-                    },
-                };
-
-                match op {
-                    Op::Push(node_ref) => match node_ref {
-                        None => break,
-                        Some(node) => it.visits.push_back(Visit::new(node)),
-                    },
-                    Op::PopPush(node_ref, terminate) => {
-                        it.visits.pop_back();
-                        it.size -= 1;
-                        if let Some(node) = node_ref { it.visits.push_back(Visit::new(node)); }
-                        if terminate { break; }
-                    }
-                }
-            }
-        }
-
-        if let Some((max, inc)) = bound_to_opt(max) {
-            loop {
-                let op = match it.visits.front_mut() {
-                    None => break,
-                    Some(visit) => match cmp.compare(max, visit.key()) {
-                        Equal =>
-                            if inc {
-                                if visit.right().is_some() { it.size -= 1; }
-                                break;
-                            } else {
-                                Op::PopPush(visit.left(), true)
-                            },
-                        Less => Op::PopPush(visit.left(), false),
-                        Greater => Op::Push(visit.right()),
-                    },
-                };
-
-                match op {
-                    Op::Push(node_ref) => match node_ref {
-                        None => break,
-                        Some(node) => it.visits.push_front(Visit::new(node)),
-                    },
-                    Op::PopPush(node_ref, terminate) => {
-                        it.visits.pop_front();
-                        it.size -= 1;
-                        if let Some(node) = node_ref { it.visits.push_front(Visit::new(node)); }
-                        if terminate { break; }
-                    }
-                }
-            }
-        }
+        bound!(it, cmp, min, Less, Greater, left, right, back_mut, pop_back, push_back);
+        bound!(it, cmp, max, Greater, Less, right, left, front_mut, pop_front, push_front);
 
         it
     }
