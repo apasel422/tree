@@ -84,10 +84,7 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
         }
         Some(ref mut node) => {
             let old_value = match cmp.compare(&key, &node.key) {
-                Equal => {
-                    node.key = key;
-                    return Some(mem::replace(&mut node.value, value));
-                }
+                Equal => return Some(mem::replace(&mut node.value, value)),
                 Less => insert(&mut node.left, cmp, key, value),
                 Greater => insert(&mut node.right, cmp, key, value),
             };
