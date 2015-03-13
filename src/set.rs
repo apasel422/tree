@@ -20,7 +20,7 @@ impl<T> TreeSet<T> where T: Ord {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -43,7 +43,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// # extern crate compare;
     /// # extern crate tree;
     /// # fn main() {
@@ -69,7 +69,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -84,7 +84,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -99,7 +99,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// # extern crate compare;
     /// # extern crate tree;
     /// # fn main() {
@@ -119,7 +119,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -142,7 +142,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -157,7 +157,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -182,7 +182,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -198,7 +198,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -216,7 +216,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -237,7 +237,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -263,7 +263,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -289,7 +289,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -315,7 +315,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -338,7 +338,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -359,7 +359,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use tree::TreeSet;
     ///
     /// let mut set = TreeSet::new();
@@ -380,7 +380,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
     /// use tree::TreeSet;
     ///
@@ -461,7 +461,7 @@ impl<T> Ord for TreeSet<T> where T: Ord {
 /// Acquire through [`TreeSet::into_iter`](struct.TreeSet.html#method.into_iter) or the
 /// `IntoIterator` trait:
 ///
-/// ```rust
+/// ```
 /// use tree::TreeSet;
 ///
 /// let mut set = TreeSet::new();
@@ -494,7 +494,7 @@ impl<T> ExactSizeIterator for IntoIter<T> {}
 ///
 /// Acquire through [`TreeSet::iter`](struct.TreeSet.html#method.iter) or the `IntoIterator` trait:
 ///
-/// ```rust
+/// ```
 /// use tree::TreeSet;
 ///
 /// let mut set = TreeSet::new();
