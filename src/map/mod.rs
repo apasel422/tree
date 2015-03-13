@@ -5,6 +5,7 @@ mod node;
 use compare::{Compare, Natural};
 use self::node::{Left, LinkExt, Node, Right};
 use std::cmp::Ordering;
+use std::cmp::Ordering::*;
 use std::collections::Bound;
 use std::default::Default;
 use std::fmt::{self, Debug};
@@ -827,23 +828,57 @@ impl<K, V, C> IntoIterator for TreeMap<K, V, C> where C: Compare<K> {
     fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
 }
 
-impl<K, V> PartialEq for TreeMap<K, V> where K: Ord, V: PartialEq {
-    fn eq(&self, other: &TreeMap<K, V>) -> bool {
-        self.len() == other.len() && iter::order::eq(self.iter(), other.iter())
+impl<K, V, C> PartialEq for TreeMap<K, V, C> where V: PartialEq, C: Compare<K> {
+    fn eq(&self, other: &TreeMap<K, V, C>) -> bool {
+        self.len() == other.len() && self.iter().zip(other.iter()).all(|(l, r)| {
+            self.cmp.compares_eq(&l.0, &r.0) && l.1 == r.1
+        })
     }
 }
 
-impl<K, V> Eq for TreeMap<K, V> where K: Ord, V: Eq {}
+impl<K, V, C> Eq for TreeMap<K, V, C> where V: Eq, C: Compare<K> {}
 
-impl<K, V> PartialOrd for TreeMap<K, V> where K: Ord, V: PartialOrd {
-    fn partial_cmp(&self, other: &TreeMap<K, V>) -> Option<Ordering> {
-        iter::order::partial_cmp(self.iter(), other.iter())
+impl<K, V, C> PartialOrd for TreeMap<K, V, C> where V: PartialOrd, C: Compare<K> {
+    fn partial_cmp(&self, other: &TreeMap<K, V, C>) -> Option<Ordering> {
+        let mut l = self.iter();
+        let mut r = other.iter();
+
+        loop {
+            match (l.next(), r.next()) {
+                (None, None) => return Some(Equal),
+                (None, Some(_)) => return Some(Less),
+                (Some(_), None) => return Some(Greater),
+                (Some(l), Some(r)) => match self.cmp.compare(&l.0, &r.0) {
+                    Equal => match l.1.partial_cmp(&r.1) {
+                        Some(Equal) => {}
+                        non_eq => return non_eq,
+                    },
+                    non_eq => return Some(non_eq),
+                },
+            }
+        }
     }
 }
 
-impl<K, V> Ord for TreeMap<K, V> where K: Ord, V: Ord {
-    fn cmp(&self, other: &TreeMap<K, V>) -> Ordering {
-        iter::order::cmp(self.iter(), other.iter())
+impl<K, V, C> Ord for TreeMap<K, V, C> where V: Ord, C: Compare<K> {
+    fn cmp(&self, other: &TreeMap<K, V, C>) -> Ordering {
+        let mut l = self.iter();
+        let mut r = other.iter();
+
+        loop {
+            match (l.next(), r.next()) {
+                (None, None) => return Equal,
+                (None, Some(_)) => return Less,
+                (Some(_), None) => return Greater,
+                (Some(l), Some(r)) => match self.cmp.compare(&l.0, &r.0) {
+                    Equal => match l.1.cmp(&r.1) {
+                        Equal => {}
+                        non_eq => return non_eq,
+                    },
+                    non_eq => return non_eq,
+                },
+            }
+        }
     }
 }
 

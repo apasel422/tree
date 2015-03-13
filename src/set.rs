@@ -465,20 +465,20 @@ impl<T, C> Hash for TreeSet<T, C> where T: Hash, C: Compare<T> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
-impl<T> PartialEq for TreeSet<T> where T: Ord {
-    fn eq(&self, other: &TreeSet<T>) -> bool { self.map == other.map }
+impl<T, C> PartialEq for TreeSet<T, C> where C: Compare<T> {
+    fn eq(&self, other: &TreeSet<T, C>) -> bool { self.map == other.map }
 }
 
-impl<T> Eq for TreeSet<T> where T: Ord {}
+impl<T, C> Eq for TreeSet<T, C> where C: Compare<T> {}
 
-impl<T> PartialOrd for TreeSet<T> where T: Ord {
-    fn partial_cmp(&self, other: &TreeSet<T>) -> Option<Ordering> {
+impl<T, C> PartialOrd for TreeSet<T, C> where C: Compare<T> {
+    fn partial_cmp(&self, other: &TreeSet<T, C>) -> Option<Ordering> {
         self.map.partial_cmp(&other.map)
     }
 }
 
-impl<T> Ord for TreeSet<T> where T: Ord {
-    fn cmp(&self, other: &TreeSet<T>) -> Ordering { Ord::cmp(&self.map, &other.map) }
+impl<T, C> Ord for TreeSet<T, C> where C: Compare<T> {
+    fn cmp(&self, other: &TreeSet<T, C>) -> Ordering { Ord::cmp(&self.map, &other.map) }
 }
 
 /// An iterator that consumes the set.
