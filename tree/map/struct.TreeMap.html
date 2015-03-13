@@ -574,6 +574,24 @@ map.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='string'>&quot;c&quot;</span>], <span class='number'>6</span>);
 </pre>
+</div><h4 id='method.into_range' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_range' class='fnname'>into_range</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/map/struct.IntoRange.html' title='tree::map::IntoRange'>IntoRange</a>&lt;K, V&gt; <span class='where'>where C: Compare&lt;Min, K&gt; + Compare&lt;Max, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns an iterator that consumes the map, yielding only those entries whose keys lie in
+the given range.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bound</span>::{<span class='ident'>Excluded</span>, <span class='ident'>Unbounded</span>};
+<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>into_range</span>(<span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>), <span class='ident'>Unbounded</span>).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(),
+    [(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>), (<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>)]);
+</pre>
 </div><h4 id='method.range' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.range' class='fnname'>range</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/map/struct.Range.html' title='tree::map::Range'>Range</a>&lt;K, V&gt; <span class='where'>where C: Compare&lt;Min, K&gt; + Compare&lt;Max, K&gt;</span></code></h4>
 <div class='docblock'><p>Returns an iterator over the map&#39;s entries whose keys lie in the given range with immutable
 references to the values.</p>

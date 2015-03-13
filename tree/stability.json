@@ -1,1 +1,1 @@
-{"name":"tree","counts":{"deprecated":0,"unstable":0,"stable":49,"unmarked":64},"submodules":[{"name":"map","counts":{"deprecated":0,"unstable":0,"stable":28,"unmarked":38},"submodules":[]},{"name":"set","counts":{"deprecated":0,"unstable":0,"stable":21,"unmarked":25},"submodules":[]}]}
+{"name":"tree","counts":{"deprecated":0,"unstable":0,"stable":57,"unmarked":68},"submodules":[{"name":"map","counts":{"deprecated":0,"unstable":0,"stable":32,"unmarked":40},"submodules":[]},{"name":"set","counts":{"deprecated":0,"unstable":0,"stable":25,"unmarked":27},"submodules":[]}]}
