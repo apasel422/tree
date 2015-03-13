@@ -380,6 +380,29 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// ```
     pub fn iter(&self) -> Iter<T> { Iter(self.map.iter()) }
 
+    /// Returns an iterator that consumes the set, yielding only those items that lie in the given
+    /// range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::collections::Bound::{Excluded, Unbounded};
+    /// use tree::TreeSet;
+    ///
+    /// let mut set = TreeSet::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert_eq!(set.into_range(Excluded(&1), Unbounded).collect::<Vec<_>>(), [2, 3]);
+    /// ```
+    pub fn into_range<Min: ?Sized, Max: ?Sized>(self, min: Bound<&Min>, max: Bound<&Max>)
+        -> IntoRange<T> where C: Compare<Min, T> + Compare<Max, T> {
+
+        IntoRange(self.map.into_range(min, max))
+    }
+
     /// Returns an iterator over the set's items that lie in the given range.
     ///
     /// # Examples
@@ -540,6 +563,22 @@ impl<T, C> IntoIterator for TreeSet<T, C> where C: Compare<T> {
     type Item = T;
     type IntoIter = IntoIter<T>;
     fn into_iter(self) -> IntoIter<T> { self.into_iter() }
+}
+
+/// An iterator that consumes the set, yielding only those items that lie in a given range.
+///
+/// Acquire through [`TreeSet::into_range`](struct.TreeSet.html#method.into_range).
+#[derive(Clone)]
+pub struct IntoRange<T>(map::IntoRange<T, ()>);
+
+impl<T> Iterator for IntoRange<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> { self.0.next().map(|e| e.0) }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+}
+
+impl<T> DoubleEndedIterator for IntoRange<T> {
+    fn next_back(&mut self) -> Option<T> { self.0.next_back().map(|e| e.0) }
 }
 
 /// An iterator over the set's items that lie in a given range.

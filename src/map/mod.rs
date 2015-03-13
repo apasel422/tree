@@ -670,6 +670,30 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
         IterMut(node::IterMut::new(&mut self.root, self.len))
     }
 
+    /// Returns an iterator that consumes the map, yielding only those entries whose keys lie in
+    /// the given range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::collections::Bound::{Excluded, Unbounded};
+    /// use tree::TreeMap;
+    ///
+    /// let mut map = TreeMap::new();
+    ///
+    /// map.insert("b", 2);
+    /// map.insert("a", 1);
+    /// map.insert("c", 3);
+    ///
+    /// assert_eq!(map.into_range(Excluded(&"a"), Unbounded).collect::<Vec<_>>(),
+    ///     [("b", 2), ("c", 3)]);
+    /// ```
+    pub fn into_range<Min: ?Sized, Max: ?Sized>(mut self, min: Bound<&Min>, max: Bound<&Max>)
+        -> IntoRange<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+
+        IntoRange(node::Iter::range(self.root.take(), self.len, &self.cmp, min, max))
+    }
+
     /// Returns an iterator over the map's entries whose keys lie in the given range with immutable
     /// references to the values.
     ///
@@ -931,6 +955,22 @@ impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
 }
 
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
+
+/// An iterator that consumes the map, yielding only those entries whose keys lie in a given range.
+///
+/// Acquire through [`TreeMap::into_range`](struct.TreeMap.html#method.into_range).
+#[derive(Clone)]
+pub struct IntoRange<K, V>(node::Iter<Box<Node<K, V>>>);
+
+impl<K, V> Iterator for IntoRange<K, V> {
+    type Item = (K, V);
+    fn next(&mut self) -> Option<(K, V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+}
+
+impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
+    fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
+}
 
 /// An iterator over the map's entries whose keys lie in a given range with immutable references to
 /// the values.
