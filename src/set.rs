@@ -10,6 +10,10 @@ use std::iter::{self, IntoIterator};
 use super::map::{self, TreeMap};
 
 /// An ordered set based on a binary search tree.
+///
+/// The behavior of this set is undefined if an item's ordering relative to any other item changes
+/// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or
+/// unsafe code.
 #[derive(Clone)]
 pub struct TreeSet<T, C = Natural<T>> where C: Compare<T> {
     map: TreeMap<T, (), C>,

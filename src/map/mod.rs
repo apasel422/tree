@@ -16,6 +16,10 @@ use std::iter::{self, IntoIterator};
 use std::ops;
 
 /// An ordered map based on a binary search tree.
+///
+/// The behavior of this map is undefined if a key's ordering relative to any other key changes
+/// while the key is in the map. This is normally only possible through `Cell`, `RefCell`, or
+/// unsafe code.
 #[derive(Clone)]
 pub struct TreeMap<K, V, C = Natural<K>> where C: Compare<K> {
     root: node::Link<K, V>,
