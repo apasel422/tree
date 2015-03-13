@@ -846,6 +846,7 @@ impl<K, V> Ord for TreeMap<K, V> where K: Ord, V: Ord {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
+#[derive(Clone)]
 pub struct IntoIter<K, V>(node::Iter<Box<Node<K, V>>>);
 
 impl<K, V> Iterator for IntoIter<K, V> {

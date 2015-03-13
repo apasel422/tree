@@ -478,6 +478,7 @@ impl<T> Ord for TreeSet<T> where T: Ord {
 ///     println!("{:?}", item);
 /// }
 /// ```
+#[derive(Clone)]
 pub struct IntoIter<T>(map::IntoIter<T, ()>);
 
 impl<T> Iterator for IntoIter<T> {
