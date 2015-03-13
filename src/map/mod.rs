@@ -2,9 +2,6 @@
 
 mod node;
 
-#[cfg(feature = "quickcheck")]
-mod quickcheck;
-
 use compare::{Compare, Natural};
 use self::node::{Left, LinkExt, Node, Right};
 use std::cmp::Ordering;

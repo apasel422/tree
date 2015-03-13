@@ -11,3 +11,6 @@ pub use set::TreeSet;
 
 pub mod map;
 pub mod set;
+
+#[cfg(feature = "quickcheck")]
+mod quickcheck;
