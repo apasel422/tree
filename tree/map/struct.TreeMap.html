@@ -43,10 +43,14 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>TreeMap</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2766' href='../../src/tree/map/mod.rs.html#20-24'>[src]</a></span></h1>
+        </span><a id='src-2758' href='../../src/tree/map/mod.rs.html#24-28'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct TreeMap&lt;K, V, C = Natural&lt;K&gt;&gt; <span class='where'>where C: Compare&lt;K&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered map based on a binary search tree.</p>
+
+<p>The behavior of this map is undefined if a key&#39;s ordering relative to any other key changes
+while the key is in the map. This is normally only possible through <code>Cell</code>, <code>RefCell</code>, or
+unsafe code.</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K, V&gt; <a class='struct' href='../../tree/map/struct.TreeMap.html' title='tree::map::TreeMap'>TreeMap</a>&lt;K, V&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../tree/map/struct.TreeMap.html' title='tree::map::TreeMap'>TreeMap</a>&lt;K, V&gt;</code></h4>
 <div class='docblock'><p>Creates an empty map ordered according to the natural order of its keys.</p>
 

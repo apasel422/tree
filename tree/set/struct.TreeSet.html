@@ -43,10 +43,14 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a>::<wbr><a class='struct' href=''>TreeSet</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-4893' href='../../src/tree/set.rs.html#14-16'>[src]</a></span></h1>
+        </span><a id='src-4885' href='../../src/tree/set.rs.html#18-20'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct TreeSet&lt;T, C = Natural&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;T&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered set based on a binary search tree.</p>
+
+<p>The behavior of this set is undefined if an item&#39;s ordering relative to any other item changes
+while the item is in the set. This is normally only possible through <code>Cell</code>, <code>RefCell</code>, or
+unsafe code.</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;T&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../tree/set/struct.TreeSet.html' title='tree::set::TreeSet'>TreeSet</a>&lt;T&gt;</code></h4>
 <div class='docblock'><p>Creates an empty set ordered according to the natural order of its items.</p>
 

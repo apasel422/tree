@@ -1004,6 +1004,10 @@
 <span id="962">962</span>
 <span id="963">963</span>
 <span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! An ordered map based on a binary search tree.</span>
 
@@ -1023,6 +1027,10 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ops</span>;
 
 <span class='doccomment'>/// An ordered map based on a binary search tree.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// The behavior of this map is undefined if a key&#39;s ordering relative to any other key changes</span>
+<span class='doccomment'>/// while the key is in the map. This is normally only possible through `Cell`, `RefCell`, or</span>
+<span class='doccomment'>/// unsafe code.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>TreeMap</span><span class='op'>&lt;</span><span class='ident'>K</span>, <span class='ident'>V</span>, <span class='ident'>C</span> <span class='op'>=</span> <span class='ident'>Natural</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> {
     <span class='ident'>root</span>: <span class='ident'>node</span>::<span class='ident'>Link</span><span class='op'>&lt;</span><span class='ident'>K</span>, <span class='ident'>V</span><span class='op'>&gt;</span>,
@@ -1035,7 +1043,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1058,7 +1066,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// # extern crate compare;</span>
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
@@ -1086,7 +1094,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1101,7 +1109,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1116,7 +1124,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// # extern crate compare;</span>
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
@@ -1136,7 +1144,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1163,7 +1171,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1183,7 +1191,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1212,7 +1220,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1229,7 +1237,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1246,7 +1254,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1272,7 +1280,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1293,7 +1301,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1320,7 +1328,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1341,7 +1349,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1370,7 +1378,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1396,7 +1404,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1424,7 +1432,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1450,7 +1458,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1487,7 +1495,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1513,7 +1521,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1541,7 +1549,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1568,7 +1576,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1602,7 +1610,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1625,7 +1633,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1648,7 +1656,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1678,7 +1686,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use std::collections::Bound::{Included, Excluded, Unbounded};</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
@@ -1706,7 +1714,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use std::collections::Bound;</span>
     <span class='doccomment'>/// use tree::TreeMap;</span>
     <span class='doccomment'>///</span>
@@ -1836,7 +1844,7 @@
 <span class='doccomment'>/// Acquire through [`TreeMap::into_iter`](struct.TreeMap.html#method.into_iter) or the</span>
 <span class='doccomment'>/// `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
+<span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use tree::TreeMap;</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1869,7 +1877,7 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Acquire through [`TreeMap::iter`](struct.TreeMap.html#method.iter) or the `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
+<span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use tree::TreeMap;</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// let mut map = TreeMap::new();</span>
@@ -1907,7 +1915,7 @@
 <span class='doccomment'>/// Acquire through [`TreeMap::iter_mut`](struct.TreeMap.html#method.iter_mut) or the</span>
 <span class='doccomment'>/// `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
+<span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use tree::TreeMap;</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// let mut map = TreeMap::new();</span>

@@ -597,6 +597,10 @@
 <span id="555">555</span>
 <span id="556">556</span>
 <span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! An ordered set based on a binary search tree.</span>
 
@@ -610,6 +614,10 @@
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>map</span>::{<span class='self'>self</span>, <span class='ident'>TreeMap</span>};
 
 <span class='doccomment'>/// An ordered set based on a binary search tree.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// The behavior of this set is undefined if an item&#39;s ordering relative to any other item changes</span>
+<span class='doccomment'>/// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or</span>
+<span class='doccomment'>/// unsafe code.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span> <span class='op'>=</span> <span class='ident'>Natural</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='ident'>map</span>: <span class='ident'>TreeMap</span><span class='op'>&lt;</span><span class='ident'>T</span>, (), <span class='ident'>C</span><span class='op'>&gt;</span>,
@@ -620,7 +628,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -643,7 +651,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// # extern crate compare;</span>
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
@@ -669,7 +677,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -684,7 +692,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -699,7 +707,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// # extern crate compare;</span>
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
@@ -719,7 +727,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -742,7 +750,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -757,7 +765,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -782,7 +790,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -798,7 +806,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -816,7 +824,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -837,7 +845,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -863,7 +871,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -889,7 +897,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -915,7 +923,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -938,7 +946,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -959,7 +967,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -980,7 +988,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ```rust</span>
+    <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use std::collections::Bound::{Included, Excluded, Unbounded};</span>
     <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
@@ -1061,7 +1069,7 @@
 <span class='doccomment'>/// Acquire through [`TreeSet::into_iter`](struct.TreeSet.html#method.into_iter) or the</span>
 <span class='doccomment'>/// `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
+<span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use tree::TreeSet;</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// let mut set = TreeSet::new();</span>
@@ -1094,7 +1102,7 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Acquire through [`TreeSet::iter`](struct.TreeSet.html#method.iter) or the `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// ```rust</span>
+<span class='doccomment'>/// ```</span>
 <span class='doccomment'>/// use tree::TreeSet;</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// let mut set = TreeSet::new();</span>
