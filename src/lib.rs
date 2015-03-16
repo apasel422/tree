@@ -12,5 +12,8 @@ pub use set::TreeSet;
 pub mod map;
 pub mod set;
 
+#[cfg(feature = "ordered_iter")]
+mod ordered_iter;
+
 #[cfg(feature = "quickcheck")]
 mod quickcheck;

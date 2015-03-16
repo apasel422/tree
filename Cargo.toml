@@ -13,13 +13,17 @@ description = "A collection based on a binary search tree."
 
 [features]
 
-default = ["quickcheck"]
+default = ["ordered_iter", "quickcheck"]
 
 [dependencies]
 
 compare = "*"
 
 [dependencies.quickcheck]
+
+optional = true
+
+[dependencies.ordered_iter]
 
 optional = true
 
