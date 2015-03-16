@@ -56,6 +56,9 @@
 <span id="14">14</span>
 <span id="15">15</span>
 <span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A collection based on a binary search tree.</span>
 
@@ -70,6 +73,9 @@
 
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>map</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>set</span>;
+
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;ordered_iter&quot;</span>)]</span>
+<span class='kw'>mod</span> <span class='ident'>ordered_iter</span>;
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;quickcheck&quot;</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>quickcheck</span>;
