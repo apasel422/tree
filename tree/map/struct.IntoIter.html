@@ -43,17 +43,17 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>IntoIter</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-4484' href='../../src/tree/map/mod.rs.html#906'>[src]</a></span></h1>
+        </span><a id='src-4484' href='../../src/tree/map/mod.rs.html#865'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct IntoIter&lt;K, V&gt;(_);</pre><div class='docblock'><p>An iterator that consumes the map.</p>
+
+<p>The iterator yields the entries in ascending order according to the map&#39;s comparator.</p>
 
 <h1 id="examples" class='section-header'><a
                            href="#examples">Examples</a></h1>
-<p>Acquire through <a href="struct.TreeMap.html#method.into_iter"><code>TreeMap::into_iter</code></a> or the
+<p>Acquire through <a href="struct.Map.html#method.into_iter"><code>Map::into_iter</code></a> or the
 <code>IntoIterator</code> trait:</p>
 <pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>TreeMap</span>;
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>TreeMap</span>::<span class='ident'>new</span>();
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
 
 <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
 <span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);

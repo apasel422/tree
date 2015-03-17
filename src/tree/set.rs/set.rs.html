@@ -619,28 +619,6 @@
 <span id="577">577</span>
 <span id="578">578</span>
 <span id="579">579</span>
-<span id="580">580</span>
-<span id="581">581</span>
-<span id="582">582</span>
-<span id="583">583</span>
-<span id="584">584</span>
-<span id="585">585</span>
-<span id="586">586</span>
-<span id="587">587</span>
-<span id="588">588</span>
-<span id="589">589</span>
-<span id="590">590</span>
-<span id="591">591</span>
-<span id="592">592</span>
-<span id="593">593</span>
-<span id="594">594</span>
-<span id="595">595</span>
-<span id="596">596</span>
-<span id="597">597</span>
-<span id="598">598</span>
-<span id="599">599</span>
-<span id="600">600</span>
-<span id="601">601</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! An ordered set based on a binary search tree.</span>
 
@@ -651,7 +629,7 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='self'>self</span>, <span class='ident'>Debug</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>hash</span>::{<span class='self'>self</span>, <span class='ident'>Hash</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>iter</span>::{<span class='self'>self</span>, <span class='ident'>IntoIterator</span>};
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>map</span>::{<span class='self'>self</span>, <span class='ident'>TreeMap</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>map</span>::{<span class='self'>self</span>, <span class='ident'>Map</span>};
 
 <span class='doccomment'>/// An ordered set based on a binary search tree.</span>
 <span class='doccomment'>///</span>
@@ -659,19 +637,17 @@
 <span class='doccomment'>/// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or</span>
 <span class='doccomment'>/// unsafe code.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span> <span class='op'>=</span> <span class='ident'>Natural</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='ident'>map</span>: <span class='ident'>TreeMap</span><span class='op'>&lt;</span><span class='ident'>T</span>, (), <span class='ident'>C</span><span class='op'>&gt;</span>,
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span> <span class='op'>=</span> <span class='ident'>Natural</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='ident'>map</span>: <span class='ident'>Map</span><span class='op'>&lt;</span><span class='ident'>T</span>, (), <span class='ident'>C</span><span class='op'>&gt;</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Ord</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Ord</span> {
     <span class='doccomment'>/// Creates an empty set ordered according to the natural order of its items.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -683,10 +659,10 @@
     <span class='doccomment'>/// assert_eq!(it.next(), Some(&amp;3));</span>
     <span class='doccomment'>/// assert_eq!(it.next(), None);</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> { <span class='ident'>TreeSet</span> { <span class='ident'>map</span>: <span class='ident'>TreeMap</span>::<span class='ident'>new</span>() } }
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> { <span class='ident'>Set</span> { <span class='ident'>map</span>: <span class='ident'>Map</span>::<span class='ident'>new</span>() } }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Creates an empty set ordered according to the given comparator.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
@@ -696,9 +672,8 @@
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
     <span class='doccomment'>/// use compare::{Compare, natural};</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::with_cmp(natural().rev());</span>
+    <span class='doccomment'>/// let mut set = tree::Set::with_cmp(natural().rev());</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -711,16 +686,14 @@
     <span class='doccomment'>/// assert_eq!(it.next(), None);</span>
     <span class='doccomment'>/// # }</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_cmp</span>(<span class='ident'>cmp</span>: <span class='ident'>C</span>) <span class='op'>-&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> { <span class='ident'>TreeSet</span> { <span class='ident'>map</span>: <span class='ident'>TreeMap</span>::<span class='ident'>with_cmp</span>(<span class='ident'>cmp</span>) } }
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_cmp</span>(<span class='ident'>cmp</span>: <span class='ident'>C</span>) <span class='op'>-&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> { <span class='ident'>Set</span> { <span class='ident'>map</span>: <span class='ident'>Map</span>::<span class='ident'>with_cmp</span>(<span class='ident'>cmp</span>) } }
 
     <span class='doccomment'>/// Checks if the set is empty.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert!(set.is_empty());</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
@@ -733,9 +706,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert_eq!(set.len(), 0);</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
@@ -752,12 +723,11 @@
     <span class='doccomment'>/// # extern crate tree;</span>
     <span class='doccomment'>/// # fn main() {</span>
     <span class='doccomment'>/// use compare::{Compare, natural};</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let set = TreeSet::new();</span>
+    <span class='doccomment'>/// let set = tree::Set::new();</span>
     <span class='doccomment'>/// assert!(set.cmp().compares_lt(&amp;1, &amp;2));</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let set: TreeSet&lt;_, _&gt; = TreeSet::with_cmp(natural().rev());</span>
+    <span class='doccomment'>/// let set: tree::Set&lt;_, _&gt; = tree::Set::with_cmp(natural().rev());</span>
     <span class='doccomment'>/// assert!(set.cmp().compares_gt(&amp;1, &amp;2));</span>
     <span class='doccomment'>/// # }</span>
     <span class='doccomment'>/// ```</span>
@@ -768,9 +738,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -791,9 +759,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert!(!set.contains(&amp;1));</span>
     <span class='doccomment'>/// assert!(set.insert(1));</span>
     <span class='doccomment'>/// assert!(set.contains(&amp;1));</span>
@@ -806,9 +772,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -831,9 +795,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert!(!set.contains(&amp;1));</span>
     <span class='doccomment'>/// set.insert(1);</span>
     <span class='doccomment'>/// assert!(set.contains(&amp;1));</span>
@@ -847,9 +809,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert_eq!(set.max(), None);</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
@@ -865,9 +825,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>/// assert_eq!(set.min(), None);</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
@@ -886,9 +844,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -912,9 +868,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -938,9 +892,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -964,9 +916,7 @@
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -984,12 +934,12 @@
 
     <span class='doccomment'>/// Returns an iterator that consumes the set.</span>
     <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -1005,12 +955,12 @@
 
     <span class='doccomment'>/// Returns an iterator over the set.</span>
     <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -1027,13 +977,14 @@
     <span class='doccomment'>/// Returns an iterator that consumes the set, yielding only those items that lie in the given</span>
     <span class='doccomment'>/// range.</span>
     <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use std::collections::Bound::{Excluded, Unbounded};</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -1049,13 +1000,14 @@
 
     <span class='doccomment'>/// Returns an iterator over the set&#39;s items that lie in the given range.</span>
     <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+    <span class='doccomment'>///</span>
     <span class='doccomment'>/// # Examples</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use std::collections::Bound::{Included, Excluded, Unbounded};</span>
-    <span class='doccomment'>/// use tree::TreeSet;</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut set = TreeSet::new();</span>
+    <span class='doccomment'>/// let mut set = tree::Set::new();</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// set.insert(2);</span>
     <span class='doccomment'>/// set.insert(1);</span>
@@ -1072,7 +1024,7 @@
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Debug</span>, <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Debug</span>, <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{{&quot;</span>));
 
@@ -1087,55 +1039,55 @@
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Default</span> {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> { <span class='ident'>TreeSet</span>::<span class='ident'>with_cmp</span>(<span class='ident'>Default</span>::<span class='ident'>default</span>()) }
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Default</span> {
+    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> { <span class='ident'>Set</span>::<span class='ident'>with_cmp</span>(<span class='ident'>Default</span>::<span class='ident'>default</span>()) }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Extend</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Extend</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>extend</span><span class='op'>&lt;</span><span class='ident'>I</span>: <span class='ident'>IntoIterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>it</span>: <span class='ident'>I</span>) {
         <span class='kw'>for</span> <span class='ident'>item</span> <span class='kw'>in</span> <span class='ident'>it</span> { <span class='self'>self</span>.<span class='ident'>insert</span>(<span class='ident'>item</span>); }
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>iter</span>::<span class='ident'>FromIterator</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Default</span> {
-    <span class='kw'>fn</span> <span class='ident'>from_iter</span><span class='op'>&lt;</span><span class='ident'>I</span>: <span class='ident'>IntoIterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>(<span class='ident'>it</span>: <span class='ident'>I</span>) <span class='op'>-&gt;</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span>: <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Default</span>::<span class='ident'>default</span>();
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>iter</span>::<span class='ident'>FromIterator</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Default</span> {
+    <span class='kw'>fn</span> <span class='ident'>from_iter</span><span class='op'>&lt;</span><span class='ident'>I</span>: <span class='ident'>IntoIterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>(<span class='ident'>it</span>: <span class='ident'>I</span>) <span class='op'>-&gt;</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span>: <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Default</span>::<span class='ident'>default</span>();
         <span class='ident'>set</span>.<span class='ident'>extend</span>(<span class='ident'>it</span>);
         <span class='ident'>set</span>
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Hash</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Hash</span>, <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Hash</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Hash</span>, <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>hash</span><span class='op'>&lt;</span><span class='ident'>H</span>: <span class='ident'>hash</span>::<span class='ident'>Hasher</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>h</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>H</span>) { <span class='self'>self</span>.<span class='ident'>map</span>.<span class='ident'>hash</span>(<span class='ident'>h</span>); }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>PartialEq</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>eq</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='self'>self</span>.<span class='ident'>map</span> <span class='op'>==</span> <span class='ident'>other</span>.<span class='ident'>map</span> }
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>PartialEq</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>eq</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='self'>self</span>.<span class='ident'>map</span> <span class='op'>==</span> <span class='ident'>other</span>.<span class='ident'>map</span> }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Eq</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {}
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Eq</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {}
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>PartialOrd</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>partial_cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Ordering</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>PartialOrd</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>partial_cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Ordering</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>map</span>.<span class='ident'>partial_cmp</span>(<span class='kw-2'>&amp;</span><span class='ident'>other</span>.<span class='ident'>map</span>)
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Ord</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Ordering</span> { <span class='ident'>Ord</span>::<span class='ident'>cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>map</span>, <span class='kw-2'>&amp;</span><span class='ident'>other</span>.<span class='ident'>map</span>) }
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Ord</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>other</span>: <span class='kw-2'>&amp;</span><span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Ordering</span> { <span class='ident'>Ord</span>::<span class='ident'>cmp</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>map</span>, <span class='kw-2'>&amp;</span><span class='ident'>other</span>.<span class='ident'>map</span>) }
 }
 
 <span class='doccomment'>/// An iterator that consumes the set.</span>
 <span class='doccomment'>///</span>
+<span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+<span class='doccomment'>///</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Acquire through [`TreeSet::into_iter`](struct.TreeSet.html#method.into_iter) or the</span>
+<span class='doccomment'>/// Acquire through [`Set::into_iter`](struct.Set.html#method.into_iter) or the</span>
 <span class='doccomment'>/// `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// use tree::TreeSet;</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// let mut set = TreeSet::new();</span>
+<span class='doccomment'>/// let mut set = tree::Set::new();</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// set.insert(2);</span>
 <span class='doccomment'>/// set.insert(1);</span>
@@ -1162,14 +1114,14 @@
 
 <span class='doccomment'>/// An iterator over the set.</span>
 <span class='doccomment'>///</span>
+<span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+<span class='doccomment'>///</span>
 <span class='doccomment'>/// # Examples</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Acquire through [`TreeSet::iter`](struct.TreeSet.html#method.iter) or the `IntoIterator` trait:</span>
+<span class='doccomment'>/// Acquire through [`Set::iter`](struct.Set.html#method.iter) or the `IntoIterator` trait:</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// ```</span>
-<span class='doccomment'>/// use tree::TreeSet;</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// let mut set = TreeSet::new();</span>
+<span class='doccomment'>/// let mut set = tree::Set::new();</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// set.insert(2);</span>
 <span class='doccomment'>/// set.insert(1);</span>
@@ -1197,13 +1149,13 @@
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>ExactSizeIterator</span> <span class='kw'>for</span> <span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span> {}
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>IntoIterator</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>IntoIterator</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>T</span>;
     <span class='kw'>type</span> <span class='ident'>IntoIter</span> <span class='op'>=</span> <span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>into_iter</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span> { <span class='self'>self</span>.<span class='ident'>iter</span>() }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>IntoIterator</span> <span class='kw'>for</span> <span class='ident'>TreeSet</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>IntoIterator</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>T</span>;
     <span class='kw'>type</span> <span class='ident'>IntoIter</span> <span class='op'>=</span> <span class='ident'>IntoIter</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>into_iter</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>IntoIter</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> { <span class='self'>self</span>.<span class='ident'>into_iter</span>() }
@@ -1211,7 +1163,9 @@
 
 <span class='doccomment'>/// An iterator that consumes the set, yielding only those items that lie in a given range.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Acquire through [`TreeSet::into_range`](struct.TreeSet.html#method.into_range).</span>
+<span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// Acquire through [`Set::into_range`](struct.Set.html#method.into_range).</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>IntoRange</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>map</span>::<span class='ident'>IntoRange</span><span class='op'>&lt;</span><span class='ident'>T</span>, ()<span class='op'>&gt;</span>);
 
@@ -1227,7 +1181,9 @@
 
 <span class='doccomment'>/// An iterator over the set&#39;s items that lie in a given range.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Acquire through [`TreeSet::range`](struct.TreeSet.html#method.range).</span>
+<span class='doccomment'>/// The iterator yields the items in ascending order according to the set&#39;s comparator.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// Acquire through [`Set::range`](struct.Set.html#method.range).</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Range</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='ident'>map</span>::<span class='ident'>Range</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span>, ()<span class='op'>&gt;</span>);
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Range</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>T</span><span class='op'>&gt;</span> {
