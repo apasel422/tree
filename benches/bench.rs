@@ -16,14 +16,14 @@ extern crate tree;
 
 use rand::{Rng, weak_rng};
 use test::{Bencher, black_box};
-use tree::TreeMap;
+use tree::Map;
 
 macro_rules! map_insert_rand_bench {
     ($name: ident, $n: expr) => (
         #[bench]
         pub fn $name(b: &mut Bencher) {
             let n: usize = $n;
-            let mut map = TreeMap::new();
+            let mut map = Map::new();
             // setup
             let mut rng = weak_rng();
 
@@ -47,7 +47,7 @@ macro_rules! map_insert_seq_bench {
     ($name: ident, $n: expr) => (
         #[bench]
         pub fn $name(b: &mut Bencher) {
-            let mut map = TreeMap::new();
+            let mut map = Map::new();
             let n: usize = $n;
             // setup
             for i in 0..n {
@@ -70,7 +70,7 @@ macro_rules! map_find_rand_bench {
     ($name: ident, $n: expr) => (
         #[bench]
         pub fn $name(b: &mut Bencher) {
-            let mut map = TreeMap::new();
+            let mut map = Map::new();
             let n: usize = $n;
 
             // setup
@@ -98,7 +98,7 @@ macro_rules! map_find_seq_bench {
     ($name: ident, $n: expr) => (
         #[bench]
         pub fn $name(b: &mut Bencher) {
-            let mut map = TreeMap::new();
+            let mut map = Map::new();
             let n: usize = $n;
 
             // setup
@@ -121,7 +121,7 @@ macro_rules! map_iter_bench {
     ($name: ident, $n: expr) => (
         #[bench]
         pub fn $name(b: &mut Bencher) {
-            let mut map = TreeMap::<u32, u32>::new();
+            let mut map = Map::<u32, u32>::new();
             let n: usize = $n;
             let mut rng = weak_rng();
 

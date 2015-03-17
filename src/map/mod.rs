@@ -19,21 +19,19 @@ use std::ops;
 /// while the key is in the map. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct TreeMap<K, V, C = Natural<K>> where C: Compare<K> {
+pub struct Map<K, V, C = Natural<K>> where C: Compare<K> {
     root: node::Link<K, V>,
     len: usize,
     cmp: C,
 }
 
-impl<K, V> TreeMap<K, V> where K: Ord {
+impl<K, V> Map<K, V> where K: Ord {
     /// Creates an empty map ordered according to the natural order of its keys.
     ///
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -45,10 +43,10 @@ impl<K, V> TreeMap<K, V> where K: Ord {
     /// assert_eq!(it.next(), Some((&3, &"c")));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn new() -> TreeMap<K, V> { TreeMap::with_cmp(::compare::natural()) }
+    pub fn new() -> Map<K, V> { Map::with_cmp(::compare::natural()) }
 }
 
-impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
+impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// Creates an empty map ordered according to the given comparator.
     ///
     /// # Examples
@@ -58,9 +56,8 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # extern crate tree;
     /// # fn main() {
     /// use compare::{Compare, natural};
-    /// use tree::TreeMap;
     ///
-    /// let mut map = TreeMap::with_cmp(natural().rev());
+    /// let mut map = tree::Map::with_cmp(natural().rev());
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -73,8 +70,8 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), None);
     /// # }
     /// ```
-    pub fn with_cmp(cmp: C) -> TreeMap<K, V, C> {
-        TreeMap { root: None, len: 0, cmp: cmp }
+    pub fn with_cmp(cmp: C) -> Map<K, V, C> {
+        Map { root: None, len: 0, cmp: cmp }
     }
 
     /// Checks if the map is empty.
@@ -82,9 +79,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert!(map.is_empty());
     ///
     /// map.insert(2, "b");
@@ -97,9 +92,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.len(), 0);
     ///
     /// map.insert(2, "b");
@@ -116,12 +109,11 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # extern crate tree;
     /// # fn main() {
     /// use compare::{Compare, natural};
-    /// use tree::TreeMap;
     ///
-    /// let map: TreeMap<i32, &str> = TreeMap::new();
+    /// let map: tree::Map<i32, &str> = tree::Map::new();
     /// assert!(map.cmp().compares_lt(&1, &2));
     ///
-    /// let map: TreeMap<i32, &str, _> = TreeMap::with_cmp(natural().rev());
+    /// let map: tree::Map<i32, &str, _> = tree::Map::with_cmp(natural().rev());
     /// assert!(map.cmp().compares_gt(&1, &2));
     /// # }
     /// ```
@@ -132,9 +124,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -159,9 +149,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.insert(1, "a"), None);
     /// assert_eq!(map.get(&1), Some(&"a"));
     /// assert_eq!(map.insert(1, "b"), Some("a"));
@@ -179,9 +167,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -208,9 +194,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert!(!map.contains_key(&1));
     /// map.insert(1, "a");
     /// assert!(map.contains_key(&1));
@@ -225,9 +209,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.get(&1), None);
     /// map.insert(1, "a");
     /// assert_eq!(map.get(&1), Some(&"a"));
@@ -242,9 +224,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.get(&1), None);
     /// map.insert(1, "a");
     ///
@@ -268,9 +248,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.max(), None);
     ///
     /// map.insert(2, "b");
@@ -289,9 +267,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.max(), None);
     ///
     /// map.insert(2, "b");
@@ -316,9 +292,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.min(), None);
     ///
     /// map.insert(2, "b");
@@ -337,9 +311,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     /// assert_eq!(map.min(), None);
     ///
     /// map.insert(2, "b");
@@ -366,9 +338,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -392,9 +362,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -420,9 +388,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -446,9 +412,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -483,9 +447,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -509,9 +471,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -537,9 +497,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -564,9 +522,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -598,9 +554,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -621,9 +575,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
@@ -644,9 +596,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeMap;
-    ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert("b", 2);
     /// map.insert("a", 1);
@@ -675,9 +625,8 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// use std::collections::Bound::{Excluded, Unbounded};
-    /// use tree::TreeMap;
     ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert("b", 2);
     /// map.insert("a", 1);
@@ -699,9 +648,8 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
-    /// use tree::TreeMap;
     ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert("b", 2);
     /// map.insert("a", 1);
@@ -727,9 +675,8 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// use std::collections::Bound;
-    /// use tree::TreeMap;
     ///
-    /// let mut map = TreeMap::new();
+    /// let mut map = tree::Map::new();
     ///
     /// map.insert("b", 2);
     /// map.insert("a", 1);
@@ -754,7 +701,7 @@ impl<K, V, C> TreeMap<K, V, C> where C: Compare<K> {
     }
 }
 
-impl<K, V, C> Debug for TreeMap<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
+impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -769,40 +716,40 @@ impl<K, V, C> Debug for TreeMap<K, V, C> where K: Debug, V: Debug, C: Compare<K>
     }
 }
 
-impl<K, V, C> Default for TreeMap<K, V, C> where C: Compare<K> + Default {
-    fn default() -> TreeMap<K, V, C> { TreeMap::with_cmp(Default::default()) }
+impl<K, V, C> Default for Map<K, V, C> where C: Compare<K> + Default {
+    fn default() -> Map<K, V, C> { Map::with_cmp(Default::default()) }
 }
 
-impl<K, V, C> Extend<(K, V)> for TreeMap<K, V, C> where C: Compare<K> {
+impl<K, V, C> Extend<(K, V)> for Map<K, V, C> where C: Compare<K> {
     fn extend<I: IntoIterator<Item=(K, V)>>(&mut self, it: I) {
         for (k, v) in it { self.insert(k, v); }
     }
 }
 
-impl<K, V, C> iter::FromIterator<(K, V)> for TreeMap<K, V, C>
+impl<K, V, C> iter::FromIterator<(K, V)> for Map<K, V, C>
     where C: Compare<K> + Default {
 
-    fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> TreeMap<K, V, C> {
-        let mut map: TreeMap<K, V, C> = Default::default();
+    fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Map<K, V, C> {
+        let mut map: Map<K, V, C> = Default::default();
         map.extend(it);
         map
     }
 }
 
-impl<K, V, C> Hash for TreeMap<K, V, C> where K: Hash, V: Hash, C: Compare<K> {
+impl<K, V, C> Hash for Map<K, V, C> where K: Hash, V: Hash, C: Compare<K> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) {
         for e in self.iter() { e.hash(h); }
     }
 }
 
-impl<K, V, C, Q: ?Sized> ops::Index<Q> for TreeMap<K, V, C>
+impl<K, V, C, Q: ?Sized> ops::Index<Q> for Map<K, V, C>
     where C: Compare<K> + Compare<Q, K> {
 
     type Output = V;
     fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
 }
 
-impl<K, V, C, Q: ?Sized> ops::IndexMut<Q> for TreeMap<K, V, C>
+impl<K, V, C, Q: ?Sized> ops::IndexMut<Q> for Map<K, V, C>
     where C: Compare<K> + Compare<Q, K> {
 
     fn index_mut(&mut self, key: &Q) -> &mut V {
@@ -810,36 +757,36 @@ impl<K, V, C, Q: ?Sized> ops::IndexMut<Q> for TreeMap<K, V, C>
     }
 }
 
-impl<'a, K, V, C> IntoIterator for &'a TreeMap<K, V, C> where C: Compare<K> {
+impl<'a, K, V, C> IntoIterator for &'a Map<K, V, C> where C: Compare<K> {
     type Item = (&'a K, &'a V);
     type IntoIter = Iter<'a, K, V>;
     fn into_iter(self) -> Iter<'a, K, V> { self.iter() }
 }
 
-impl<'a, K, V, C> IntoIterator for &'a mut TreeMap<K, V, C> where C: Compare<K> {
+impl<'a, K, V, C> IntoIterator for &'a mut Map<K, V, C> where C: Compare<K> {
     type Item = (&'a K, &'a mut V);
     type IntoIter = IterMut<'a, K, V>;
     fn into_iter(self) -> IterMut<'a, K, V> { self.iter_mut() }
 }
 
-impl<K, V, C> IntoIterator for TreeMap<K, V, C> where C: Compare<K> {
+impl<K, V, C> IntoIterator for Map<K, V, C> where C: Compare<K> {
     type Item = (K, V);
     type IntoIter = IntoIter<K, V>;
     fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
 }
 
-impl<K, V, C> PartialEq for TreeMap<K, V, C> where V: PartialEq, C: Compare<K> {
-    fn eq(&self, other: &TreeMap<K, V, C>) -> bool {
+impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
+    fn eq(&self, other: &Map<K, V, C>) -> bool {
         self.len() == other.len() && self.iter().zip(other.iter()).all(|(l, r)| {
             self.cmp.compares_eq(&l.0, &r.0) && l.1 == r.1
         })
     }
 }
 
-impl<K, V, C> Eq for TreeMap<K, V, C> where V: Eq, C: Compare<K> {}
+impl<K, V, C> Eq for Map<K, V, C> where V: Eq, C: Compare<K> {}
 
-impl<K, V, C> PartialOrd for TreeMap<K, V, C> where V: PartialOrd, C: Compare<K> {
-    fn partial_cmp(&self, other: &TreeMap<K, V, C>) -> Option<Ordering> {
+impl<K, V, C> PartialOrd for Map<K, V, C> where V: PartialOrd, C: Compare<K> {
+    fn partial_cmp(&self, other: &Map<K, V, C>) -> Option<Ordering> {
         let mut l = self.iter();
         let mut r = other.iter();
 
@@ -860,8 +807,8 @@ impl<K, V, C> PartialOrd for TreeMap<K, V, C> where V: PartialOrd, C: Compare<K>
     }
 }
 
-impl<K, V, C> Ord for TreeMap<K, V, C> where V: Ord, C: Compare<K> {
-    fn cmp(&self, other: &TreeMap<K, V, C>) -> Ordering {
+impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
+    fn cmp(&self, other: &Map<K, V, C>) -> Ordering {
         let mut l = self.iter();
         let mut r = other.iter();
 
@@ -886,13 +833,11 @@ impl<K, V, C> Ord for TreeMap<K, V, C> where V: Ord, C: Compare<K> {
 ///
 /// # Examples
 ///
-/// Acquire through [`TreeMap::into_iter`](struct.TreeMap.html#method.into_iter) or the
+/// Acquire through [`Map::into_iter`](struct.Map.html#method.into_iter) or the
 /// `IntoIterator` trait:
 ///
 /// ```
-/// use tree::TreeMap;
-///
-/// let mut map = TreeMap::new();
+/// let mut map = tree::Map::new();
 ///
 /// map.insert(2, "b");
 /// map.insert(1, "a");
@@ -921,12 +866,10 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
 ///
 /// # Examples
 ///
-/// Acquire through [`TreeMap::iter`](struct.TreeMap.html#method.iter) or the `IntoIterator` trait:
+/// Acquire through [`Map::iter`](struct.Map.html#method.iter) or the `IntoIterator` trait:
 ///
 /// ```
-/// use tree::TreeMap;
-///
-/// let mut map = TreeMap::new();
+/// let mut map = tree::Map::new();
 ///
 /// map.insert(2, "b");
 /// map.insert(1, "a");
@@ -958,13 +901,11 @@ impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {}
 ///
 /// # Examples
 ///
-/// Acquire through [`TreeMap::iter_mut`](struct.TreeMap.html#method.iter_mut) or the
+/// Acquire through [`Map::iter_mut`](struct.Map.html#method.iter_mut) or the
 /// `IntoIterator` trait:
 ///
 /// ```
-/// use tree::TreeMap;
-///
-/// let mut map = TreeMap::new();
+/// let mut map = tree::Map::new();
 ///
 /// map.insert(2, "b");
 /// map.insert(1, "a");
@@ -990,7 +931,7 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
 
 /// An iterator that consumes the map, yielding only those entries whose keys lie in a given range.
 ///
-/// Acquire through [`TreeMap::into_range`](struct.TreeMap.html#method.into_range).
+/// Acquire through [`Map::into_range`](struct.Map.html#method.into_range).
 #[derive(Clone)]
 pub struct IntoRange<K, V>(node::Iter<Box<Node<K, V>>>);
 
@@ -1007,7 +948,7 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 /// An iterator over the map's entries whose keys lie in a given range with immutable references to
 /// the values.
 ///
-/// Acquire through [`TreeMap::range`](struct.TreeMap.html#method.range).
+/// Acquire through [`Map::range`](struct.Map.html#method.range).
 pub struct Range<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
 
 impl<'a, K, V> Clone for Range<'a, K, V> {
@@ -1027,7 +968,7 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 /// An iterator over the map's entries whose keys lie in a given range with mutable references to
 /// the values.
 ///
-/// Acquire through [`TreeMap::range_mut`](struct.TreeMap.html#method.range_mut).
+/// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
 pub struct RangeMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V>);
 
 impl<'a, K, V> Iterator for RangeMut<'a, K, V> {

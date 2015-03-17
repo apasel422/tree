@@ -7,7 +7,7 @@ use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter::{self, IntoIterator};
-use super::map::{self, TreeMap};
+use super::map::{self, Map};
 
 /// An ordered set based on a binary search tree.
 ///
@@ -15,19 +15,17 @@ use super::map::{self, TreeMap};
 /// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct TreeSet<T, C = Natural<T>> where C: Compare<T> {
-    map: TreeMap<T, (), C>,
+pub struct Set<T, C = Natural<T>> where C: Compare<T> {
+    map: Map<T, (), C>,
 }
 
-impl<T> TreeSet<T> where T: Ord {
+impl<T> Set<T> where T: Ord {
     /// Creates an empty set ordered according to the natural order of its items.
     ///
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -39,10 +37,10 @@ impl<T> TreeSet<T> where T: Ord {
     /// assert_eq!(it.next(), Some(&3));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn new() -> TreeSet<T> { TreeSet { map: TreeMap::new() } }
+    pub fn new() -> Set<T> { Set { map: Map::new() } }
 }
 
-impl<T, C> TreeSet<T, C> where C: Compare<T> {
+impl<T, C> Set<T, C> where C: Compare<T> {
     /// Creates an empty set ordered according to the given comparator.
     ///
     /// # Examples
@@ -52,9 +50,8 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # extern crate tree;
     /// # fn main() {
     /// use compare::{Compare, natural};
-    /// use tree::TreeSet;
     ///
-    /// let mut set = TreeSet::with_cmp(natural().rev());
+    /// let mut set = tree::Set::with_cmp(natural().rev());
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -67,16 +64,14 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// assert_eq!(it.next(), None);
     /// # }
     /// ```
-    pub fn with_cmp(cmp: C) -> TreeSet<T, C> { TreeSet { map: TreeMap::with_cmp(cmp) } }
+    pub fn with_cmp(cmp: C) -> Set<T, C> { Set { map: Map::with_cmp(cmp) } }
 
     /// Checks if the set is empty.
     ///
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert!(set.is_empty());
     ///
     /// set.insert(2);
@@ -89,9 +84,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert_eq!(set.len(), 0);
     ///
     /// set.insert(2);
@@ -108,12 +101,11 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # extern crate tree;
     /// # fn main() {
     /// use compare::{Compare, natural};
-    /// use tree::TreeSet;
     ///
-    /// let set = TreeSet::new();
+    /// let set = tree::Set::new();
     /// assert!(set.cmp().compares_lt(&1, &2));
     ///
-    /// let set: TreeSet<_, _> = TreeSet::with_cmp(natural().rev());
+    /// let set: tree::Set<_, _> = tree::Set::with_cmp(natural().rev());
     /// assert!(set.cmp().compares_gt(&1, &2));
     /// # }
     /// ```
@@ -124,9 +116,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -147,9 +137,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert!(!set.contains(&1));
     /// assert!(set.insert(1));
     /// assert!(set.contains(&1));
@@ -162,9 +150,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -187,9 +173,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert!(!set.contains(&1));
     /// set.insert(1);
     /// assert!(set.contains(&1));
@@ -203,9 +187,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert_eq!(set.max(), None);
     ///
     /// set.insert(2);
@@ -221,9 +203,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     /// assert_eq!(set.min(), None);
     ///
     /// set.insert(2);
@@ -242,9 +222,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -268,9 +246,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -294,9 +270,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -320,9 +294,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -343,9 +315,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -364,9 +334,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// use tree::TreeSet;
-    ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -387,9 +355,8 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// ```
     /// use std::collections::Bound::{Excluded, Unbounded};
-    /// use tree::TreeSet;
     ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -409,9 +376,8 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     ///
     /// ```
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
-    /// use tree::TreeSet;
     ///
-    /// let mut set = TreeSet::new();
+    /// let mut set = tree::Set::new();
     ///
     /// set.insert(2);
     /// set.insert(1);
@@ -428,7 +394,7 @@ impl<T, C> TreeSet<T, C> where C: Compare<T> {
     }
 }
 
-impl<T, C> Debug for TreeSet<T, C> where T: Debug, C: Compare<T> {
+impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -443,55 +409,53 @@ impl<T, C> Debug for TreeSet<T, C> where T: Debug, C: Compare<T> {
     }
 }
 
-impl<T, C> Default for TreeSet<T, C> where C: Compare<T> + Default {
-    fn default() -> TreeSet<T, C> { TreeSet::with_cmp(Default::default()) }
+impl<T, C> Default for Set<T, C> where C: Compare<T> + Default {
+    fn default() -> Set<T, C> { Set::with_cmp(Default::default()) }
 }
 
-impl<T, C> Extend<T> for TreeSet<T, C> where C: Compare<T> {
+impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
     fn extend<I: IntoIterator<Item=T>>(&mut self, it: I) {
         for item in it { self.insert(item); }
     }
 }
 
-impl<T, C> iter::FromIterator<T> for TreeSet<T, C> where C: Compare<T> + Default {
-    fn from_iter<I: IntoIterator<Item=T>>(it: I) -> TreeSet<T, C> {
-        let mut set: TreeSet<T, C> = Default::default();
+impl<T, C> iter::FromIterator<T> for Set<T, C> where C: Compare<T> + Default {
+    fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Set<T, C> {
+        let mut set: Set<T, C> = Default::default();
         set.extend(it);
         set
     }
 }
 
-impl<T, C> Hash for TreeSet<T, C> where T: Hash, C: Compare<T> {
+impl<T, C> Hash for Set<T, C> where T: Hash, C: Compare<T> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
-impl<T, C> PartialEq for TreeSet<T, C> where C: Compare<T> {
-    fn eq(&self, other: &TreeSet<T, C>) -> bool { self.map == other.map }
+impl<T, C> PartialEq for Set<T, C> where C: Compare<T> {
+    fn eq(&self, other: &Set<T, C>) -> bool { self.map == other.map }
 }
 
-impl<T, C> Eq for TreeSet<T, C> where C: Compare<T> {}
+impl<T, C> Eq for Set<T, C> where C: Compare<T> {}
 
-impl<T, C> PartialOrd for TreeSet<T, C> where C: Compare<T> {
-    fn partial_cmp(&self, other: &TreeSet<T, C>) -> Option<Ordering> {
+impl<T, C> PartialOrd for Set<T, C> where C: Compare<T> {
+    fn partial_cmp(&self, other: &Set<T, C>) -> Option<Ordering> {
         self.map.partial_cmp(&other.map)
     }
 }
 
-impl<T, C> Ord for TreeSet<T, C> where C: Compare<T> {
-    fn cmp(&self, other: &TreeSet<T, C>) -> Ordering { Ord::cmp(&self.map, &other.map) }
+impl<T, C> Ord for Set<T, C> where C: Compare<T> {
+    fn cmp(&self, other: &Set<T, C>) -> Ordering { Ord::cmp(&self.map, &other.map) }
 }
 
 /// An iterator that consumes the set.
 ///
 /// # Examples
 ///
-/// Acquire through [`TreeSet::into_iter`](struct.TreeSet.html#method.into_iter) or the
+/// Acquire through [`Set::into_iter`](struct.Set.html#method.into_iter) or the
 /// `IntoIterator` trait:
 ///
 /// ```
-/// use tree::TreeSet;
-///
-/// let mut set = TreeSet::new();
+/// let mut set = tree::Set::new();
 ///
 /// set.insert(2);
 /// set.insert(1);
@@ -520,12 +484,10 @@ impl<T> ExactSizeIterator for IntoIter<T> {}
 ///
 /// # Examples
 ///
-/// Acquire through [`TreeSet::iter`](struct.TreeSet.html#method.iter) or the `IntoIterator` trait:
+/// Acquire through [`Set::iter`](struct.Set.html#method.iter) or the `IntoIterator` trait:
 ///
 /// ```
-/// use tree::TreeSet;
-///
-/// let mut set = TreeSet::new();
+/// let mut set = tree::Set::new();
 ///
 /// set.insert(2);
 /// set.insert(1);
@@ -553,13 +515,13 @@ impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
 
 impl<'a, T> ExactSizeIterator for Iter<'a, T> {}
 
-impl<'a, T, C> IntoIterator for &'a TreeSet<T, C> where C: Compare<T> {
+impl<'a, T, C> IntoIterator for &'a Set<T, C> where C: Compare<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
     fn into_iter(self) -> Iter<'a, T> { self.iter() }
 }
 
-impl<T, C> IntoIterator for TreeSet<T, C> where C: Compare<T> {
+impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
     type Item = T;
     type IntoIter = IntoIter<T>;
     fn into_iter(self) -> IntoIter<T> { self.into_iter() }
@@ -567,7 +529,7 @@ impl<T, C> IntoIterator for TreeSet<T, C> where C: Compare<T> {
 
 /// An iterator that consumes the set, yielding only those items that lie in a given range.
 ///
-/// Acquire through [`TreeSet::into_range`](struct.TreeSet.html#method.into_range).
+/// Acquire through [`Set::into_range`](struct.Set.html#method.into_range).
 #[derive(Clone)]
 pub struct IntoRange<T>(map::IntoRange<T, ()>);
 
@@ -583,7 +545,7 @@ impl<T> DoubleEndedIterator for IntoRange<T> {
 
 /// An iterator over the set's items that lie in a given range.
 ///
-/// Acquire through [`TreeSet::range`](struct.TreeSet.html#method.range).
+/// Acquire through [`Set::range`](struct.Set.html#method.range).
 pub struct Range<'a, T: 'a>(map::Range<'a, T, ()>);
 
 impl<'a, T> Clone for Range<'a, T> {

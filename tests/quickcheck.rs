@@ -16,7 +16,7 @@ use std::iter::order;
 
 type K = u32;
 type V = u16;
-type M = tree::TreeMap<K, V>;
+type M = tree::Map<K, V>;
 
 #[quickcheck]
 fn insert_incs_len(mut m: M, k: K, v: V) -> TestResult {
