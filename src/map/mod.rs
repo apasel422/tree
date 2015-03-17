@@ -551,6 +551,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
     /// Returns an iterator that consumes the map.
     ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
+    ///
     /// # Examples
     ///
     /// ```
@@ -572,6 +574,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
     /// Returns an iterator over the map's entries with immutable references to the values.
     ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
+    ///
     /// # Examples
     ///
     /// ```
@@ -592,6 +596,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     }
 
     /// Returns an iterator over the map's entries with mutable references to the values.
+    ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
     ///
     /// # Examples
     ///
@@ -621,6 +627,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// Returns an iterator that consumes the map, yielding only those entries whose keys lie in
     /// the given range.
     ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
+    ///
     /// # Examples
     ///
     /// ```
@@ -643,6 +651,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with immutable
     /// references to the values.
+    ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
     ///
     /// # Examples
     ///
@@ -670,6 +680,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with mutable
     /// references to the values.
+    ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
     ///
     /// # Examples
     ///
@@ -831,6 +843,8 @@ impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
 
 /// An iterator that consumes the map.
 ///
+/// The iterator yields the entries in ascending order according to the map's comparator.
+///
 /// # Examples
 ///
 /// Acquire through [`Map::into_iter`](struct.Map.html#method.into_iter) or the
@@ -863,6 +877,8 @@ impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
 impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
 
 /// An iterator over the map's entries with immutable references to the values.
+///
+/// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// # Examples
 ///
@@ -899,6 +915,8 @@ impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {}
 
 /// An iterator over the map's entries with mutable references to the values.
 ///
+/// The iterator yields the entries in ascending order according to the map's comparator.
+///
 /// # Examples
 ///
 /// Acquire through [`Map::iter_mut`](struct.Map.html#method.iter_mut) or the
@@ -931,6 +949,8 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
 
 /// An iterator that consumes the map, yielding only those entries whose keys lie in a given range.
 ///
+/// The iterator yields the entries in ascending order according to the map's comparator.
+///
 /// Acquire through [`Map::into_range`](struct.Map.html#method.into_range).
 #[derive(Clone)]
 pub struct IntoRange<K, V>(node::Iter<Box<Node<K, V>>>);
@@ -947,6 +967,8 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 
 /// An iterator over the map's entries whose keys lie in a given range with immutable references to
 /// the values.
+///
+/// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// Acquire through [`Map::range`](struct.Map.html#method.range).
 pub struct Range<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
@@ -967,6 +989,8 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 
 /// An iterator over the map's entries whose keys lie in a given range with mutable references to
 /// the values.
+///
+/// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
 pub struct RangeMut<'a, K: 'a, V: 'a>(node::IterMut<'a, K, V>);

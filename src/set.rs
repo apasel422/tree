@@ -312,6 +312,8 @@ impl<T, C> Set<T, C> where C: Compare<T> {
 
     /// Returns an iterator that consumes the set.
     ///
+    /// The iterator yields the items in ascending order according to the set's comparator.
+    ///
     /// # Examples
     ///
     /// ```
@@ -330,6 +332,8 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     pub fn into_iter(self) -> IntoIter<T> { IntoIter(self.map.into_iter()) }
 
     /// Returns an iterator over the set.
+    ///
+    /// The iterator yields the items in ascending order according to the set's comparator.
     ///
     /// # Examples
     ///
@@ -351,6 +355,8 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// Returns an iterator that consumes the set, yielding only those items that lie in the given
     /// range.
     ///
+    /// The iterator yields the items in ascending order according to the set's comparator.
+    ///
     /// # Examples
     ///
     /// ```
@@ -371,6 +377,8 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     }
 
     /// Returns an iterator over the set's items that lie in the given range.
+    ///
+    /// The iterator yields the items in ascending order according to the set's comparator.
     ///
     /// # Examples
     ///
@@ -449,6 +457,8 @@ impl<T, C> Ord for Set<T, C> where C: Compare<T> {
 
 /// An iterator that consumes the set.
 ///
+/// The iterator yields the items in ascending order according to the set's comparator.
+///
 /// # Examples
 ///
 /// Acquire through [`Set::into_iter`](struct.Set.html#method.into_iter) or the
@@ -481,6 +491,8 @@ impl<T> DoubleEndedIterator for IntoIter<T> {
 impl<T> ExactSizeIterator for IntoIter<T> {}
 
 /// An iterator over the set.
+///
+/// The iterator yields the items in ascending order according to the set's comparator.
 ///
 /// # Examples
 ///
@@ -529,6 +541,8 @@ impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
 
 /// An iterator that consumes the set, yielding only those items that lie in a given range.
 ///
+/// The iterator yields the items in ascending order according to the set's comparator.
+///
 /// Acquire through [`Set::into_range`](struct.Set.html#method.into_range).
 #[derive(Clone)]
 pub struct IntoRange<T>(map::IntoRange<T, ()>);
@@ -544,6 +558,8 @@ impl<T> DoubleEndedIterator for IntoRange<T> {
 }
 
 /// An iterator over the set's items that lie in a given range.
+///
+/// The iterator yields the items in ascending order according to the set's comparator.
 ///
 /// Acquire through [`Set::range`](struct.Set.html#method.range).
 pub struct Range<'a, T: 'a>(map::Range<'a, T, ()>);
