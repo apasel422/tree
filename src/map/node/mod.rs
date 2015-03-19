@@ -7,7 +7,7 @@ use compare::Compare;
 use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
 
-pub use self::iter::{Iter, IterMut};
+pub use self::iter::Iter;
 
 pub type Link<K, V> = Option<Box<Node<K, V>>>;
 

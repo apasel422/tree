@@ -1,7 +1,6 @@
 use compare::Compare;
 use std::cmp::Ordering::*;
 use std::collections::{Bound, VecDeque};
-use std::marker::PhantomData;
 use self::visit::{Seen, Visit};
 use super::{Link, LinkExt, Node};
 
@@ -206,43 +205,5 @@ mod visit {
         L,
         R,
         B,
-    }
-}
-
-pub struct IterMut<'a, K: 'a, V: 'a> {
-    iter: Iter<&'a Node<K, V>>,
-    _mut: PhantomData<&'a mut V>,
-}
-
-impl<'a, K, V> IterMut<'a, K, V> {
-    pub fn new(node: &'a mut Link<K, V>, size: usize) -> IterMut<'a, K, V> {
-        IterMut { iter: Iter::new(node.as_node_ref(), size), _mut: PhantomData }
-    }
-
-    pub fn range<C, Min: ?Sized, Max: ?Sized>(node: &'a mut Link<K, V>, size: usize, cmp: &C,
-                                              min: Bound<&Min>, max: Bound<&Max>)
-        -> IterMut<'a, K, V> where C: Compare<Min, K> + Compare<Max, K> {
-
-        IterMut { iter: Iter::range(node.as_node_ref(), size, cmp, min, max), _mut: PhantomData }
-    }
-
-    pub fn range_size_hint(&self) -> (usize, Option<usize>) { self.iter.range_size_hint() }
-}
-
-impl<'a, K, V> Iterator for IterMut<'a, K, V> {
-    type Item = (&'a K, &'a mut V);
-
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next = self.iter.next();
-        unsafe { ::std::mem::transmute(next) }
-    }
-
-    fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
-}
-
-impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next_back = self.iter.next_back();
-        unsafe { ::std::mem::transmute(next_back) }
     }
 }
