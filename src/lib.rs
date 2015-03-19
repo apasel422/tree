@@ -2,7 +2,6 @@
 
 #![feature(box_patterns, box_syntax)]
 #![feature(collections)]
-#![feature(core)]
 
 extern crate compare;
 

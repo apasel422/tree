@@ -246,5 +246,3 @@ impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
         unsafe { ::std::mem::transmute(next_back) }
     }
 }
-
-impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}

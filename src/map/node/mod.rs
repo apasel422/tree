@@ -213,8 +213,8 @@ impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a mut Link<K, V> {
     }
 }
 
-pub fn get<'a, L: LinkRef<'a>, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
-    where C: Compare<Q, L::K> {
+pub fn get<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
+    where L: LinkRef<'a>, C: Compare<Q, L::K> {
 
     link.with(|mut link| loop {
         match *link {
@@ -228,8 +228,8 @@ pub fn get<'a, L: LinkRef<'a>, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
     })
 }
 
-trait Dir: ::std::marker::MarkerTrait {
-    type Opposite: Dir;
+trait Dir {
+    type Opposite: Dir<Opposite=Self>;
 
     fn left() -> bool;
 
@@ -265,7 +265,7 @@ impl Dir for Right {
 pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
     link.with(|mut link| {
         while let Some(ref node) = *link {
-            let child = <D as Dir>::forward(node);
+            let child = D::forward(node);
             if child.is_some() { link = child; } else { break; }
         }
 
@@ -273,35 +273,32 @@ pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
     })
 }
 
-pub fn closest<'a, L: LinkRef<'a>, C, Q: ?Sized, D>(link: L, cmp: &C, key: &Q, inc: bool) -> L
-    where C: Compare<Q, L::K>, D: Dir {
+pub fn closest<'a, L, C, Q: ?Sized, D>(link: L, cmp: &C, key: &Q, inc: bool) -> L
+    where L: LinkRef<'a>, C: Compare<Q, L::K>, D: Dir {
 
     link.with(|mut link| {
         let mut closest_ancstr = None;
 
-        loop {
-            match *link {
-                None => break,
-                Some(ref node) => match cmp.compare(key, &node.key) {
-                    Equal => return
-                        if inc {
-                            link
-                        } else {
-                            let child = <D as Dir>::forward(node);
+        while let Some(ref node) = *link {
+            match cmp.compare(key, &node.key) {
+                Equal => return
+                    if inc {
+                        link
+                    } else {
+                        let child = D::forward(node);
 
-                            match closest_ancstr {
-                                Some(ancstr) if child.is_none() => ancstr,
-                                _ => extremum::<_, <D as Dir>::Opposite>(child),
-                            }
-                        },
-                    order =>
-                        if <D as Dir>::left() == (order == Less) {
-                            link = <D as Dir>::forward(node);
-                        } else {
-                            closest_ancstr = Some(link);
-                            link = <D as Dir>::reverse(node);
-                        },
-                },
+                        match closest_ancstr {
+                            Some(ancstr) if child.is_none() => ancstr,
+                            _ => extremum::<_, D::Opposite>(child),
+                        }
+                    },
+                order => link =
+                    if D::left() == (order == Less) {
+                        D::forward(node)
+                    } else {
+                        closest_ancstr = Some(link);
+                        D::reverse(node)
+                    },
             }
         }
 
