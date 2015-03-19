@@ -1,9 +1,6 @@
 //! An ordered map based on a binary search tree.
 
-mod node;
-
 use compare::{Compare, Natural};
-use self::node::{Left, LinkExt, Node, Right};
 use std::cmp::Ordering;
 use std::cmp::Ordering::*;
 use std::collections::Bound;
@@ -14,6 +11,7 @@ use std::iter::{self, IntoIterator};
 use std::marker::PhantomData;
 use std::mem::transmute;
 use std::ops;
+use super::node::{self, Left, LinkExt, Node, Right};
 
 /// An ordered map based on a binary search tree.
 ///
@@ -713,6 +711,9 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
         RangeMut { iter: self.range(min, max), _mut: PhantomData }
     }
+
+    #[cfg(test)]
+    pub fn root(&self) -> &node::Link<K, V> { &self.root }
 }
 
 impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {

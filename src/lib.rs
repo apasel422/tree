@@ -11,6 +11,8 @@ pub use set::Set;
 pub mod map;
 pub mod set;
 
+mod node;
+
 #[cfg(feature = "ordered_iter")]
 mod ordered_iter;
 

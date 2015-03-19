@@ -73,7 +73,7 @@ fn assert_andersson_tree<K, V>(map: &Map<K, V>) where K: Ord {
         }
     }
 
-    if let Some(ref node) = map.root {
+    if let Some(ref node) = *map.root() {
         check_left(&node.left, node);
         check_right(&node.right, node, false);
     }
