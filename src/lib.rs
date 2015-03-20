@@ -1,4 +1,4 @@
-//! A collection based on a binary search tree.
+//! An ordered map and set based on a binary search tree.
 
 #![feature(box_patterns, box_syntax)]
 #![feature(collections)]
