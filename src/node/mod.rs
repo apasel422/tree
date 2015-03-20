@@ -262,6 +262,10 @@ impl Dir for Right {
     fn reverse<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.left }
 }
 
+pub fn remove_extremum<K, V, D>(link: &mut Link<K, V>) -> Option<(K, V)> where D: Dir {
+    extremum::<_, D>(link).take().map(|box node| (node.key, node.value))
+}
+
 pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
     link.with(|mut link| {
         while let Some(ref node) = *link {

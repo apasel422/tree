@@ -286,6 +286,27 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
         node::extremum::<_, Right>(&mut self.root).key_value_mut()
     }
 
+    /// Removes the map's maximum key and returns it and its associated value, or `None` if the map
+    /// is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    /// assert_eq!(map.remove_max(), None);
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.remove_max(), Some((3, "c")));
+    /// ```
+    pub fn remove_max(&mut self) -> Option<(K, V)> {
+        let key_value = node::remove_extremum::<_, _, Right>(&mut self.root).take();
+        if key_value.is_some() { self.len -= 1; }
+        key_value
+    }
+
     /// Returns a reference to the map's minimum key and a reference to its associated
     /// value, or `None` if the map is empty.
     ///
@@ -328,6 +349,27 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// ```
     pub fn min_mut(&mut self) -> Option<(&K, &mut V)> {
         node::extremum::<_, Left>(&mut self.root).key_value_mut()
+    }
+
+    /// Removes the map's minimum key and returns it and its associated value, or `None` if the map
+    /// is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    /// assert_eq!(map.remove_min(), None);
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.remove_min(), Some((1, "a")));
+    /// ```
+    pub fn remove_min(&mut self) -> Option<(K, V)> {
+        let key_value = node::remove_extremum::<_, _, Left>(&mut self.root).take();
+        if key_value.is_some() { self.len -= 1; }
+        key_value
     }
 
     /// Returns a reference to the greatest key that is strictly less than the given key and a

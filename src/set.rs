@@ -198,6 +198,22 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// ```
     pub fn max(&self) -> Option<&T> { self.map.max().map(|e| e.0) }
 
+    /// Removes and returns the set's maximum item, or `None` if the set is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    /// assert_eq!(set.remove_max(), None);
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert_eq!(set.remove_max(), Some(3));
+    /// ```
+    pub fn remove_max(&mut self) -> Option<T> { self.map.remove_max().map(|e| e.0) }
+
     /// Returns a reference to the set's minimum item, or `None` if the set is empty.
     ///
     /// # Examples
@@ -213,6 +229,22 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(set.min(), Some(&1));
     /// ```
     pub fn min(&self) -> Option<&T> { self.map.min().map(|e| e.0) }
+
+    /// Removes and returns the set's minimum item, or `None` if the set is empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    /// assert_eq!(set.remove_min(), None);
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert_eq!(set.remove_min(), Some(1));
+    /// ```
+    pub fn remove_min(&mut self) -> Option<T> { self.map.remove_min().map(|e| e.0) }
 
     /// Returns a reference to the greatest item that is strictly less than the given item, or
     /// `None` if no such item is present in the set.
