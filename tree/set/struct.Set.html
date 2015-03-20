@@ -43,7 +43,7 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a>::<wbr><a class='struct' href=''>Set</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2536' href='../../src/tree/set.rs.html#18-20'>[src]</a></span></h1>
+        </span><a id='src-2602' href='../../src/tree/set.rs.html#18-20'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Set&lt;T, C = Natural&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;T&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered set based on a binary search tree.</p>
@@ -195,6 +195,20 @@ unsafe code.</p>
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>max</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
 </pre>
+</div><h4 id='method.remove_max' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_max' class='fnname'>remove_max</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Removes and returns the set&#39;s maximum item, or <code>None</code> if the set is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>Some</span>(<span class='number'>3</span>));
+</pre>
 </div><h4 id='method.min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min' class='fnname'>min</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt;</code></h4>
 <div class='docblock'><p>Returns a reference to the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
 
@@ -208,6 +222,20 @@ unsafe code.</p>
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>min</span>(), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+</pre>
+</div><h4 id='method.remove_min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_min' class='fnname'>remove_min</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt;</code></h4>
+<div class='docblock'><p>Removes and returns the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>Some</span>(<span class='number'>1</span>));
 </pre>
 </div><h4 id='method.pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred' class='fnname'>pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the greatest item that is strictly less than the given item, or

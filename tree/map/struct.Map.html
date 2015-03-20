@@ -248,6 +248,21 @@ associated value, or <code>None</code> if the map is empty.</p>
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>max</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;cc&quot;</span>)));
 </pre>
+</div><h4 id='method.remove_max' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_max' class='fnname'>remove_max</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt;</code></h4>
+<div class='docblock'><p>Removes the map&#39;s maximum key and returns it and its associated value, or <code>None</code> if the map
+is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>Some</span>((<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>)));
+</pre>
 </div><h4 id='method.min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min' class='fnname'>min</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt;</code></h4>
 <div class='docblock'><p>Returns a reference to the map&#39;s minimum key and a reference to its associated
 value, or <code>None</code> if the map is empty.</p>
@@ -283,6 +298,21 @@ associated value, or <code>None</code> if the map is empty.</p>
 }
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>min</span>(), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;aa&quot;</span>)));
+</pre>
+</div><h4 id='method.remove_min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_min' class='fnname'>remove_min</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt;</code></h4>
+<div class='docblock'><p>Removes the map&#39;s minimum key and returns it and its associated value, or <code>None</code> if the map
+is empty.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>None</span>);
+
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>2</span>, <span class='string'>&quot;b&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>);
+<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='number'>3</span>, <span class='string'>&quot;c&quot;</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>Some</span>((<span class='number'>1</span>, <span class='string'>&quot;a&quot;</span>)));
 </pre>
 </div><h4 id='method.pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred' class='fnname'>pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the greatest key that is strictly less than the given key and a
