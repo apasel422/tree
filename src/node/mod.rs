@@ -179,7 +179,7 @@ pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
     node.take().map(|box node| (node.key, node.value))
 }
 
-trait LinkRef<'a>: Sized {
+pub trait LinkRef<'a>: Sized {
     type K: 'a;
     type V: 'a;
     fn as_ref(self) -> &'a Link<Self::K, Self::V>;
@@ -199,7 +199,7 @@ impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a Link<K, V> {
 
     fn as_ref(self) -> &'a Link<K, V> { self }
 
-    fn from_ref(link: &'a Link<K, V>) -> &'a Link<K, V> { link }
+    unsafe fn from_ref(link: &'a Link<K, V>) -> &'a Link<K, V> { link }
 }
 
 impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a mut Link<K, V> {
@@ -228,7 +228,7 @@ pub fn get<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
     })
 }
 
-trait Dir {
+pub trait Dir {
     type Opposite: Dir<Opposite=Self>;
 
     fn left() -> bool;

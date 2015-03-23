@@ -4,7 +4,7 @@ use std::collections::{Bound, VecDeque};
 use self::visit::{Seen, Visit};
 use super::{Link, LinkExt, Node};
 
-trait NodeRef {
+pub trait NodeRef {
     type Key;
     type Item;
     fn key(&self) -> &Self::Key;
