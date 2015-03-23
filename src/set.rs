@@ -471,6 +471,18 @@ impl<T, C> Hash for Set<T, C> where T: Hash, C: Compare<T> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
+impl<'a, T, C> IntoIterator for &'a Set<T, C> where C: Compare<T> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+    fn into_iter(self) -> Iter<'a, T> { self.iter() }
+}
+
+impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> IntoIter<T> { self.into_iter() }
+}
+
 impl<T, C> PartialEq for Set<T, C> where C: Compare<T> {
     fn eq(&self, other: &Set<T, C>) -> bool { self.map == other.map }
 }
@@ -558,18 +570,6 @@ impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
 }
 
 impl<'a, T> ExactSizeIterator for Iter<'a, T> {}
-
-impl<'a, T, C> IntoIterator for &'a Set<T, C> where C: Compare<T> {
-    type Item = &'a T;
-    type IntoIter = Iter<'a, T>;
-    fn into_iter(self) -> Iter<'a, T> { self.iter() }
-}
-
-impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
-    type Item = T;
-    type IntoIter = IntoIter<T>;
-    fn into_iter(self) -> IntoIter<T> { self.into_iter() }
-}
 
 /// An iterator that consumes the set, yielding only those items that lie in a given range.
 ///
