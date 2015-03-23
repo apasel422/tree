@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["LinkExt",""]]});
+initSidebarItems({"trait":[["Dir",""],["LinkExt",""],["LinkRef",""]]});
