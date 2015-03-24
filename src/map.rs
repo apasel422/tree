@@ -806,14 +806,6 @@ impl<K, V, C, Q: ?Sized> ops::Index<Q> for Map<K, V, C>
     fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
 }
 
-impl<K, V, C, Q: ?Sized> ops::IndexMut<Q> for Map<K, V, C>
-    where C: Compare<K> + Compare<Q, K> {
-
-    fn index_mut(&mut self, key: &Q) -> &mut V {
-        self.get_mut(key).expect("key not found")
-    }
-}
-
 impl<'a, K, V, C> IntoIterator for &'a Map<K, V, C> where C: Compare<K> {
     type Item = (&'a K, &'a V);
     type IntoIter = Iter<'a, K, V>;
