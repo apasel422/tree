@@ -182,13 +182,13 @@ pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
 pub trait LinkRef<'a>: Sized {
     type K: 'a;
     type V: 'a;
-    fn as_ref(self) -> &'a Link<Self::K, Self::V>;
+    fn into_ref(self) -> &'a Link<Self::K, Self::V>;
     unsafe fn from_ref(link: &'a Link<Self::K, Self::V>) -> Self;
 
     fn with<F>(self, f: F) -> Self
         where F: FnOnce(&'a Link<Self::K, Self::V>) -> &'a Link<Self::K, Self::V> {
 
-        let link = f(self.as_ref());
+        let link = f(self.into_ref());
         unsafe { LinkRef::from_ref(link) }
     }
 }
@@ -197,7 +197,7 @@ impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a Link<K, V> {
     type K = K;
     type V = V;
 
-    fn as_ref(self) -> &'a Link<K, V> { self }
+    fn into_ref(self) -> &'a Link<K, V> { self }
 
     unsafe fn from_ref(link: &'a Link<K, V>) -> &'a Link<K, V> { link }
 }
@@ -206,7 +206,7 @@ impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a mut Link<K, V> {
     type K = K;
     type V = V;
 
-    fn as_ref(self) -> &'a Link<K, V> { self }
+    fn into_ref(self) -> &'a Link<K, V> { self }
 
     unsafe fn from_ref(link: &'a Link<K, V>) -> &'a mut Link<K, V> {
         mem::transmute(link)
