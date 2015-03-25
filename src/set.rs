@@ -392,6 +392,9 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
+    /// # #![feature(collections)]
+    /// # extern crate tree;
+    /// # fn main() {
     /// use std::collections::Bound::{Excluded, Unbounded};
     ///
     /// let mut set = tree::Set::new();
@@ -401,6 +404,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// set.insert(3);
     ///
     /// assert_eq!(set.into_range(Excluded(&1), Unbounded).collect::<Vec<_>>(), [2, 3]);
+    /// # }
     /// ```
     pub fn into_range<Min: ?Sized, Max: ?Sized>(self, min: Bound<&Min>, max: Bound<&Max>)
         -> IntoRange<T> where C: Compare<Min, T> + Compare<Max, T> {
@@ -415,6 +419,9 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
+    /// # #![feature(collections)]
+    /// # extern crate tree;
+    /// # fn main() {
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
     ///
     /// let mut set = tree::Set::new();
@@ -426,6 +433,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(set.range(Unbounded, Unbounded).collect::<Vec<_>>(), [&1, &2, &3]);
     /// assert_eq!(set.range(Excluded(&1), Included(&5)).collect::<Vec<_>>(), [&2, &3]);
     /// assert_eq!(set.range(Included(&1), Excluded(&2)).collect::<Vec<_>>(), [&1]);
+    /// # }
     /// ```
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
         -> Range<T> where C: Compare<Min, T> + Compare<Max, T> {

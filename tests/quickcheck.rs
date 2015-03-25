@@ -34,14 +34,14 @@ fn insert_returns_none(mut m: M, k: K, v: V) -> TestResult {
 #[quickcheck]
 fn insert_sets_val(mut m: M, k: K, v: V) -> TestResult {
     if m.insert(k, v).is_some() { return TestResult::discard(); }
-    TestResult::from_bool(m[k] == v)
+    TestResult::from_bool(m[&k] == v)
 }
 
 #[quickcheck]
 fn reinsert_changes_val(mut m: M, k: K, v1: V, v2: V) -> bool {
     m.insert(k, v1);
     m.insert(k, v2);
-    m[k] == v2
+    m[&k] == v2
 }
 
 #[quickcheck]

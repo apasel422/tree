@@ -658,9 +658,9 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///     i += 1;
     /// }
     ///
-    /// assert_eq!(map["a"], 2);
-    /// assert_eq!(map["b"], 4);
-    /// assert_eq!(map["c"], 6);
+    /// assert_eq!(map[&"a"], 2);
+    /// assert_eq!(map[&"b"], 4);
+    /// assert_eq!(map[&"c"], 6);
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<K, V> {
         IterMut { iter: self.iter(), _mut: PhantomData }
@@ -674,6 +674,9 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
+    /// # #![feature(collections)]
+    /// # extern crate tree;
+    /// # fn main() {
     /// use std::collections::Bound::{Excluded, Unbounded};
     ///
     /// let mut map = tree::Map::new();
@@ -684,6 +687,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// assert_eq!(map.into_range(Excluded(&"a"), Unbounded).collect::<Vec<_>>(),
     ///     [("b", 2), ("c", 3)]);
+    /// # }
     /// ```
     pub fn into_range<Min: ?Sized, Max: ?Sized>(mut self, min: Bound<&Min>, max: Bound<&Max>)
         -> IntoRange<K, V> where C: Compare<Min, K> + Compare<Max, K> {
@@ -699,6 +703,9 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
+    /// # #![feature(collections)]
+    /// # extern crate tree;
+    /// # fn main() {
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
     ///
     /// let mut map = tree::Map::new();
@@ -713,6 +720,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///     [(&"b", &2), (&"c", &3)]);
     /// assert_eq!(map.range(Included(&"a"), Excluded(&"b")).collect::<Vec<_>>(),
     ///     [(&"a", &1)]);
+    /// # }
     /// ```
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
         -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
@@ -728,6 +736,9 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
+    /// # #![feature(collections)]
+    /// # extern crate tree;
+    /// # fn main() {
     /// use std::collections::Bound;
     ///
     /// let mut map = tree::Map::new();
@@ -744,9 +755,10 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///     i += 1;
     /// }
     ///
-    /// assert_eq!(map["a"], 2);
-    /// assert_eq!(map["b"], 4);
-    /// assert_eq!(map["c"], 3);
+    /// assert_eq!(map[&"a"], 2);
+    /// assert_eq!(map[&"b"], 4);
+    /// assert_eq!(map[&"c"], 3);
+    /// # }
     /// ```
     pub fn range_mut<Min: ?Sized, Max: ?Sized>(&mut self, min: Bound<&Min>, max: Bound<&Max>)
         -> RangeMut<K, V> where C: Compare<Min, K> + Compare<Max, K> {
@@ -799,7 +811,7 @@ impl<K, V, C> Hash for Map<K, V, C> where K: Hash, V: Hash, C: Compare<K> {
     }
 }
 
-impl<K, V, C, Q: ?Sized> ops::Index<Q> for Map<K, V, C>
+impl<'a, K, V, C, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, C>
     where C: Compare<K> + Compare<Q, K> {
 
     type Output = V;
