@@ -80,6 +80,7 @@ fn assert_andersson_tree<K, V>(map: &Map<K, V>) where K: Ord {
 }
 
 #[test]
+#[allow(trivial_casts)]
 fn test_andersson() {
     fn check(ops: Vec<Op<u32>>) -> TestResult {
         let mut map = Map::new();
@@ -88,5 +89,5 @@ fn test_andersson() {
         TestResult::passed()
     }
 
-    quickcheck(check as fn(_) -> _);
+    quickcheck(check as fn(Vec<Op<u32>>) -> TestResult);
 }

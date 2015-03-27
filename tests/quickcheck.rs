@@ -3,6 +3,7 @@
 #![feature(custom_attribute)]
 #![feature(plugin)]
 #![plugin(quickcheck_macros)]
+#![allow(trivial_casts)]
 
 extern crate compare;
 extern crate quickcheck;
