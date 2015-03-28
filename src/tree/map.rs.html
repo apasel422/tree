@@ -1131,7 +1131,7 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>::<span class='ident'>PhantomData</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>mem</span>::<span class='ident'>transmute</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ops</span>;
-<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>node</span>::{<span class='self'>self</span>, <span class='ident'>Left</span>, <span class='ident'>LinkExt</span>, <span class='ident'>Node</span>, <span class='ident'>Right</span>};
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>node</span>::{<span class='self'>self</span>, <span class='ident'>Dir</span>, <span class='ident'>Left</span>, <span class='ident'>LinkExt</span>, <span class='ident'>Node</span>, <span class='ident'>Right</span>};
 
 <span class='doccomment'>/// An ordered map based on a binary search tree.</span>
 <span class='doccomment'>///</span>
@@ -1378,7 +1378,7 @@
     <span class='doccomment'>/// assert_eq!(map.max(), Some((&amp;3, &amp;&quot;c&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>max</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>extremum</span>::<span class='op'>&lt;</span>_, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Right</span>::<span class='ident'>extremum</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the map&#39;s maximum key and a mutable reference to its</span>
@@ -1403,7 +1403,7 @@
     <span class='doccomment'>/// assert_eq!(map.max(), Some((&amp;3, &amp;&quot;cc&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>max_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>extremum</span>::<span class='op'>&lt;</span>_, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Right</span>::<span class='ident'>extremum</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Removes the map&#39;s maximum key and returns it and its associated value, or `None` if the map</span>
@@ -1422,7 +1422,7 @@
     <span class='doccomment'>/// assert_eq!(map.remove_max(), Some((3, &quot;c&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_max</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>K</span>, <span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>key_value</span> <span class='op'>=</span> <span class='ident'>node</span>::<span class='ident'>remove_extremum</span>::<span class='op'>&lt;</span>_, _, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>take</span>();
+        <span class='kw'>let</span> <span class='ident'>key_value</span> <span class='op'>=</span> <span class='ident'>Right</span>::<span class='ident'>remove_extremum</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>take</span>();
         <span class='kw'>if</span> <span class='ident'>key_value</span>.<span class='ident'>is_some</span>() { <span class='self'>self</span>.<span class='ident'>len</span> <span class='op'>-=</span> <span class='number'>1</span>; }
         <span class='ident'>key_value</span>
     }
@@ -1443,7 +1443,7 @@
     <span class='doccomment'>/// assert_eq!(map.min(), Some((&amp;1, &amp;&quot;a&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>extremum</span>::<span class='op'>&lt;</span>_, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Left</span>::<span class='ident'>extremum</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the map&#39;s minimum key and a mutable reference to its</span>
@@ -1468,7 +1468,7 @@
     <span class='doccomment'>/// assert_eq!(map.min(), Some((&amp;1, &amp;&quot;aa&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>extremum</span>::<span class='op'>&lt;</span>_, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Left</span>::<span class='ident'>extremum</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Removes the map&#39;s minimum key and returns it and its associated value, or `None` if the map</span>
@@ -1487,7 +1487,7 @@
     <span class='doccomment'>/// assert_eq!(map.remove_min(), Some((1, &quot;a&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_min</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>K</span>, <span class='ident'>V</span>)<span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>key_value</span> <span class='op'>=</span> <span class='ident'>node</span>::<span class='ident'>remove_extremum</span>::<span class='op'>&lt;</span>_, _, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>take</span>();
+        <span class='kw'>let</span> <span class='ident'>key_value</span> <span class='op'>=</span> <span class='ident'>Left</span>::<span class='ident'>remove_extremum</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>).<span class='ident'>take</span>();
         <span class='kw'>if</span> <span class='ident'>key_value</span>.<span class='ident'>is_some</span>() { <span class='self'>self</span>.<span class='ident'>len</span> <span class='op'>-=</span> <span class='number'>1</span>; }
         <span class='ident'>key_value</span>
     }
@@ -1513,7 +1513,7 @@
     <span class='doccomment'>/// assert_eq!(map.pred(&amp;4), Some((&amp;3, &amp;&quot;c&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pred</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Left</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the greatest key that is strictly less than the given key and a</span>
@@ -1539,7 +1539,7 @@
     <span class='doccomment'>/// assert_eq!(map.pred(&amp;2), Some((&amp;1, &amp;&quot;aa&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pred_mut</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Left</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the greatest key that is less than or equal to the given key and a</span>
@@ -1563,7 +1563,7 @@
     <span class='doccomment'>/// assert_eq!(map.pred_or_eq(&amp;4), Some((&amp;3, &amp;&quot;c&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pred_or_eq</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Left</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the greatest key that is less than or equal to the given key and a</span>
@@ -1598,7 +1598,7 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pred_or_eq_mut</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span>
         <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
 
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Left</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Left</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the smallest key that is strictly greater than the given key and a</span>
@@ -1622,7 +1622,7 @@
     <span class='doccomment'>/// assert_eq!(map.succ(&amp;4), None);</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>succ</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Right</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the smallest key that is strictly greater than the given key and a</span>
@@ -1648,7 +1648,7 @@
     <span class='doccomment'>/// assert_eq!(map.succ(&amp;2), Some((&amp;3, &amp;&quot;cc&quot;)));</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>succ_mut</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Right</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>false</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the smallest key that is greater than or equal to the given key and</span>
@@ -1672,7 +1672,7 @@
     <span class='doccomment'>/// assert_eq!(map.succ_or_eq(&amp;4), None);</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>succ_or_eq</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='ident'>V</span>)<span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value</span>()
+        <span class='ident'>Right</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value</span>()
     }
 
     <span class='doccomment'>/// Returns a reference to the smallest key that is greater than or equal to the given key and</span>
@@ -1708,7 +1708,7 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>succ_or_eq_mut</span><span class='op'>&lt;</span><span class='ident'>Q</span>: ?<span class='ident'>Sized</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Q</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='kw-2'>&amp;</span><span class='ident'>K</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>V</span>)<span class='op'>&gt;</span>
         <span class='kw'>where</span> <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>Q</span>, <span class='ident'>K</span><span class='op'>&gt;</span> {
 
-        <span class='ident'>node</span>::<span class='ident'>closest</span>::<span class='op'>&lt;</span>_, _, _, <span class='ident'>Right</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value_mut</span>()
+        <span class='ident'>Right</span>::<span class='ident'>closest</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>root</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>cmp</span>, <span class='ident'>key</span>, <span class='boolval'>true</span>).<span class='ident'>key_value_mut</span>()
     }
 
     <span class='doccomment'>/// Returns an iterator that consumes the map.</span>
