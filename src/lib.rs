@@ -1,6 +1,5 @@
 //! An ordered map and set based on a binary search tree.
 
-#![feature(box_patterns, box_syntax)]
 #![feature(collections)]
 
 extern crate compare;

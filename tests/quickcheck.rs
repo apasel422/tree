@@ -1,4 +1,3 @@
-#![feature(box_syntax)]
 #![feature(collections, core)]
 #![feature(custom_attribute)]
 #![feature(plugin)]
@@ -174,9 +173,9 @@ impl<T> Arbitrary for Bound<T> where T: Arbitrary {
 
     fn shrink(&self) -> Box<Iterator<Item=Bound<T>>> {
         match *self {
-            Bound::Included(ref t) => box t.shrink().map(Bound::Included),
-            Bound::Excluded(ref t) => box t.shrink().map(Bound::Excluded),
-            Bound::Unbounded => box None.into_iter(),
+            Bound::Included(ref t) => Box::new(t.shrink().map(Bound::Included)),
+            Bound::Excluded(ref t) => Box::new(t.shrink().map(Bound::Excluded)),
+            Bound::Unbounded => Box::new(None.into_iter()),
         }
     }
 }

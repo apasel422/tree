@@ -32,7 +32,7 @@ impl<K, V> LinkExt for Link<K, V> {
     }
 
     fn key_value_mut(&mut self) -> Option<(&K, &mut V)> {
-        self.as_mut().map(|&mut box ref mut node| (&node.key, &mut node.value))
+        self.as_mut().map(|node| { let mut node = &mut **node; (&node.key, &mut node.value) })
     }
 }
 
@@ -46,6 +46,10 @@ pub struct Node<K, V> {
 }
 
 impl<K, V> Node<K, V> {
+    fn new(key: K, value: V) -> Self {
+        Node { left: None, right: None, level: 1, key: key, value: value }
+    }
+
     // Remove left horizontal link by rotating right
     //
     // From https://github.com/Gankro/collect-rs/tree/map.rs
@@ -79,7 +83,7 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
 
     match *link {
         None => {
-            *link = Some(box Node { left: None, right: None, level: 1, key: key, value: value });
+            *link = Some(Box::new(Node::new(key, value)));
             None
         }
         Some(ref mut node) => {
@@ -135,12 +139,12 @@ pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
                         save.left = Some(left);
                         (remove(&mut save.left, cmp, key), true)
                     } else {
-                        let box Node { key, value, .. } = replace(save, left);
+                        let Node { key, value, .. } = *replace(save, left);
                         *save = save.left.take().unwrap();
                         (Some((key, value)), true)
                     }
                 } else if let Some(new) = save.right.take() {
-                    let box Node { key, value, .. } = replace(save, new);
+                    let Node { key, value, .. } = *replace(save, new);
                     (Some((key, value)), true)
                 } else {
                     (None, false)
@@ -154,7 +158,7 @@ pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
         }
     }
 
-    node.take().map(|box node| (node.key, node.value))
+    node.take().map(|node| { let node = *node; (node.key, node.value) })
 }
 
 fn rebalance<K, V>(save: &mut Node<K, V>) {
@@ -257,7 +261,8 @@ pub trait Dir: Sized {
                 rebalance(node);
                 key_value
             }
-            _ => link.take().map(|box mut node| {
+            _ => link.take().map(|node| {
+                let mut node = *node;
                 *link = Self::Opposite::forward_mut(&mut node).take();
                 (node.key, node.value)
             }),

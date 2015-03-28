@@ -31,9 +31,9 @@ impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
 
     fn shrink(&self) -> Box<Iterator<Item=Self>> {
         match *self {
-            Op::Insert(ref key) => box key.shrink().map(Op::Insert),
-            Op::Remove(index) => box index.shrink().map(Op::Remove),
-            Op::RemoveMax | Op::RemoveMin => box None.into_iter(),
+            Op::Insert(ref key) => Box::new(key.shrink().map(Op::Insert)),
+            Op::Remove(index) => Box::new(index.shrink().map(Op::Remove)),
+            Op::RemoveMax | Op::RemoveMin => Box::new(None.into_iter()),
         }
     }
 }
