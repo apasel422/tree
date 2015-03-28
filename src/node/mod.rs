@@ -7,28 +7,30 @@ use compare::Compare;
 use self::build::{Build, PathBuilder};
 use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
+use super::{Augment, OrderStat};
 use super::map::Entry;
 
 pub use self::iter::{Iter, MarkedNode, MutMarkedNode};
 #[cfg(feature = "range")] pub use self::iter::Range;
 
-pub type Link<K, V> = Option<Box<Node<K, V>>>;
+pub type Link<K, V, A = ()> = Option<Box<Node<K, V, A>>>;
 
 #[derive(Clone)]
-pub struct Node<K, V> {
-    left: Link<K, V>,
-    right: Link<K, V>,
+pub struct Node<K, V, A = ()> {
+    left: Link<K, V, A>,
+    right: Link<K, V, A>,
     level: usize,
     key: K,
     value: V,
+    augment: A,
 }
 
-impl<K, V> Node<K, V> {
+impl<K, V, A> Node<K, V, A> where A: Augment {
     fn new(key: K, value: V) -> Self {
-        Node { left: None, right: None, level: 1, key: key, value: value }
+        Node { left: None, right: None, level: 1, key: key, value: value, augment: A::new() }
     }
 
-    fn rebalance(node: &mut Box<Node<K, V>>) {
+    fn rebalance(node: &mut Box<Self>) {
         let left_level = node.left.as_ref().map_or(0, |node| node.level);
         let right_level = node.right.as_ref().map_or(0, |node| node.level);
 
@@ -53,6 +55,11 @@ impl<K, V> Node<K, V> {
         }
     }
 
+    fn bottom_up(&mut self) {
+        self.augment.bottom_up(self.left.as_ref().map(|left| &left.augment),
+                               self.right.as_ref().map(|right| &right.augment));
+    }
+
     // Remove left horizontal link by rotating right
     //
     // From https://github.com/Gankro/collect-rs/tree/map.rs
@@ -60,6 +67,7 @@ impl<K, V> Node<K, V> {
         if node.left.as_ref().map_or(false, |x| x.level == node.level) {
             let mut save = node.left.take().unwrap();
             swap(&mut node.left, &mut save.right); // save.right now None
+            node.bottom_up();
             swap(node, &mut save);
             node.right = Some(save);
         }
@@ -74,6 +82,7 @@ impl<K, V> Node<K, V> {
           |x| x.right.as_ref().map_or(false, |y| y.level == node.level)) {
             let mut save = node.right.take().unwrap();
             swap(&mut node.right, &mut save.left); // save.left now None
+            node.bottom_up();
             save.level += 1;
             swap(node, &mut save);
             node.left = Some(save);
@@ -81,8 +90,8 @@ impl<K, V> Node<K, V> {
     }
 }
 
-pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Option<V>
-    where C: Compare<K> {
+pub fn insert<K, V, A, C>(link: &mut Link<K, V, A>, cmp: &C, key: K, value: V) -> Option<V>
+    where A: Augment, C: Compare<K> {
 
     match *link {
         None => {
@@ -98,28 +107,31 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
 
             Node::skew(node);
             Node::split(node);
+            node.bottom_up();
             old_value
         },
     }
 }
 
 pub mod build {
+    use Augment;
     use std::marker::PhantomData;
     use super::{Link, Node, Path};
 
-    pub struct Closed<'a, K: 'a, V: 'a> {
-        link: *const Link<K, V>,
-        _marker: PhantomData<&'a Link<K, V>>,
+    pub struct Closed<'a, K: 'a, V: 'a, A: 'a> {
+        link: *const Link<K, V, A>,
+        _marker: PhantomData<&'a Link<K, V, A>>,
     }
 
     pub trait Build<'a>: Sized + Default {
         type Key: 'a;
         type Value: 'a;
-        type Node: ::std::ops::Deref<Target = Box<Node<Self::Key, Self::Value>>>;
+        type Augment: 'a;
+        type Node: ::std::ops::Deref<Target = Box<Node<Self::Key, Self::Value, Self::Augment>>>;
         type Link;
         type Output;
 
-        fn closed(link: &Self::Link) -> Closed<'a, Self::Key, Self::Value>;
+        fn closed(link: &Self::Link) -> Closed<'a, Self::Key, Self::Value, Self::Augment>;
 
         fn into_option(link: Self::Link) -> Option<Self::Node>;
 
@@ -129,114 +141,122 @@ pub mod build {
 
         fn build_open(self, link: Self::Link) -> Self::Output;
 
-        fn build_closed(self, link: Closed<'a, Self::Key, Self::Value>) -> Self::Output;
+        fn build_closed(self, link: Closed<'a, Self::Key, Self::Value, Self::Augment>)
+            -> Self::Output;
     }
 
-    pub struct Get<'a, K: 'a, V: 'a>(PhantomData<fn(&'a Link<K, V>)>);
+    pub struct Get<'a, K: 'a, V: 'a, A: 'a>(PhantomData<fn(&'a Link<K, V, A>)>);
 
-    impl<'a, K, V> Default for Get<'a, K, V> {
+    impl<'a, K, V, A> Default for Get<'a, K, V, A> {
         fn default() -> Self { Get(PhantomData) }
     }
 
-    impl<'a, K: 'a, V: 'a> Build<'a> for Get<'a, K, V> {
+    impl<'a, K: 'a, V: 'a, A: 'a> Build<'a> for Get<'a, K, V, A> {
         type Key = K;
         type Value = V;
-        type Node = &'a Box<Node<K, V>>;
-        type Link = &'a Link<K, V>;
+        type Augment = A;
+        type Node = &'a Box<Node<K, V, A>>;
+        type Link = &'a Link<K, V, A>;
         type Output = Option<(&'a K, &'a V)>;
 
-        fn closed(link: & &'a Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: & &'a Link<K, V, A>) -> Closed<'a, K, V, A> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a Link<K, V>) -> Option<&'a Box<Node<K, V>>> { link.as_ref() }
+        fn into_option(link: &'a Link<K, V, A>) -> Option<&'a Box<Node<K, V, A>>> { link.as_ref() }
 
-        fn left(&mut self, node: &'a Box<Node<K, V>>) -> &'a Link<K, V> { &node.left }
+        fn left(&mut self, node: &'a Box<Node<K, V, A>>) -> &'a Link<K, V, A> { &node.left }
 
-        fn right(&mut self, node: &'a Box<Node<K, V>>) -> &'a Link<K, V> { &node.right }
+        fn right(&mut self, node: &'a Box<Node<K, V, A>>) -> &'a Link<K, V, A> { &node.right }
 
-        fn build_open(self, link: &'a Link<K, V>) -> Option<(&'a K, &'a V)> {
+        fn build_open(self, link: &'a Link<K, V, A>) -> Option<(&'a K, &'a V)> {
             link.as_ref().map(|node| (&node.key, &node.value))
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Option<(&'a K, &'a V)> {
+        fn build_closed(self, link: Closed<'a, K, V, A>) -> Option<(&'a K, &'a V)> {
             self.build_open(unsafe { &*link.link })
         }
     }
 
-    pub struct GetMut<'a, K: 'a, V: 'a>(PhantomData<&'a mut Link<K, V>>);
+    pub struct GetMut<'a, K: 'a, V: 'a, A: 'a>(PhantomData<&'a mut Link<K, V, A>>);
 
-    impl<'a, K, V> Default for GetMut<'a, K, V> {
+    impl<'a, K, V, A> Default for GetMut<'a, K, V, A> {
         fn default() -> Self { GetMut(PhantomData) }
     }
 
-    impl<'a, K: 'a, V: 'a> Build<'a> for GetMut<'a, K, V> {
+    impl<'a, K: 'a, V: 'a, A: 'a> Build<'a> for GetMut<'a, K, V, A> {
         type Key = K;
         type Value = V;
-        type Node = &'a mut Box<Node<K, V>>;
-        type Link = &'a mut Link<K, V>;
+        type Augment = A;
+        type Node = &'a mut Box<Node<K, V, A>>;
+        type Link = &'a mut Link<K, V, A>;
         type Output = Option<(&'a K, &'a mut V)>;
 
-        fn closed(link: & &'a mut Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: & &'a mut Link<K, V, A>) -> Closed<'a, K, V, A> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a mut Link<K, V>) -> Option<&'a mut Box<Node<K, V>>> {
+        fn into_option(link: &'a mut Link<K, V, A>) -> Option<&'a mut Box<Node<K, V, A>>> {
             link.as_mut()
         }
 
-        fn left(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> { &mut node.left }
+        fn left(&mut self, node: &'a mut Box<Node<K, V, A>>) -> &'a mut Link<K, V, A> {
+            &mut node.left
+        }
 
-        fn right(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> { &mut node.right }
+        fn right(&mut self, node: &'a mut Box<Node<K, V, A>>) -> &'a mut Link<K, V, A> {
+            &mut node.right
+        }
 
-        fn build_open(self, link: &'a mut Link<K, V>) -> Option<(&'a K, &'a mut V)> {
+        fn build_open(self, link: &'a mut Link<K, V, A>) -> Option<(&'a K, &'a mut V)> {
             link.as_mut().map(|node| { let node = &mut **node; (&node.key, &mut node.value) })
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Option<(&'a K, &'a mut V)> {
+        fn build_closed(self, link: Closed<'a, K, V, A>) -> Option<(&'a K, &'a mut V)> {
             self.build_open(unsafe { &mut *(link.link as *mut _) })
         }
     }
 
-    pub struct PathBuilder<'a, K: 'a, V: 'a> {
-        path: Vec<*mut Box<Node<K, V>>>,
-        _marker: PhantomData<&'a mut Box<Node<K, V>>>,
+    pub struct PathBuilder<'a, K: 'a, V: 'a, A: 'a> where A: Augment {
+        path: Vec<*mut Box<Node<K, V, A>>>,
+        _marker: PhantomData<&'a mut Box<Node<K, V, A>>>,
     }
 
-    impl<'a, K, V> Default for PathBuilder<'a, K, V> {
+    impl<'a, K, V, A> Default for PathBuilder<'a, K, V, A> where A: Augment {
         fn default() -> Self { PathBuilder { path: vec![], _marker: PhantomData } }
     }
 
-    impl<'a, K: 'a, V: 'a> Build<'a> for PathBuilder<'a, K, V> {
+    impl<'a, K: 'a, V: 'a, A: 'a> Build<'a> for PathBuilder<'a, K, V, A> where A: Augment {
         type Key = K;
         type Value = V;
-        type Node = &'a mut Box<Node<K, V>>;
-        type Link = &'a mut Link<K, V>;
-        type Output = Path<'a, K, V>;
+        type Augment = A;
+        type Node = &'a mut Box<Node<K, V, A>>;
+        type Link = &'a mut Link<K, V, A>;
+        type Output = Path<'a, K, V, A>;
 
-        fn closed(link: & &'a mut Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: & &'a mut Link<K, V, A>) -> Closed<'a, K, V, A> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a mut Link<K, V>) -> Option<&'a mut Box<Node<K, V>>> {
+        fn into_option(link: &'a mut Link<K, V, A>) -> Option<&'a mut Box<Node<K, V, A>>> {
             link.as_mut()
         }
 
-        fn left(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> {
+        fn left(&mut self, node: &'a mut Box<Node<K, V, A>>) -> &'a mut Link<K, V, A> {
             self.path.push(node);
             &mut node.left
         }
 
-        fn right(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> {
+        fn right(&mut self, node: &'a mut Box<Node<K, V, A>>) -> &'a mut Link<K, V, A> {
             self.path.push(node);
             &mut node.right
         }
 
-        fn build_open(self, link: &'a mut Link<K, V>) -> Path<'a, K, V> {
+        fn build_open(self, link: &'a mut Link<K, V, A>) -> Path<'a, K, V, A> {
             Path { path: self.path, link: link }
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Path<'a, K, V> {
+        fn build_closed(self, link: Closed<'a, K, V, A>) -> Path<'a, K, V, A> {
             Path {
                 path: self.path.into_iter().take_while(|l| *l as *const _ != link.link).collect(),
                 link: unsafe { &mut *(link.link as *mut _) },
@@ -262,11 +282,35 @@ pub fn find<'a, B, C: ?Sized, Q: ?Sized>(mut link: B::Link, mut build: B, cmp: &
     }
 }
 
+pub fn select<'a, B>(mut link: B::Link, mut build: B, mut index: usize) -> B::Output
+    where B: Build<'a, Augment = OrderStat> {
+
+    loop {
+        link = match B::into_option(link) {
+            None => break,
+            Some(node) => {
+                let r = node.left.as_ref().map_or(0, |left| left.augment.0);
+
+                match index.cmp(&r) {
+                    Equal => break,
+                    Less => build.left(node),
+                    Greater => {
+                        index -= r + 1;
+                        build.right(node)
+                    }
+                }
+            }
+        }
+    }
+
+    build.build_open(link)
+}
+
 pub trait Extreme: Sized {
     type Opposite: Extreme<Opposite = Self>;
 
     fn min() -> bool;
-    fn has_forward<K, V>(node: &Node<K, V>) -> bool;
+    fn has_forward<K, V, A>(node: &Node<K, V, A>) -> bool;
     fn forward<'a, B>(node: B::Node, build: &mut B) -> B::Link where B: Build<'a>;
 
     fn extreme<'a, B>(mut link: B::Link, mut build: B) -> B::Output where B: Build<'a> {
@@ -331,7 +375,7 @@ pub enum Max {}
 impl Extreme for Max {
     type Opposite = Min;
     fn min() -> bool { false }
-    fn has_forward<K, V>(node: &Node<K, V>) -> bool { node.right.is_some() }
+    fn has_forward<K, V, A>(node: &Node<K, V, A>) -> bool { node.right.is_some() }
     fn forward<'a, B>(node: B::Node, build: &mut B) -> B::Link where B: Build<'a> {
         build.right(node)
     }
@@ -343,19 +387,19 @@ pub enum Min {}
 impl Extreme for Min {
     type Opposite = Max;
     fn min() -> bool { true }
-    fn has_forward<K, V>(node: &Node<K, V>) -> bool { node.left.is_some() }
+    fn has_forward<K, V, A>(node: &Node<K, V, A>) -> bool { node.left.is_some() }
     fn forward<'a, B>(node: B::Node, build: &mut B) -> B::Link where B: Build<'a> {
         build.left(node)
     }
 }
 
-pub struct Path<'a, K: 'a, V: 'a> {
-    path: Vec<*mut Box<Node<K, V>>>,
-    link: &'a mut Link<K, V>,
+pub struct Path<'a, K: 'a, V: 'a, A: 'a> {
+    path: Vec<*mut Box<Node<K, V, A>>>,
+    link: &'a mut Link<K, V, A>,
 }
 
-impl<'a, K, V> Path<'a, K, V> {
-    pub fn into_entry(self, len: &'a mut usize, key: K) -> Entry<'a, K, V> {
+impl<'a, K, V, A> Path<'a, K, V, A> where A: Augment {
+    pub fn into_entry(self, len: &'a mut usize, key: K) -> Entry<'a, K, V, A> {
         if self.link.is_some() {
             Entry::Occupied(OccupiedEntry { path: self, len: len })
         } else {
@@ -363,7 +407,7 @@ impl<'a, K, V> Path<'a, K, V> {
         }
     }
 
-    pub fn into_occupied_entry(self, len: &'a mut usize) -> Option<OccupiedEntry<'a, K, V>> {
+    pub fn into_occupied_entry(self, len: &'a mut usize) -> Option<OccupiedEntry<'a, K, V, A>> {
         if self.link.is_some() {
             Some(OccupiedEntry { path: self, len: len })
         } else {
@@ -403,18 +447,18 @@ impl<'a, K, V> Path<'a, K, V> {
     }
 }
 
-unsafe impl<'a, K, V> Send for Path<'a, K, V> where K: Send, V: Send {}
-unsafe impl<'a, K, V> Sync for Path<'a, K, V> where K: Sync, V: Sync {}
+unsafe impl<'a, K, V, A> Send for Path<'a, K, V, A> where K: Send, V: Send, A: Augment + Send {}
+unsafe impl<'a, K, V, A> Sync for Path<'a, K, V, A> where K: Sync, V: Sync, A: Augment + Sync {}
 
 /// An occupied entry.
 ///
 /// See [`Map::entry`](struct.Map.html#method.entry) for an example.
-pub struct OccupiedEntry<'a, K: 'a, V: 'a> {
-    path: Path<'a, K, V>,
+pub struct OccupiedEntry<'a, K: 'a, V: 'a, A: 'a = ()> where A: Augment {
+    path: Path<'a, K, V, A>,
     len: &'a mut usize,
 }
 
-impl<'a, K, V> OccupiedEntry<'a, K, V> {
+impl<'a, K, V, A> OccupiedEntry<'a, K, V, A> where A: Augment {
     /// Returns a reference to the entry's key.
     pub fn key(&self) -> &K { &self.path.link.as_ref().unwrap().key }
 
@@ -439,13 +483,13 @@ impl<'a, K, V> OccupiedEntry<'a, K, V> {
 /// A vacant entry.
 ///
 /// See [`Map::entry`](struct.Map.html#method.entry) for an example.
-pub struct VacantEntry<'a, K: 'a, V: 'a> {
-    path: Path<'a, K, V>,
+pub struct VacantEntry<'a, K: 'a, V: 'a, A: 'a = ()> where A: Augment {
+    path: Path<'a, K, V, A>,
     len: &'a mut usize,
     key: K,
 }
 
-impl<'a, K, V> VacantEntry<'a, K, V> {
+impl<'a, K, V, A> VacantEntry<'a, K, V, A> where A: Augment {
     /// Inserts the entry into the map with its key and the given value, returning a mutable
     /// reference to the value with the same lifetime as the map.
     pub fn insert(self, value: V) -> &'a mut V {
@@ -458,6 +502,7 @@ impl<'a, K, V> VacantEntry<'a, K, V> {
             unsafe {
                 Node::skew(&mut *node);
                 Node::split(&mut *node);
+                (&mut *node).bottom_up();
             }
         }
 

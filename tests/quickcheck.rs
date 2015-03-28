@@ -5,7 +5,7 @@ extern crate quickcheck;
 extern crate tree;
 
 use compare::Compare;
-use quickcheck::{Arbitrary, Gen};
+use quickcheck::{Arbitrary, Gen, quickcheck};
 use tree::map::{self, Map};
 
 pub trait OccupiedEntry<K, C> where C: Compare<K> {
@@ -529,4 +529,16 @@ mod range {
 
         quickcheck(test as fn(Map<u32, u16>, Bound<u32>, Bound<u32>) -> bool);
     }
+}
+
+#[test]
+fn select() {
+    use compare::Natural;
+    use tree::OrderStat;
+
+    fn test(map: Map<u32, u16, Natural<u32>, OrderStat>) -> bool {
+        map.iter().enumerate().all(|(i, e)| map.select(i) == Some(e))
+    }
+
+    quickcheck(test as fn(Map<u32, u16, Natural<u32>, OrderStat>) -> bool);
 }

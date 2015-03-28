@@ -8,6 +8,7 @@ use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter;
 use std::ops;
+use super::{Augment, OrderStat};
 use super::node::{self, Extreme, Max, Min, MarkedNode, MutMarkedNode, Node};
 use super::node::build::{Get, GetMut, PathBuilder};
 
@@ -19,8 +20,8 @@ pub use super::node::{OccupiedEntry, VacantEntry};
 /// while the key is in the map. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct Map<K, V, C = Natural<K>> where C: Compare<K> {
-    root: node::Link<K, V>,
+pub struct Map<K, V, C = Natural<K>, A = ()> where C: Compare<K>, A: Augment {
+    root: node::Link<K, V, A>,
     len: usize,
     cmp: C,
 }
@@ -70,9 +71,17 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), None);
     /// # }
     /// ```
-    pub fn with_cmp(cmp: C) -> Self {
-        Map { root: None, len: 0, cmp: cmp }
-    }
+    pub fn with_cmp(cmp: C) -> Self { Map::with_cmp_and_augment(cmp) }
+}
+
+impl<K, V, A> Map<K, V, Natural<K>, A> where K: Ord, A: Augment {
+    /// TODO
+    pub fn with_augment() -> Self { Map::with_cmp_and_augment(::compare::natural()) }
+}
+
+impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
+    /// TODO
+    pub fn with_cmp_and_augment(cmp: C) -> Self { Map { root: None, len: 0, cmp: cmp } }
 
     /// Checks if the map is empty.
     ///
@@ -202,7 +211,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(counts[&"b"], 2);
     /// assert_eq!(counts[&"c"], 1);
     /// ```
-    pub fn entry(&mut self, key: K) -> Entry<K, V> {
+    pub fn entry(&mut self, key: K) -> Entry<K, V, A> {
         node::find(&mut self.root, PathBuilder::default(), &self.cmp, &key)
             .into_entry(&mut self.len, key)
     }
@@ -343,7 +352,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// assert_eq!(map[&3], "cc");
     /// ```
-    pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+    pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V, A>> {
         Max::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 
@@ -430,7 +439,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// assert_eq!(map[&1], "aa");
     /// ```
-    pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+    pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V, A>> {
         Min::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 
@@ -586,7 +595,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert!(!map.contains_key(&2));
     /// ```
     pub fn pred_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
-        -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
+        -> Option<OccupiedEntry<K, V, A>> where C: Compare<Q, K> {
 
         Min::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
             .into_occupied_entry(&mut self.len)
@@ -744,7 +753,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert!(!map.contains_key(&2));
     /// ```
     pub fn succ_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
-        -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
+        -> Option<OccupiedEntry<K, V, A>> where C: Compare<Q, K> {
 
         Max::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
             .into_occupied_entry(&mut self.len)
@@ -769,7 +778,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), Some((3, "c")));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn into_iter(mut self) -> IntoIter<K, V> {
+    pub fn into_iter(mut self) -> IntoIter<K, V, A> {
         IntoIter(node::Iter::new(self.root.take(), self.len))
     }
 
@@ -792,7 +801,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), Some((&3, &"c")));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn iter(&self) -> Iter<K, V> {
+    pub fn iter(&self) -> Iter<K, V, A> {
         Iter(node::Iter::new(self.root.as_ref().map(MarkedNode::new), self.len))
     }
 
@@ -821,16 +830,16 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map[&"b"], 4);
     /// assert_eq!(map[&"c"], 6);
     /// ```
-    pub fn iter_mut(&mut self) -> IterMut<K, V> {
+    pub fn iter_mut(&mut self) -> IterMut<K, V, A> {
         IterMut(node::Iter::new(self.root.as_mut().map(MutMarkedNode::new), self.len))
     }
 
     #[cfg(test)]
-    pub fn root(&self) -> &node::Link<K, V> { &self.root }
+    pub fn root(&self) -> &node::Link<K, V, A> { &self.root }
 }
 
 #[cfg(feature = "range")]
-impl<K, V, C> Map<K, V, C> where C: Compare<K> {
+impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
     /// Returns an iterator that consumes the map, yielding only those entries whose keys lie in
     /// the given range.
     ///
@@ -855,7 +864,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # }
     /// ```
     pub fn into_range<Min: ?Sized, Max: ?Sized>(mut self, min: Bound<&Min>, max: Bound<&Max>)
-        -> IntoRange<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+        -> IntoRange<K, V, A> where C: Compare<Min, K> + Compare<Max, K> {
 
         IntoRange(node::Range::new(self.root.take(), self.len, &self.cmp, min, max))
     }
@@ -888,7 +897,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # }
     /// ```
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
-        -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+        -> Range<K, V, A> where C: Compare<Min, K> + Compare<Max, K> {
 
         Range(node::Range::new(self.root.as_ref().map(MarkedNode::new), self.len, &self.cmp, min,
             max))
@@ -927,14 +936,74 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # }
     /// ```
     pub fn range_mut<Min: ?Sized, Max: ?Sized>(&mut self, min: Bound<&Min>, max: Bound<&Max>)
-        -> RangeMut<K, V> where C: Compare<Min, K> + Compare<Max, K> {
+        -> RangeMut<K, V, A> where C: Compare<Min, K> + Compare<Max, K> {
 
         RangeMut(node::Range::new(self.root.as_mut().map(MutMarkedNode::new), self.len, &self.cmp,
             min, max))
     }
 }
 
-impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
+impl<K, V, C> Map<K, V, C, OrderStat> where C: Compare<K> {
+    /// Returns a reference to the key at the given in-order index in the map and a reference to
+    /// its associated value, or `None` if the index is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// assert_eq!(map.select(0), None);
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.select(0), Some((&1, &"a")));
+    /// assert_eq!(map.select(1), Some((&2, &"b")));
+    /// assert_eq!(map.select(2), Some((&3, &"c")));
+    /// assert_eq!(map.select(3), None);
+    /// ```
+    pub fn select(&self, index: usize) -> Option<(&K, &V)> {
+        node::select(&self.root, Get::default(), index)
+    }
+
+    /// Returns a reference to the key at the given in-order index in the map and a mutable
+    /// reference to its associated value, or `None` if the index is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// assert_eq!(map.select(1), None);
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let e = map.select_mut(1).unwrap();
+    ///     assert_eq!(e, (&2, &mut "b"));
+    ///     *e.1 = "bb";
+    /// }
+    ///
+    /// assert_eq!(map.select(1), Some((&2, &"bb")));
+    /// ```
+    pub fn select_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        node::select(&mut self.root, GetMut::default(), index)
+    }
+
+    /// TODO
+    pub fn remove_select(&mut self, index: usize) -> Option<(K, V)> {
+        node::select(&mut self.root, PathBuilder::default(), index).remove(&mut self.len)
+    }
+
+    /// TODO
+    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<K, V, OrderStat>> {
+        node::select(&mut self.root, PathBuilder::default(), index)
+            .into_occupied_entry(&mut self.len)
+    }
+}
+
+impl<K, V, C, A> Debug for Map<K, V, C, A> where K: Debug, V: Debug, C: Compare<K>, A: Augment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -949,18 +1018,18 @@ impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
     }
 }
 
-impl<K, V, C> Default for Map<K, V, C> where C: Compare<K> + Default {
-    fn default() -> Self { Map::with_cmp(C::default()) }
+impl<K, V, C, A> Default for Map<K, V, C, A> where C: Compare<K> + Default, A: Augment {
+    fn default() -> Self { Map::with_cmp_and_augment(C::default()) }
 }
 
-impl<K, V, C> Extend<(K, V)> for Map<K, V, C> where C: Compare<K> {
+impl<K, V, C, A> Extend<(K, V)> for Map<K, V, C, A> where C: Compare<K>, A: Augment {
     fn extend<I: IntoIterator<Item=(K, V)>>(&mut self, it: I) {
         for (k, v) in it { self.insert(k, v); }
     }
 }
 
-impl<K, V, C> iter::FromIterator<(K, V)> for Map<K, V, C>
-    where C: Compare<K> + Default {
+impl<K, V, C, A> iter::FromIterator<(K, V)> for Map<K, V, C, A>
+    where C: Compare<K> + Default, A: Augment {
 
     fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Self {
         let mut map = Map::default();
@@ -969,38 +1038,43 @@ impl<K, V, C> iter::FromIterator<(K, V)> for Map<K, V, C>
     }
 }
 
-impl<K, V, C> Hash for Map<K, V, C> where K: Hash, V: Hash, C: Compare<K> {
+impl<K, V, C, A> Hash for Map<K, V, C, A> where K: Hash, V: Hash, C: Compare<K>, A: Augment {
     fn hash<H: hash::Hasher>(&self, h: &mut H) {
         for e in self.iter() { e.hash(h); }
     }
 }
 
-impl<'a, K, V, C, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, C>
-    where C: Compare<K> + Compare<Q, K> {
+impl<'a, K, V, C, A, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, C, A>
+    where C: Compare<K> + Compare<Q, K>, A: Augment {
 
     type Output = V;
     fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
 }
 
-impl<'a, K, V, C> IntoIterator for &'a Map<K, V, C> where C: Compare<K> {
+impl<K, V, C> ops::Index<usize> for Map<K, V, C, OrderStat> where C: Compare<K> {
+    type Output = V;
+    fn index(&self, index: usize) -> &V { self.select(index).expect("index out of bounds").1 }
+}
+
+impl<'a, K, V, C, A> IntoIterator for &'a Map<K, V, C, A> where C: Compare<K>, A: Augment {
     type Item = (&'a K, &'a V);
-    type IntoIter = Iter<'a, K, V>;
-    fn into_iter(self) -> Iter<'a, K, V> { self.iter() }
+    type IntoIter = Iter<'a, K, V, A>;
+    fn into_iter(self) -> Iter<'a, K, V, A> { self.iter() }
 }
 
-impl<'a, K, V, C> IntoIterator for &'a mut Map<K, V, C> where C: Compare<K> {
+impl<'a, K, V, C, A> IntoIterator for &'a mut Map<K, V, C, A> where C: Compare<K>, A: Augment {
     type Item = (&'a K, &'a mut V);
-    type IntoIter = IterMut<'a, K, V>;
-    fn into_iter(self) -> IterMut<'a, K, V> { self.iter_mut() }
+    type IntoIter = IterMut<'a, K, V, A>;
+    fn into_iter(self) -> IterMut<'a, K, V, A> { self.iter_mut() }
 }
 
-impl<K, V, C> IntoIterator for Map<K, V, C> where C: Compare<K> {
+impl<K, V, C, A> IntoIterator for Map<K, V, C, A> where C: Compare<K>, A: Augment {
     type Item = (K, V);
-    type IntoIter = IntoIter<K, V>;
-    fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
+    type IntoIter = IntoIter<K, V, A>;
+    fn into_iter(self) -> IntoIter<K, V, A> { self.into_iter() }
 }
 
-impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
+impl<K, V, C, A> PartialEq for Map<K, V, C, A> where V: PartialEq, C: Compare<K>, A: Augment {
     fn eq(&self, other: &Self) -> bool {
         self.len() == other.len() && self.iter().zip(other.iter()).all(|(l, r)| {
             self.cmp.compares_eq(&l.0, &r.0) && l.1 == r.1
@@ -1008,9 +1082,9 @@ impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
     }
 }
 
-impl<K, V, C> Eq for Map<K, V, C> where V: Eq, C: Compare<K> {}
+impl<K, V, C, A> Eq for Map<K, V, C, A> where V: Eq, C: Compare<K>, A: Augment {}
 
-impl<K, V, C> PartialOrd for Map<K, V, C> where V: PartialOrd, C: Compare<K> {
+impl<K, V, C, A> PartialOrd for Map<K, V, C, A> where V: PartialOrd, C: Compare<K>, A: Augment {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let mut l = self.iter();
         let mut r = other.iter();
@@ -1032,7 +1106,7 @@ impl<K, V, C> PartialOrd for Map<K, V, C> where V: PartialOrd, C: Compare<K> {
     }
 }
 
-impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
+impl<K, V, C, A> Ord for Map<K, V, C, A> where V: Ord, C: Compare<K>, A: Augment {
     fn cmp(&self, other: &Self) -> Ordering {
         let mut l = self.iter();
         let mut r = other.iter();
@@ -1075,9 +1149,9 @@ impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
 /// }
 /// ```
 #[derive(Clone)]
-pub struct IntoIter<K, V>(node::Iter<Box<Node<K, V>>>);
+pub struct IntoIter<K, V, A = ()>(node::Iter<Box<Node<K, V, A>>>);
 
-impl<K, V> Iterator for IntoIter<K, V> {
+impl<K, V, A> Iterator for IntoIter<K, V, A> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1088,11 +1162,11 @@ impl<K, V> Iterator for IntoIter<K, V> {
     fn min(mut self) -> Option<(K, V)> { self.next() }
 }
 
-impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
+impl<K, V, A> DoubleEndedIterator for IntoIter<K, V, A> {
     fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
 }
 
-impl<K, V> ExactSizeIterator for IntoIter<K, V> {
+impl<K, V, A> ExactSizeIterator for IntoIter<K, V, A> {
     fn len(&self) -> usize { self.0.len() }
 }
 
@@ -1115,13 +1189,13 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<MarkedNode<'a, K, V>>);
+pub struct Iter<'a, K: 'a, V: 'a, A: 'a = ()>(node::Iter<MarkedNode<'a, K, V, A>>);
 
-impl<'a, K, V> Clone for Iter<'a, K, V> {
-    fn clone(&self) -> Iter<'a, K, V> { Iter(self.0.clone()) }
+impl<'a, K, V, A> Clone for Iter<'a, K, V, A> {
+    fn clone(&self) -> Self { Iter(self.0.clone()) }
 }
 
-impl<'a, K, V> Iterator for Iter<'a, K, V> {
+impl<'a, K, V, A> Iterator for Iter<'a, K, V, A> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1132,11 +1206,11 @@ impl<'a, K, V> Iterator for Iter<'a, K, V> {
     fn min(mut self) -> Option<(&'a K, &'a V)> { self.next() }
 }
 
-impl<'a, K, V> DoubleEndedIterator for Iter<'a, K, V> {
+impl<'a, K, V, A> DoubleEndedIterator for Iter<'a, K, V, A> {
     fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
 }
 
-impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {
+impl<'a, K, V, A> ExactSizeIterator for Iter<'a, K, V, A> {
     fn len(&self) -> usize { self.0.len() }
 }
 
@@ -1160,9 +1234,9 @@ impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct IterMut<'a, K: 'a, V: 'a>(node::Iter<MutMarkedNode<'a, K, V>>);
+pub struct IterMut<'a, K: 'a, V: 'a, A: 'a = ()>(node::Iter<MutMarkedNode<'a, K, V, A>>);
 
-impl<'a, K, V> Iterator for IterMut<'a, K, V> {
+impl<'a, K, V, A> Iterator for IterMut<'a, K, V, A> {
     type Item = (&'a K, &'a mut V);
     fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1173,11 +1247,11 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     fn min(mut self) -> Option<(&'a K, &'a mut V)> { self.next() }
 }
 
-impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
+impl<'a, K, V, A> DoubleEndedIterator for IterMut<'a, K, V, A> {
     fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
 }
 
-impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
+impl<'a, K, V, A> ExactSizeIterator for IterMut<'a, K, V, A> {
     fn len(&self) -> usize { self.0.len() }
 }
 
@@ -1188,10 +1262,10 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
 /// Acquire through [`Map::into_range`](struct.Map.html#method.into_range).
 #[cfg(feature = "range")]
 #[derive(Clone)]
-pub struct IntoRange<K, V>(node::Range<Box<Node<K, V>>>);
+pub struct IntoRange<K, V, A = ()>(node::Range<Box<Node<K, V, A>>>);
 
 #[cfg(feature = "range")]
-impl<K, V> Iterator for IntoRange<K, V> {
+impl<K, V, A> Iterator for IntoRange<K, V, A> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1202,7 +1276,7 @@ impl<K, V> Iterator for IntoRange<K, V> {
 }
 
 #[cfg(feature = "range")]
-impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
+impl<K, V, A> DoubleEndedIterator for IntoRange<K, V, A> {
     fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
 }
 
@@ -1213,15 +1287,15 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 ///
 /// Acquire through [`Map::range`](struct.Map.html#method.range).
 #[cfg(feature = "range")]
-pub struct Range<'a, K: 'a, V: 'a>(node::Range<MarkedNode<'a, K, V>>);
+pub struct Range<'a, K: 'a, V: 'a, A: 'a = ()>(node::Range<MarkedNode<'a, K, V, A>>);
 
 #[cfg(feature = "range")]
-impl<'a, K, V> Clone for Range<'a, K, V> {
-    fn clone(&self) -> Range<'a, K, V> { Range(self.0.clone()) }
+impl<'a, K, V, A> Clone for Range<'a, K, V, A> {
+    fn clone(&self) -> Self { Range(self.0.clone()) }
 }
 
 #[cfg(feature = "range")]
-impl<'a, K, V> Iterator for Range<'a, K, V> {
+impl<'a, K, V, A> Iterator for Range<'a, K, V, A> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1232,7 +1306,7 @@ impl<'a, K, V> Iterator for Range<'a, K, V> {
 }
 
 #[cfg(feature = "range")]
-impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
+impl<'a, K, V, A> DoubleEndedIterator for Range<'a, K, V, A> {
     fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
 }
 
@@ -1243,10 +1317,10 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 ///
 /// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
 #[cfg(feature = "range")]
-pub struct RangeMut<'a, K: 'a, V: 'a>(node::Range<MutMarkedNode<'a, K, V>>);
+pub struct RangeMut<'a, K: 'a, V: 'a, A: 'a = ()>(node::Range<MutMarkedNode<'a, K, V, A>>);
 
 #[cfg(feature = "range")]
-impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
+impl<'a, K, V, A> Iterator for RangeMut<'a, K, V, A> {
     type Item = (&'a K, &'a mut V);
     fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -1257,21 +1331,21 @@ impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
 }
 
 #[cfg(feature = "range")]
-impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
+impl<'a, K, V, A> DoubleEndedIterator for RangeMut<'a, K, V, A> {
     fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
 }
 
 /// An entry in the map.
 ///
 /// See [`Map::entry`](struct.Map.html#method.entry) for an example.
-pub enum Entry<'a, K: 'a, V: 'a> {
+pub enum Entry<'a, K: 'a, V: 'a, A: 'a = ()> where A: Augment {
     /// An occupied entry.
-    Occupied(OccupiedEntry<'a, K, V>),
+    Occupied(OccupiedEntry<'a, K, V, A>),
     /// A vacant entry.
-    Vacant(VacantEntry<'a, K, V>),
+    Vacant(VacantEntry<'a, K, V, A>),
 }
 
-impl<'a, K, V> Entry<'a, K, V> {
+impl<'a, K, V, A> Entry<'a, K, V, A> where A: Augment {
     /// Returns the entry's value, inserting the given default if the entry is vacant.
     pub fn or_insert(self, default: V) -> &'a mut V {
         match self {
