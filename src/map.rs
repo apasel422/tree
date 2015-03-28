@@ -11,7 +11,7 @@ use std::iter::{self, IntoIterator};
 use std::marker::PhantomData;
 use std::mem::transmute;
 use std::ops;
-use super::node::{self, Left, LinkExt, Node, Right};
+use super::node::{self, Dir, Left, LinkExt, Node, Right};
 
 /// An ordered map based on a binary search tree.
 ///
@@ -258,7 +258,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"c")));
     /// ```
     pub fn max(&self) -> Option<(&K, &V)> {
-        node::extremum::<_, Right>(&self.root).key_value()
+        Right::extremum(&self.root).key_value()
     }
 
     /// Returns a reference to the map's maximum key and a mutable reference to its
@@ -283,7 +283,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"cc")));
     /// ```
     pub fn max_mut(&mut self) -> Option<(&K, &mut V)> {
-        node::extremum::<_, Right>(&mut self.root).key_value_mut()
+        Right::extremum(&mut self.root).key_value_mut()
     }
 
     /// Removes the map's maximum key and returns it and its associated value, or `None` if the map
@@ -302,7 +302,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_max(), Some((3, "c")));
     /// ```
     pub fn remove_max(&mut self) -> Option<(K, V)> {
-        let key_value = node::remove_extremum::<_, _, Right>(&mut self.root).take();
+        let key_value = Right::remove_extremum(&mut self.root).take();
         if key_value.is_some() { self.len -= 1; }
         key_value
     }
@@ -323,7 +323,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"a")));
     /// ```
     pub fn min(&self) -> Option<(&K, &V)> {
-        node::extremum::<_, Left>(&self.root).key_value()
+        Left::extremum(&self.root).key_value()
     }
 
     /// Returns a reference to the map's minimum key and a mutable reference to its
@@ -348,7 +348,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"aa")));
     /// ```
     pub fn min_mut(&mut self) -> Option<(&K, &mut V)> {
-        node::extremum::<_, Left>(&mut self.root).key_value_mut()
+        Left::extremum(&mut self.root).key_value_mut()
     }
 
     /// Removes the map's minimum key and returns it and its associated value, or `None` if the map
@@ -367,7 +367,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_min(), Some((1, "a")));
     /// ```
     pub fn remove_min(&mut self) -> Option<(K, V)> {
-        let key_value = node::remove_extremum::<_, _, Left>(&mut self.root).take();
+        let key_value = Left::remove_extremum(&mut self.root).take();
         if key_value.is_some() { self.len -= 1; }
         key_value
     }
@@ -393,7 +393,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.pred(&4), Some((&3, &"c")));
     /// ```
     pub fn pred<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Left>(&self.root, &self.cmp, key, false).key_value()
+        Left::closest(&self.root, &self.cmp, key, false).key_value()
     }
 
     /// Returns a reference to the greatest key that is strictly less than the given key and a
@@ -419,7 +419,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.pred(&2), Some((&1, &"aa")));
     /// ```
     pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Left>(&mut self.root, &self.cmp, key, false).key_value_mut()
+        Left::closest(&mut self.root, &self.cmp, key, false).key_value_mut()
     }
 
     /// Returns a reference to the greatest key that is less than or equal to the given key and a
@@ -443,7 +443,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.pred_or_eq(&4), Some((&3, &"c")));
     /// ```
     pub fn pred_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Left>(&self.root, &self.cmp, key, true).key_value()
+        Left::closest(&self.root, &self.cmp, key, true).key_value()
     }
 
     /// Returns a reference to the greatest key that is less than or equal to the given key and a
@@ -478,7 +478,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn pred_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        node::closest::<_, _, _, Left>(&mut self.root, &self.cmp, key, true).key_value_mut()
+        Left::closest(&mut self.root, &self.cmp, key, true).key_value_mut()
     }
 
     /// Returns a reference to the smallest key that is strictly greater than the given key and a
@@ -502,7 +502,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.succ(&4), None);
     /// ```
     pub fn succ<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Right>(&self.root, &self.cmp, key, false).key_value()
+        Right::closest(&self.root, &self.cmp, key, false).key_value()
     }
 
     /// Returns a reference to the smallest key that is strictly greater than the given key and a
@@ -528,7 +528,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.succ(&2), Some((&3, &"cc")));
     /// ```
     pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, false).key_value_mut()
+        Right::closest(&mut self.root, &self.cmp, key, false).key_value_mut()
     }
 
     /// Returns a reference to the smallest key that is greater than or equal to the given key and
@@ -552,7 +552,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.succ_or_eq(&4), None);
     /// ```
     pub fn succ_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        node::closest::<_, _, _, Right>(&self.root, &self.cmp, key, true).key_value()
+        Right::closest(&self.root, &self.cmp, key, true).key_value()
     }
 
     /// Returns a reference to the smallest key that is greater than or equal to the given key and
@@ -588,7 +588,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn succ_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        node::closest::<_, _, _, Right>(&mut self.root, &self.cmp, key, true).key_value_mut()
+        Right::closest(&mut self.root, &self.cmp, key, true).key_value_mut()
     }
 
     /// Returns an iterator that consumes the map.

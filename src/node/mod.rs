@@ -228,16 +228,63 @@ pub fn get<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
     })
 }
 
-pub trait Dir {
+pub trait Dir: Sized {
     type Opposite: Dir<Opposite=Self>;
 
     fn left() -> bool;
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V>;
 
-    fn reverse<K, V>(node: &Node<K, V>) -> &Link<K, V>;
+    fn extremum<'a, L>(link: L) -> L where L: LinkRef<'a> {
+        link.with(|mut link| {
+            while let Some(ref node) = *link {
+                let child = Self::forward(node);
+                if child.is_some() { link = child; } else { break; }
+            }
+
+            link
+        })
+    }
+
+    fn remove_extremum<K, V>(link: &mut Link<K, V>) -> Option<(K, V)> {
+        Self::extremum(link).take().map(|box node| (node.key, node.value))
+    }
+
+    fn closest<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q, inc: bool) -> L
+        where L: LinkRef<'a>, C: Compare<Q, L::K> {
+
+        link.with(|mut link| {
+            let mut closest_ancstr = None;
+
+            while let Some(ref node) = *link {
+                match cmp.compare(key, &node.key) {
+                    Equal => return
+                        if inc {
+                            link
+                        } else {
+                            let child = Self::forward(node);
+
+                            match closest_ancstr {
+                                Some(ancstr) if child.is_none() => ancstr,
+                                _ => Self::Opposite::extremum(child),
+                            }
+                        },
+                    order => link =
+                        if Self::left() == (order == Less) {
+                            Self::forward(node)
+                        } else {
+                            closest_ancstr = Some(link);
+                            Self::Opposite::forward(node)
+                        },
+                }
+            }
+
+            closest_ancstr.unwrap_or(link)
+        })
+    }
 }
 
+#[allow(unused)] // FIXME: rust-lang/rust#23808
 pub enum Left {}
 
 impl Dir for Left {
@@ -246,10 +293,9 @@ impl Dir for Left {
     fn left() -> bool { true }
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.left }
-
-    fn reverse<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.right }
 }
 
+#[allow(unused)] // FIXME: rust-lang/rust#23808
 pub enum Right {}
 
 impl Dir for Right {
@@ -258,54 +304,4 @@ impl Dir for Right {
     fn left() -> bool { false }
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.right }
-
-    fn reverse<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.left }
-}
-
-pub fn remove_extremum<K, V, D>(link: &mut Link<K, V>) -> Option<(K, V)> where D: Dir {
-    extremum::<_, D>(link).take().map(|box node| (node.key, node.value))
-}
-
-pub fn extremum<'a, L, D>(link: L) -> L where L: LinkRef<'a>, D: Dir {
-    link.with(|mut link| {
-        while let Some(ref node) = *link {
-            let child = D::forward(node);
-            if child.is_some() { link = child; } else { break; }
-        }
-
-        link
-    })
-}
-
-pub fn closest<'a, L, C, Q: ?Sized, D>(link: L, cmp: &C, key: &Q, inc: bool) -> L
-    where L: LinkRef<'a>, C: Compare<Q, L::K>, D: Dir {
-
-    link.with(|mut link| {
-        let mut closest_ancstr = None;
-
-        while let Some(ref node) = *link {
-            match cmp.compare(key, &node.key) {
-                Equal => return
-                    if inc {
-                        link
-                    } else {
-                        let child = D::forward(node);
-
-                        match closest_ancstr {
-                            Some(ancstr) if child.is_none() => ancstr,
-                            _ => extremum::<_, D::Opposite>(child),
-                        }
-                    },
-                order => link =
-                    if D::left() == (order == Less) {
-                        D::forward(node)
-                    } else {
-                        closest_ancstr = Some(link);
-                        D::reverse(node)
-                    },
-            }
-        }
-
-        closest_ancstr.unwrap_or(link)
-    })
 }
