@@ -8,7 +8,9 @@ extern crate compare;
 pub use map::Map;
 pub use set::Set;
 
+#[forbid(missing_docs)]
 pub mod map;
+#[forbid(missing_docs)]
 pub mod set;
 
 mod node;
