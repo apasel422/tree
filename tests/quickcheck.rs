@@ -218,3 +218,29 @@ fn range_rev(m: M, min: Bound<K>, max: Bound<K>) -> bool {
 
     order::equals(r, i)
 }
+
+#[quickcheck]
+fn remove_min(mut m: M) -> bool {
+    let min = m.min().map(|(k, v)| (k.clone(), v.clone()));
+    m.remove_min() == min
+}
+
+#[quickcheck]
+fn remove_max(mut m: M) -> bool {
+    let max = m.max().map(|(k, v)| (k.clone(), v.clone()));
+    m.remove_max() == max
+}
+
+#[quickcheck]
+fn remove_min_maintains_others(mut m: M) -> bool {
+    let others: Vec<(K, V)> = m.iter().skip(1).map(|(k, v)| (k.clone(), v.clone())).collect();
+    m.remove_min();
+    order::equals(m.into_iter(), others.into_iter())
+}
+
+#[quickcheck]
+fn remove_max_maintains_others(mut m: M) -> bool {
+    let others: Vec<(K, V)> = m.iter().rev().skip(1).map(|(k, v)| (k.clone(), v.clone())).collect();
+    m.remove_max();
+    order::equals(m.into_iter().rev(), others.into_iter())
+}

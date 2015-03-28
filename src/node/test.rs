@@ -13,14 +13,19 @@ enum Op<K> where K: Clone + Ord {
     Insert(K),
     /// Remove the key at index `n % map.len()` from the map.
     Remove(usize),
+    /// Remove the maximum key.
+    RemoveMax,
+    /// Remove the minimum key.
+    RemoveMin,
 }
 
 impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
     fn arbitrary<G: Gen>(gen: &mut G) -> Op<K> {
-        if gen.gen() {
-            Op::Insert(Arbitrary::arbitrary(gen))
-        } else {
-            Op::Remove(Arbitrary::arbitrary(gen))
+        match gen.gen_range(0, 4) {
+            0 => Op::Insert(Arbitrary::arbitrary(gen)),
+            1 => Op::Remove(Arbitrary::arbitrary(gen)),
+            2 => Op::RemoveMax,
+            _ => Op::RemoveMin,
         }
     }
 
@@ -28,6 +33,7 @@ impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
         match *self {
             Op::Insert(ref key) => box key.shrink().map(Op::Insert),
             Op::Remove(index) => box index.shrink().map(Op::Remove),
+            Op::RemoveMax | Op::RemoveMin => box None.into_iter(),
         }
     }
 }
@@ -41,6 +47,8 @@ impl<K> Op<K> where K: Clone + Ord {
                 let key = map.iter().nth(index % map.len()).unwrap().0.clone();
                 map.remove(&key);
             },
+            Op::RemoveMax => { map.remove_max(); }
+            Op::RemoveMin => { map.remove_min(); }
         }
     }
 }

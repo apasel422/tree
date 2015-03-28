@@ -149,34 +149,37 @@ pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
         };
 
         if rebalance {
-            let left_level = save.left.as_ref().map_or(0, |node| node.level);
-            let right_level = save.right.as_ref().map_or(0, |node| node.level);
-
-            // re-balance, if necessary
-            if left_level < save.level - 1 || right_level < save.level - 1 {
-                save.level -= 1;
-
-                if right_level > save.level {
-                    let save_level = save.level;
-                    if let Some(ref mut x) = save.right { x.level = save_level; }
-                }
-
-                save.skew();
-
-                if let Some(ref mut right) = save.right {
-                    right.skew();
-                    if let Some(ref mut x) = right.right { x.skew() };
-                }
-
-                save.split();
-                if let Some(ref mut x) = save.right { x.split(); }
-            }
-
+            self::rebalance(save);
             return old;
         }
     }
 
     node.take().map(|box node| (node.key, node.value))
+}
+
+fn rebalance<K, V>(save: &mut Node<K, V>) {
+    let left_level = save.left.as_ref().map_or(0, |node| node.level);
+    let right_level = save.right.as_ref().map_or(0, |node| node.level);
+
+    // re-balance, if necessary
+    if left_level < save.level - 1 || right_level < save.level - 1 {
+        save.level -= 1;
+
+        if right_level > save.level {
+            let save_level = save.level;
+            if let Some(ref mut x) = save.right { x.level = save_level; }
+        }
+
+        save.skew();
+
+        if let Some(ref mut right) = save.right {
+            right.skew();
+            if let Some(ref mut x) = right.right { x.skew() };
+        }
+
+        save.split();
+        if let Some(ref mut x) = save.right { x.split(); }
+    }
 }
 
 pub trait LinkRef<'a>: Sized {
@@ -234,6 +237,7 @@ pub trait Dir: Sized {
     fn left() -> bool;
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V>;
+    fn forward_mut<K, V>(node: &mut Node<K, V>) -> &mut Link<K, V>;
 
     fn extremum<'a, L>(link: L) -> L where L: LinkRef<'a> {
         link.with(|mut link| {
@@ -247,7 +251,17 @@ pub trait Dir: Sized {
     }
 
     fn remove_extremum<K, V>(link: &mut Link<K, V>) -> Option<(K, V)> {
-        Self::extremum(link).take().map(|box node| (node.key, node.value))
+        match *link {
+            Some(ref mut node) if Self::forward(node).is_some() => {
+                let key_value = Self::remove_extremum(Self::forward_mut(node));
+                rebalance(node);
+                key_value
+            }
+            _ => link.take().map(|box mut node| {
+                *link = Self::Opposite::forward_mut(&mut node).take();
+                (node.key, node.value)
+            }),
+        }
     }
 
     fn closest<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q, inc: bool) -> L
@@ -293,6 +307,7 @@ impl Dir for Left {
     fn left() -> bool { true }
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.left }
+    fn forward_mut<K, V>(node: &mut Node<K, V>) -> &mut Link<K, V> { &mut node.left }
 }
 
 #[allow(unused)] // FIXME: rust-lang/rust#23808
@@ -304,4 +319,5 @@ impl Dir for Right {
     fn left() -> bool { false }
 
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.right }
+    fn forward_mut<K, V>(node: &mut Node<K, V>) -> &mut Link<K, V> { &mut node.right }
 }
