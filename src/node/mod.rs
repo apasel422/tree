@@ -110,16 +110,22 @@ pub fn remove<K, V, C, Q: ?Sized>(link: &mut Link<K, V>, cmp: &C, key: &Q)
             Less => remove(&mut node.left, cmp, key),
             Greater => remove(&mut node.right, cmp, key),
             Equal => {
+                let mut path: Vec<*mut Node<K, V>> = vec![];
+
                 let replacement = if node.left.is_some() {
-                    Right::extremum(&mut node.left).take()
+                    Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _))
+                        .take()
                 } else if node.right.is_some() {
-                    Left::extremum(&mut node.right).take()
+                    Left::extremum_f(&mut node.right, |node| path.push(node as *const _ as *mut _))
+                        .take()
                 } else {
                     take = true;
                     None
                 };
 
                 replacement.map(|replacement| {
+                    for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
+
                     let replacement = *replacement; (
                         replace(&mut node.key, replacement.key),
                         replace(&mut node.value, replacement.value)
@@ -223,11 +229,17 @@ pub trait Dir: Sized {
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V>;
     fn forward_mut<K, V>(node: &mut Node<K, V>) -> &mut Link<K, V>;
 
-    fn extremum<'a, L>(link: L) -> L where L: LinkRef<'a> {
+    fn extremum<'a, L>(link: L) -> L where L: LinkRef<'a> { Self::extremum_f(link, |_| ()) }
+
+    fn extremum_f<'a, L, F>(link: L, mut f: F) -> L
+        where L: LinkRef<'a>, F: FnMut(&'a Node<L::K, L::V>) {
+
         link.with(|mut link| {
             while let Some(ref node) = *link {
                 let child = Self::forward(node);
-                if child.is_some() { link = child; } else { break; }
+                if child.is_none() { break; }
+                link = child;
+                f(node);
             }
 
             link
