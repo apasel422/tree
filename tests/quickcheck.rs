@@ -243,3 +243,26 @@ fn remove_max_maintains_others(mut m: M) -> bool {
     m.remove_max();
     order::equals(m.into_iter().rev(), others.into_iter())
 }
+
+#[quickcheck]
+fn remove_maintains_others(mut m: M, k: K, v: V) -> TestResult {
+    if m.contains_key(&k) {
+        TestResult::discard()
+    } else {
+        let m2 = m.clone();
+        m.insert(k, v);
+        m.remove(&k);
+        TestResult::from_bool(m == m2)
+    }
+}
+
+#[quickcheck]
+fn remove_absent_maintains(mut m: M, k: K) -> TestResult {
+    if m.contains_key(&k) {
+        TestResult::discard()
+    } else {
+        let m2 = m.clone();
+        m.remove(&k);
+        TestResult::from_bool(m == m2)
+    }
+}

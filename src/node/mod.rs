@@ -100,65 +100,45 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
     }
 }
 
-// Adapted from https://github.com/Gankro/collect-rs/tree/map.rs
-pub fn remove<K, V, C, Q: ?Sized>(node: &mut Link<K, V>, cmp: &C, key: &Q)
+pub fn remove<K, V, C, Q: ?Sized>(link: &mut Link<K, V>, cmp: &C, key: &Q)
     -> Option<(K, V)> where C: Compare<Q, K> {
 
-    fn heir_swap<K, V>(node: &mut Node<K, V>, child: &mut Link<K, V>) {
-        if let Some(ref mut x) = *child {
-            let mut x = x;
+    let mut take = false;
 
-            loop {
-                let x_curr = x;
-
-                x = match x_curr.right {
-                    None => break,
-                    Some(ref mut right) => right,
-                };
-            }
-
-            swap(&mut node.key, &mut x.key);
-            swap(&mut node.value, &mut x.value);
-        }
-    }
-
-    if let Some(ref mut save) = *node {
-        let (old, rebalance) = match cmp.compare(key, &save.key) {
-            Less => (remove(&mut save.left, cmp, key), true),
-            Greater => (remove(&mut save.right, cmp, key), true),
+    if let Some(ref mut node) = *link {
+        let key_value = match cmp.compare(&key, &node.key) {
+            Less => remove(&mut node.left, cmp, key),
+            Greater => remove(&mut node.right, cmp, key),
             Equal => {
-                if let Some(mut left) = save.left.take() {
-                    if save.right.is_some() {
-                        if left.right.is_some() {
-                            heir_swap(save, &mut left.right);
-                        } else {
-                            swap(&mut save.key, &mut left.key);
-                            swap(&mut save.value, &mut left.value);
-                        }
-
-                        save.left = Some(left);
-                        (remove(&mut save.left, cmp, key), true)
-                    } else {
-                        let Node { key, value, .. } = *replace(save, left);
-                        *save = save.left.take().unwrap();
-                        (Some((key, value)), true)
-                    }
-                } else if let Some(new) = save.right.take() {
-                    let Node { key, value, .. } = *replace(save, new);
-                    (Some((key, value)), true)
+                let replacement = if node.left.is_some() {
+                    Right::extremum(&mut node.left).take()
+                } else if node.right.is_some() {
+                    Left::extremum(&mut node.right).take()
                 } else {
-                    (None, false)
-                }
+                    take = true;
+                    None
+                };
+
+                replacement.map(|replacement| {
+                    let replacement = *replacement; (
+                        replace(&mut node.key, replacement.key),
+                        replace(&mut node.value, replacement.value)
+                    )
+                })
             }
         };
 
-        if rebalance {
-            self::rebalance(save);
-            return old;
+        if key_value.is_some() {
+            rebalance(node);
+            return key_value;
         }
     }
 
-    node.take().map(|node| { let node = *node; (node.key, node.value) })
+    if take {
+        link.take().map(|node| { let node = *node; (node.key, node.value) })
+    } else {
+        None
+    }
 }
 
 fn rebalance<K, V>(save: &mut Node<K, V>) {
