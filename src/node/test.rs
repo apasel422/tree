@@ -17,15 +17,21 @@ enum Op<K> where K: Clone + Ord {
     RemoveMax,
     /// Remove the minimum key.
     RemoveMin,
+    /// Insert a key into the map using the entry API.
+    EntryInsert(K),
+    /// Remove the key at index `n % map.len()` from the map using the entry API.
+    EntryRemove(usize),
 }
 
 impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
     fn arbitrary<G: Gen>(gen: &mut G) -> Op<K> {
-        match gen.gen_range(0, 4) {
+        match gen.gen_range(0, 6) {
             0 => Op::Insert(Arbitrary::arbitrary(gen)),
             1 => Op::Remove(Arbitrary::arbitrary(gen)),
             2 => Op::RemoveMax,
-            _ => Op::RemoveMin,
+            3 => Op::RemoveMin,
+            4 => Op::EntryInsert(Arbitrary::arbitrary(gen)),
+            _ => Op::EntryRemove(Arbitrary::arbitrary(gen)),
         }
     }
 
@@ -34,6 +40,8 @@ impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
             Op::Insert(ref key) => Box::new(key.shrink().map(Op::Insert)),
             Op::Remove(index) => Box::new(index.shrink().map(Op::Remove)),
             Op::RemoveMax | Op::RemoveMin => Box::new(None.into_iter()),
+            Op::EntryInsert(ref key) => Box::new(key.shrink().map(Op::EntryInsert)),
+            Op::EntryRemove(index) => Box::new(index.shrink().map(Op::EntryRemove)),
         }
     }
 }
@@ -49,6 +57,17 @@ impl<K> Op<K> where K: Clone + Ord {
             },
             Op::RemoveMax => { map.remove_max(); }
             Op::RemoveMin => { map.remove_min(); }
+            Op::EntryInsert(key) => { map.entry(key).or_insert(()); }
+            Op::EntryRemove(index) => if !map.is_empty() {
+                use map::Entry;
+
+                let key = map.iter().nth(index % map.len()).unwrap().0.clone();
+
+                match map.entry(key) {
+                    Entry::Occupied(e) => { e.remove(); }
+                    Entry::Vacant(_) => panic!("expected an occupied entry"),
+                }
+            },
         }
     }
 }

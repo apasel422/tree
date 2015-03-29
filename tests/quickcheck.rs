@@ -179,6 +179,166 @@ mod remove {
     }
 }
 
+mod entry {
+    use quickcheck::TestResult;
+    use std::iter::order;
+    use super::{K, Map, V};
+    use tree::map::Entry;
+
+    #[quickcheck]
+    fn is_occupied_when_key_is_present(mut map: Map, key: K) -> TestResult {
+        if map.contains_key(&key) {
+            let value = map[&key];
+
+            TestResult::from_bool(match map.entry(key) {
+                Entry::Occupied(e) => e.key() == &key && *e.get() == value,
+                Entry::Vacant(_) => false,
+            })
+        } else {
+            TestResult::discard()
+        }
+    }
+
+    #[quickcheck]
+    fn is_vacant_when_key_is_absent(mut map: Map, key: K) -> TestResult {
+        if map.contains_key(&key) {
+            TestResult::discard()
+        } else {
+            TestResult::from_bool(match map.entry(key) {
+                Entry::Occupied(_) => false,
+                Entry::Vacant(_) => true,
+            })
+        }
+    }
+
+    #[quickcheck]
+    fn occupied_insert_maintains_len(mut map: Map, key: K, value: V) -> TestResult {
+        let old_len = map.len();
+
+        match map.entry(key) {
+            Entry::Occupied(mut e) => { e.insert(value); }
+            Entry::Vacant(_) => return TestResult::discard(),
+        }
+
+        TestResult::from_bool(map.len() == old_len)
+    }
+
+    #[quickcheck]
+    fn vacant_insert_increments_len(mut map: Map, key: K, value: V) -> TestResult {
+        let old_len = map.len();
+
+        match map.entry(key) {
+            Entry::Occupied(_) => return TestResult::discard(),
+            Entry::Vacant(e) => { e.insert(value); }
+        }
+
+        TestResult::from_bool(map.len() == old_len + 1)
+    }
+
+    #[quickcheck]
+    fn occupied_insert_replaces_value(mut map: Map, key: K, value: V) -> TestResult {
+        match map.entry(key) {
+            Entry::Occupied(mut e) => { e.insert(value); }
+            Entry::Vacant(_) => return TestResult::discard(),
+        }
+
+        TestResult::from_bool(map[&key] == value)
+    }
+
+    #[quickcheck]
+    fn occupied_insert_returns_old_value(mut map: Map, key: K, value: V) -> TestResult {
+        let old_value = map.get(&key).cloned();
+
+        match map.entry(key) {
+            Entry::Occupied(mut e) => TestResult::from_bool(e.insert(value) == old_value.unwrap()),
+            Entry::Vacant(_) => TestResult::discard(),
+        }
+    }
+
+    #[quickcheck]
+    fn vacant_insert_inserts_key(mut map: Map, key: K, value: V) -> TestResult {
+        match map.entry(key) {
+            Entry::Occupied(_) => return TestResult::discard(),
+            Entry::Vacant(e) => { e.insert(value); }
+        }
+
+        TestResult::from_bool(map[&key] == value)
+    }
+
+    #[quickcheck]
+    fn vacant_insert_returns_value(mut map: Map, key: K, value: V) -> TestResult {
+        match map.entry(key) {
+            Entry::Occupied(_) => TestResult::discard(),
+            Entry::Vacant(e) => TestResult::from_bool(*e.insert(value) == value),
+        }
+    }
+
+    #[quickcheck]
+    fn insert_affects_no_other_keys(mut map: Map, key: K, value: V) -> bool {
+        let others: Vec<_> = map.iter()
+            .filter_map(|(k, v)| if *k == key { None } else { Some((k.clone(), v.clone())) })
+            .collect();
+
+        match map.entry(key) {
+            Entry::Occupied(mut e) => { e.insert(value); }
+            Entry::Vacant(e) => { e.insert(value); }
+        }
+
+        order::equals(map.into_iter().filter(|e| e.0 != key), others.into_iter())
+    }
+
+    #[quickcheck]
+    fn remove_decrements_len(mut map: Map, key: K) -> TestResult {
+        let old_len = map.len();
+
+        match map.entry(key) {
+            Entry::Occupied(e) => { e.remove(); }
+            Entry::Vacant(_) => return TestResult::discard(),
+        }
+
+        TestResult::from_bool(map.len() == old_len - 1)
+    }
+
+    #[quickcheck]
+    fn remove_returns_key_value(mut map: Map, key: K) -> TestResult {
+        let value = map.get(&key).cloned();
+
+        match map.entry(key) {
+            Entry::Occupied(e) => TestResult::from_bool(e.remove() == (key, value.unwrap())),
+            Entry::Vacant(_) => TestResult::discard(),
+        }
+    }
+
+    #[quickcheck]
+    fn remove_removes_key(mut map: Map, key: K) -> TestResult {
+        match map.entry(key) {
+            Entry::Occupied(e) => { e.remove(); }
+            Entry::Vacant(_) => return TestResult::discard(),
+        }
+
+        TestResult::from_bool(
+            !map.contains_key(&key) &&
+            map.get(&key).is_none() &&
+            map.get_mut(&key).is_none() &&
+            map.iter().find(|e| *e.0 == key).is_none()
+        )
+    }
+
+    #[quickcheck]
+    fn remove_removes_no_other_keys(mut map: Map, key: K) -> TestResult {
+        let others: Vec<_> = map.iter()
+            .filter_map(|(k, v)| if *k == key { None } else { Some((k.clone(), v.clone())) })
+            .collect();
+
+        match map.entry(key) {
+            Entry::Occupied(e) => { e.remove(); }
+            Entry::Vacant(_) => return TestResult::discard(),
+        }
+
+        TestResult::from_bool(order::equals(map.into_iter(), others.into_iter()))
+    }
+}
+
 #[quickcheck]
 fn max_agrees_with_iter(map: Map) -> bool {
     map.max() == map.iter().rev().next()

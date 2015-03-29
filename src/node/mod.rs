@@ -6,6 +6,7 @@ mod test;
 use compare::Compare;
 use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
+use super::map::Entry;
 
 pub use self::iter::Iter;
 
@@ -53,12 +54,12 @@ impl<K, V> Node<K, V> {
     // Remove left horizontal link by rotating right
     //
     // From https://github.com/Gankro/collect-rs/tree/map.rs
-    fn skew(&mut self) {
-        if self.left.as_ref().map_or(false, |x| x.level == self.level) {
-            let mut save = self.left.take().unwrap();
-            swap(&mut self.left, &mut save.right); // save.right now None
-            swap(self, &mut save);
-            self.right = Some(save);
+    fn skew(node: &mut Box<Self>) {
+        if node.left.as_ref().map_or(false, |x| x.level == node.level) {
+            let mut save = node.left.take().unwrap();
+            swap(&mut node.left, &mut save.right); // save.right now None
+            swap(node, &mut save);
+            node.right = Some(save);
         }
     }
 
@@ -66,14 +67,14 @@ impl<K, V> Node<K, V> {
     // the parent
     //
     // From https://github.com/Gankro/collect-rs/tree/map.rs
-    fn split(&mut self) {
-        if self.right.as_ref().map_or(false,
-          |x| x.right.as_ref().map_or(false, |y| y.level == self.level)) {
-            let mut save = self.right.take().unwrap();
-            swap(&mut self.right, &mut save.left); // save.left now None
+    fn split(node: &mut Box<Self>) {
+        if node.right.as_ref().map_or(false,
+          |x| x.right.as_ref().map_or(false, |y| y.level == node.level)) {
+            let mut save = node.right.take().unwrap();
+            swap(&mut node.right, &mut save.left); // save.left now None
             save.level += 1;
-            swap(self, &mut save);
-            self.left = Some(save);
+            swap(node, &mut save);
+            node.left = Some(save);
         }
     }
 }
@@ -93,8 +94,8 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
                 Greater => insert(&mut node.right, cmp, key, value),
             };
 
-            node.skew();
-            node.split();
+            Node::skew(node);
+            Node::split(node);
             old_value
         },
     }
@@ -110,7 +111,7 @@ pub fn remove<K, V, C, Q: ?Sized>(link: &mut Link<K, V>, cmp: &C, key: &Q)
             Less => remove(&mut node.left, cmp, key),
             Greater => remove(&mut node.right, cmp, key),
             Equal => {
-                let mut path: Vec<*mut Node<K, V>> = vec![];
+                let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
 
                 let replacement = if node.left.is_some() {
                     Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _))
@@ -147,7 +148,7 @@ pub fn remove<K, V, C, Q: ?Sized>(link: &mut Link<K, V>, cmp: &C, key: &Q)
     }
 }
 
-fn rebalance<K, V>(save: &mut Node<K, V>) {
+fn rebalance<K, V>(save: &mut Box<Node<K, V>>) {
     let left_level = save.left.as_ref().map_or(0, |node| node.level);
     let right_level = save.right.as_ref().map_or(0, |node| node.level);
 
@@ -160,15 +161,15 @@ fn rebalance<K, V>(save: &mut Node<K, V>) {
             if let Some(ref mut x) = save.right { x.level = save_level; }
         }
 
-        save.skew();
+        Node::skew(save);
 
         if let Some(ref mut right) = save.right {
-            right.skew();
-            if let Some(ref mut x) = right.right { x.skew() };
+            Node::skew(right);
+            if let Some(ref mut x) = right.right { Node::skew(x); };
         }
 
-        save.split();
-        if let Some(ref mut x) = save.right { x.split(); }
+        Node::split(save);
+        if let Some(ref mut x) = save.right { Node::split(x); }
     }
 }
 
@@ -209,14 +210,24 @@ impl<'a, K: 'a, V: 'a> LinkRef<'a> for &'a mut Link<K, V> {
 pub fn get<'a, L, C, Q: ?Sized>(link: L, cmp: &C, key: &Q) -> L
     where L: LinkRef<'a>, C: Compare<Q, L::K> {
 
+    get_f(link, cmp, key, |_| ())
+}
+
+fn get_f<'a, L, C, Q: ?Sized, F>(link: L, cmp: &C, key: &Q, mut f: F) -> L
+    where L: LinkRef<'a>, C: Compare<Q, L::K>, F: FnMut(&'a Box<Node<L::K, L::V>>) {
+
     link.with(|mut link| loop {
         match *link {
             None => return link,
-            Some(ref node) => match cmp.compare(key, &node.key) {
-                Equal => return link,
-                Less => link = &node.left,
-                Greater => link = &node.right,
-            },
+            Some(ref node) => {
+                match cmp.compare(key, &node.key) {
+                    Equal => return link,
+                    Less => link = &node.left,
+                    Greater => link = &node.right,
+                }
+
+                f(node);
+            }
         }
     })
 }
@@ -232,7 +243,7 @@ pub trait Dir: Sized {
     fn extremum<'a, L>(link: L) -> L where L: LinkRef<'a> { Self::extremum_f(link, |_| ()) }
 
     fn extremum_f<'a, L, F>(link: L, mut f: F) -> L
-        where L: LinkRef<'a>, F: FnMut(&'a Node<L::K, L::V>) {
+        where L: LinkRef<'a>, F: FnMut(&'a Box<Node<L::K, L::V>>) {
 
         link.with(|mut link| {
             while let Some(ref node) = *link {
@@ -318,3 +329,116 @@ impl Dir for Right {
     fn forward<K, V>(node: &Node<K, V>) -> &Link<K, V> { &node.right }
     fn forward_mut<K, V>(node: &mut Node<K, V>) -> &mut Link<K, V> { &mut node.right }
 }
+
+pub fn entry<'a, K, V, C>(link: &'a mut Link<K, V>, cmp: &C, key: K, len: &'a mut usize)
+    -> Entry<'a, K, V> where C: Compare<K> {
+
+    let mut path = vec![];
+    let link = get_f(link, cmp, &key, |node| path.push(node as *const _ as *mut _));
+
+    if link.is_some() {
+        Entry::Occupied(OccupiedEntry { path: path, link: link, len: len })
+    } else {
+        Entry::Vacant(VacantEntry { path: path, link: link, len: len, key: key })
+    }
+}
+
+/// An occupied entry.
+///
+/// See [`Map::entry`](struct.Map.html#method.entry) for an example.
+pub struct OccupiedEntry<'a, K: 'a, V: 'a> {
+    path: Vec<*mut Box<Node<K, V>>>,
+    link: &'a mut Link<K, V>,
+    len: &'a mut usize,
+}
+
+impl<'a, K, V> OccupiedEntry<'a, K, V> {
+    /// Returns a reference to the entry's key.
+    pub fn key(&self) -> &K { &self.link.as_ref().unwrap().key }
+
+    /// Returns a reference to the entry's value.
+    pub fn get(&self) -> &V { &self.link.as_ref().unwrap().value }
+
+    /// Returns a mutable reference to the entry's value.
+    pub fn get_mut(&mut self) -> &mut V { &mut self.link.as_mut().unwrap().value }
+
+    /// Returns a mutable reference to the entry's value with the same lifetime as the map.
+    pub fn into_mut(self) -> &'a mut V { &mut self.link.as_mut().unwrap().value }
+
+    /// Replaces the entry's value with the given value, returning the old one.
+    pub fn insert(&mut self, value: V) -> V { replace(self.get_mut(), value) }
+
+    /// Removes the entry from the map and returns its key and value.
+    pub fn remove(self) -> (K, V) {
+        *self.len -= 1;
+
+        let key_value = {
+            let node = self.link.as_mut().unwrap();
+            let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
+
+            let replacement = if node.left.is_some() {
+                Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _))
+                    .take()
+            } else if node.right.is_some() {
+                Left::extremum_f(&mut node.right, |node| path.push(node as *const _ as *mut _))
+                    .take()
+            } else {
+                None
+            };
+
+            replacement.map(|replacement| {
+                for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
+                let replacement = *replacement;
+                let key_value = (
+                    replace(&mut node.key, replacement.key),
+                    replace(&mut node.value, replacement.value)
+                );
+                rebalance(node);
+                key_value
+            })
+        }.unwrap_or_else(|| {
+            let node = *self.link.take().unwrap();
+            (node.key, node.value)
+        });
+
+        for node in self.path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
+        key_value
+    }
+}
+
+unsafe impl<'a, K, V> Send for OccupiedEntry<'a, K, V> where K: Send, V: Send {}
+unsafe impl<'a, K, V> Sync for OccupiedEntry<'a, K, V> where K: Sync, V: Sync {}
+
+/// A vacant entry.
+///
+/// See [`Map::entry`](struct.Map.html#method.entry) for an example.
+pub struct VacantEntry<'a, K: 'a, V: 'a> {
+    path: Vec<*mut Box<Node<K, V>>>,
+    link: &'a mut Link<K, V>,
+    len: &'a mut usize,
+    key: K,
+}
+
+impl<'a, K, V> VacantEntry<'a, K, V> {
+    /// Inserts the entry into the map with its key and the given value, returning a mutable
+    /// reference to the value with the same lifetime as the map.
+    #[allow(trivial_casts)]
+    pub fn insert(self, value: V) -> &'a mut V {
+        *self.len += 1;
+
+        *self.link = Some(Box::new(Node::new(self.key, value)));
+        let value = &mut self.link.as_mut().unwrap().value;
+
+        for node in self.path.into_iter().rev() {
+            unsafe {
+                Node::skew(&mut *node);
+                Node::split(&mut *node);
+            }
+        }
+
+        value
+    }
+}
+
+unsafe impl<'a, K, V> Send for VacantEntry<'a, K, V> where K: Send, V: Send {}
+unsafe impl<'a, K, V> Sync for VacantEntry<'a, K, V> where K: Sync, V: Sync {}

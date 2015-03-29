@@ -13,6 +13,8 @@ use std::mem::transmute;
 use std::ops;
 use super::node::{self, Dir, Left, LinkExt, Node, Right};
 
+pub use super::node::{OccupiedEntry, VacantEntry};
+
 /// An ordered map based on a binary search tree.
 ///
 /// The behavior of this map is undefined if a key's ordering relative to any other key changes
@@ -187,6 +189,25 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
         let key_value = node::remove(&mut self.root, &self.cmp, key);
         if key_value.is_some() { self.len -= 1; }
         key_value
+    }
+
+    /// Returns the map's entry corresponding to the given key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut counts = tree::Map::new();
+    ///
+    /// for s in vec!["a", "b", "a", "c", "a", "b"] {
+    ///     *counts.entry(s).or_insert(0) += 1;
+    /// }
+    ///
+    /// assert_eq!(counts[&"a"], 3);
+    /// assert_eq!(counts[&"b"], 2);
+    /// assert_eq!(counts[&"c"], 1);
+    /// ```
+    pub fn entry(&mut self, key: K) -> Entry<K, V> {
+        node::entry(&mut self.root, &self.cmp, key, &mut self.len)
     }
 
     /// Checks if the map contains the given key.
@@ -1073,5 +1094,33 @@ impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
     fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
         let next_back = self.iter.next_back();
         unsafe { transmute(next_back) }
+    }
+}
+
+/// An entry in the map.
+///
+/// See [`Map::entry`](struct.Map.html#method.entry) for an example.
+pub enum Entry<'a, K: 'a, V: 'a> {
+    /// An occupied entry.
+    Occupied(OccupiedEntry<'a, K, V>),
+    /// A vacant entry.
+    Vacant(VacantEntry<'a, K, V>),
+}
+
+impl<'a, K, V> Entry<'a, K, V> {
+    /// Returns the entry's value, inserting the given default if the entry is vacant.
+    pub fn or_insert(self, default: V) -> &'a mut V {
+        match self {
+            Entry::Occupied(e) => e.into_mut(),
+            Entry::Vacant(e) => e.insert(default),
+        }
+    }
+
+    /// Returns the entry's value, inserting the given function's result if the entry is vacant.
+    pub fn or_insert_with<F>(self, default: F) -> &'a mut V where F: FnOnce() -> V {
+        match self {
+            Entry::Occupied(e) => e.into_mut(),
+            Entry::Vacant(e) => e.insert(default()),
+        }
     }
 }
