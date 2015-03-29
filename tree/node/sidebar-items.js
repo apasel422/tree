@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Dir",""],["LinkExt",""],["LinkRef",""]]});
+initSidebarItems({"struct":[["OccupiedEntry","An occupied entry."],["VacantEntry","A vacant entry."]],"trait":[["Dir",""],["LinkExt",""],["LinkRef",""]]});

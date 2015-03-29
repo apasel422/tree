@@ -43,7 +43,7 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>Map</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-35' href='../../src/tree/map.rs.html#22-26'>[src]</a></span></h1>
+        </span><a id='src-38' href='../../src/tree/map.rs.html#24-28'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Map&lt;K, V, C = Natural&lt;K&gt;&gt; <span class='where'>where C: Compare&lt;K&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered map based on a binary search tree.</p>
@@ -172,6 +172,21 @@ with the key.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>len</span>(), <span class='number'>2</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>remove</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='prelude-val'>None</span>);
+</pre>
+</div><h4 id='method.entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.entry' class='fnname'>entry</a>(&amp;mut self, key: K) -&gt; <a class='enum' href='../../tree/map/enum.Entry.html' title='tree::map::Entry'>Entry</a>&lt;K, V&gt;</code></h4>
+<div class='docblock'><p>Returns the map&#39;s entry corresponding to the given key.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>counts</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
+
+<span class='kw'>for</span> <span class='ident'>s</span> <span class='kw'>in</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='string'>&quot;a&quot;</span>, <span class='string'>&quot;b&quot;</span>, <span class='string'>&quot;a&quot;</span>, <span class='string'>&quot;c&quot;</span>, <span class='string'>&quot;a&quot;</span>, <span class='string'>&quot;b&quot;</span>] {
+    <span class='op'>*</span><span class='ident'>counts</span>.<span class='ident'>entry</span>(<span class='ident'>s</span>).<span class='ident'>or_insert</span>(<span class='number'>0</span>) <span class='op'>+=</span> <span class='number'>1</span>;
+}
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>counts</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>], <span class='number'>3</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>counts</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>], <span class='number'>2</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>counts</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>], <span class='number'>1</span>);
 </pre>
 </div><h4 id='method.contains_key' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.contains_key' class='fnname'>contains_key</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
 <div class='docblock'><p>Checks if the map contains the given key.</p>
