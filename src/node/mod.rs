@@ -101,51 +101,41 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
     }
 }
 
+fn do_remove<K, V>(link: &mut Link<K, V>, path: Vec<*mut Box<Node<K, V>>>) -> Option<(K, V)> {
+    let key_value = match *link {
+        None => return None,
+        Some(ref mut node) => {
+            let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
+
+            let replacement = if node.left.is_some() {
+                Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _)).take()
+            } else if node.right.is_some() {
+                Left::extremum_f(&mut node.right, |node| path.push(node as *const _ as *mut _)).take()
+            } else {
+                None
+            };
+
+            replacement.map(|replacement| {
+                for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
+                let replacement = *replacement;
+                let key_value = (replace(&mut node.key, replacement.key),
+                                 replace(&mut node.value, replacement.value));
+                rebalance(node);
+                key_value
+            })
+        }
+    }.or_else(|| link.take().map(|node| { let node = *node; (node.key, node.value) }));
+
+    for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
+    key_value
+}
+
 pub fn remove<K, V, C, Q: ?Sized>(link: &mut Link<K, V>, cmp: &C, key: &Q)
     -> Option<(K, V)> where C: Compare<Q, K> {
 
-    let mut take = false;
-
-    if let Some(ref mut node) = *link {
-        let key_value = match cmp.compare(&key, &node.key) {
-            Less => remove(&mut node.left, cmp, key),
-            Greater => remove(&mut node.right, cmp, key),
-            Equal => {
-                let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
-
-                let replacement = if node.left.is_some() {
-                    Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _))
-                        .take()
-                } else if node.right.is_some() {
-                    Left::extremum_f(&mut node.right, |node| path.push(node as *const _ as *mut _))
-                        .take()
-                } else {
-                    take = true;
-                    None
-                };
-
-                replacement.map(|replacement| {
-                    for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
-
-                    let replacement = *replacement; (
-                        replace(&mut node.key, replacement.key),
-                        replace(&mut node.value, replacement.value)
-                    )
-                })
-            }
-        };
-
-        if key_value.is_some() {
-            rebalance(node);
-            return key_value;
-        }
-    }
-
-    if take {
-        link.take().map(|node| { let node = *node; (node.key, node.value) })
-    } else {
-        None
-    }
+    let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
+    let link = get_f(link, cmp, key, |node| path.push(node as *const _ as *mut _));
+    do_remove(link, path)
 }
 
 fn rebalance<K, V>(save: &mut Box<Node<K, V>>) {
@@ -371,38 +361,7 @@ impl<'a, K, V> OccupiedEntry<'a, K, V> {
     /// Removes the entry from the map and returns its key and value.
     pub fn remove(self) -> (K, V) {
         *self.len -= 1;
-
-        let key_value = {
-            let node = self.link.as_mut().unwrap();
-            let mut path: Vec<*mut Box<Node<K, V>>> = vec![];
-
-            let replacement = if node.left.is_some() {
-                Right::extremum_f(&mut node.left, |node| path.push(node as *const _ as *mut _))
-                    .take()
-            } else if node.right.is_some() {
-                Left::extremum_f(&mut node.right, |node| path.push(node as *const _ as *mut _))
-                    .take()
-            } else {
-                None
-            };
-
-            replacement.map(|replacement| {
-                for node in path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
-                let replacement = *replacement;
-                let key_value = (
-                    replace(&mut node.key, replacement.key),
-                    replace(&mut node.value, replacement.value)
-                );
-                rebalance(node);
-                key_value
-            })
-        }.unwrap_or_else(|| {
-            let node = *self.link.take().unwrap();
-            (node.key, node.value)
-        });
-
-        for node in self.path.into_iter().rev() { rebalance(unsafe { &mut *node }); }
-        key_value
+        do_remove(self.link, self.path).unwrap()
     }
 }
 
