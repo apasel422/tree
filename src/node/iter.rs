@@ -84,13 +84,13 @@ macro_rules! bound {
 }
 
 impl<N> Iter<N> where N: NodeRef {
-    pub fn new(root: Option<N>, size: usize) -> Iter<N> {
+    pub fn new(root: Option<N>, size: usize) -> Self {
         Iter { visits: root.into_iter().map(Visit::new).collect(), size: size }
     }
 
     pub fn range<C, Min: ?Sized, Max: ?Sized>(root: Option<N>, size: usize, cmp: &C,
                                               min: Bound<&Min>, max: Bound<&Max>)
-        -> Iter<N> where C: Compare<Min, N::Key> + Compare<Max, N::Key> {
+        -> Self where C: Compare<Min, N::Key> + Compare<Max, N::Key> {
 
         fn bound_to_opt<T>(bound: Bound<T>) -> Option<(T, bool)> {
             match bound {
@@ -174,7 +174,7 @@ mod visit {
     }
 
     impl<N> Visit<N> where N: super::NodeRef {
-        pub fn new(node: N) -> Visit<N> { Visit { node: node, seen: Seen::N } }
+        pub fn new(node: N) -> Self { Visit { node: node, seen: Seen::N } }
 
         pub fn left(&mut self) -> Option<N> {
             match self.seen {

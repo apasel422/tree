@@ -37,7 +37,7 @@ impl<T> Set<T> where T: Ord {
     /// assert_eq!(it.next(), Some(&3));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn new() -> Set<T> { Set { map: Map::new() } }
+    pub fn new() -> Self { Set { map: Map::new() } }
 }
 
 impl<T, C> Set<T, C> where C: Compare<T> {
@@ -64,7 +64,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(it.next(), None);
     /// # }
     /// ```
-    pub fn with_cmp(cmp: C) -> Set<T, C> { Set { map: Map::with_cmp(cmp) } }
+    pub fn with_cmp(cmp: C) -> Self { Set { map: Map::with_cmp(cmp) } }
 
     /// Checks if the set is empty.
     ///
@@ -458,7 +458,7 @@ impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
 }
 
 impl<T, C> Default for Set<T, C> where C: Compare<T> + Default {
-    fn default() -> Set<T, C> { Set::with_cmp(Default::default()) }
+    fn default() -> Self { Set::with_cmp(Default::default()) }
 }
 
 impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
@@ -468,8 +468,8 @@ impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
 }
 
 impl<T, C> iter::FromIterator<T> for Set<T, C> where C: Compare<T> + Default {
-    fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Set<T, C> {
-        let mut set: Set<T, C> = Default::default();
+    fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Self {
+        let mut set: Self = Default::default();
         set.extend(it);
         set
     }
@@ -492,19 +492,19 @@ impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
 }
 
 impl<T, C> PartialEq for Set<T, C> where C: Compare<T> {
-    fn eq(&self, other: &Set<T, C>) -> bool { self.map == other.map }
+    fn eq(&self, other: &Self) -> bool { self.map == other.map }
 }
 
 impl<T, C> Eq for Set<T, C> where C: Compare<T> {}
 
 impl<T, C> PartialOrd for Set<T, C> where C: Compare<T> {
-    fn partial_cmp(&self, other: &Set<T, C>) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.map.partial_cmp(&other.map)
     }
 }
 
 impl<T, C> Ord for Set<T, C> where C: Compare<T> {
-    fn cmp(&self, other: &Set<T, C>) -> Ordering { Ord::cmp(&self.map, &other.map) }
+    fn cmp(&self, other: &Self) -> Ordering { Ord::cmp(&self.map, &other.map) }
 }
 
 /// An iterator that consumes the set.

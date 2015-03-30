@@ -45,7 +45,7 @@ impl<K, V> Map<K, V> where K: Ord {
     /// assert_eq!(it.next(), Some((&3, &"c")));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn new() -> Map<K, V> { Map::with_cmp(::compare::natural()) }
+    pub fn new() -> Self { Map::with_cmp(::compare::natural()) }
 }
 
 impl<K, V, C> Map<K, V, C> where C: Compare<K> {
@@ -72,7 +72,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), None);
     /// # }
     /// ```
-    pub fn with_cmp(cmp: C) -> Map<K, V, C> {
+    pub fn with_cmp(cmp: C) -> Self {
         Map { root: None, len: 0, cmp: cmp }
     }
 
@@ -807,7 +807,7 @@ impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
 }
 
 impl<K, V, C> Default for Map<K, V, C> where C: Compare<K> + Default {
-    fn default() -> Map<K, V, C> { Map::with_cmp(Default::default()) }
+    fn default() -> Self { Map::with_cmp(Default::default()) }
 }
 
 impl<K, V, C> Extend<(K, V)> for Map<K, V, C> where C: Compare<K> {
@@ -819,8 +819,8 @@ impl<K, V, C> Extend<(K, V)> for Map<K, V, C> where C: Compare<K> {
 impl<K, V, C> iter::FromIterator<(K, V)> for Map<K, V, C>
     where C: Compare<K> + Default {
 
-    fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Map<K, V, C> {
-        let mut map: Map<K, V, C> = Default::default();
+    fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Self {
+        let mut map: Self = Default::default();
         map.extend(it);
         map
     }
@@ -858,7 +858,7 @@ impl<K, V, C> IntoIterator for Map<K, V, C> where C: Compare<K> {
 }
 
 impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
-    fn eq(&self, other: &Map<K, V, C>) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         self.len() == other.len() && self.iter().zip(other.iter()).all(|(l, r)| {
             self.cmp.compares_eq(&l.0, &r.0) && l.1 == r.1
         })
@@ -868,7 +868,7 @@ impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
 impl<K, V, C> Eq for Map<K, V, C> where V: Eq, C: Compare<K> {}
 
 impl<K, V, C> PartialOrd for Map<K, V, C> where V: PartialOrd, C: Compare<K> {
-    fn partial_cmp(&self, other: &Map<K, V, C>) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let mut l = self.iter();
         let mut r = other.iter();
 
@@ -890,7 +890,7 @@ impl<K, V, C> PartialOrd for Map<K, V, C> where V: PartialOrd, C: Compare<K> {
 }
 
 impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
-    fn cmp(&self, other: &Map<K, V, C>) -> Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         let mut l = self.iter();
         let mut r = other.iter();
 

@@ -24,7 +24,7 @@ enum Op<K> where K: Clone + Ord {
 }
 
 impl<K> Arbitrary for Op<K> where K: Arbitrary + Ord {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Op<K> {
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self {
         match gen.gen_range(0, 6) {
             0 => Op::Insert(Arbitrary::arbitrary(gen)),
             1 => Op::Remove(Arbitrary::arbitrary(gen)),
