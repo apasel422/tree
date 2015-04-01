@@ -404,6 +404,23 @@ than or equal to the given key.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;aaa&quot;</span>)));
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;cc&quot;</span>)));
 </pre>
+</div><h4 id='method.remove_pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_pred' class='fnname'>remove_pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Removes the predecessor of the given key from the map and returns it and its associated
+value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method removes the greatest key that is strictly less than
+the given key. If <code>inclusive</code> is <code>true</code>, this method removes the greatest key that is less
+than or equal to the given key.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.pred_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_entry' class='fnname'>pred_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/map/struct.OccupiedEntry.html' title='tree::map::OccupiedEntry'>OccupiedEntry</a>&lt;K, V&gt;&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the predecessor of the given key.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method returns the entry corresponding to the greatest key
+that is strictly less than the given key. If <code>inclusive</code> is <code>true</code>, this method returns
+the entry corresponding to the greatest key that is less than or equal to the given key.</p>
+
+<p>The given key need not itself be present in the map.</p>
 </div><h4 id='method.succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ' class='fnname'>succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, key: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;K, &amp;V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the successor of the given key and a
 reference to its associated value, or <code>None</code> if no such key is present in the map.</p>
@@ -475,6 +492,23 @@ than or equal to the given key.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>0</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;aa&quot;</span>)));
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='kw-2'>&amp;</span><span class='string'>&quot;ccc&quot;</span>)));
 </pre>
+</div><h4 id='method.remove_succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_succ' class='fnname'>remove_succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(K, V)</a>&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Removes the successor of the given key from the map and returns it and its associated
+value, or <code>None</code> if no such key is present in the map.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method removes the smallest key that is strictly greater
+than the given key. If <code>inclusive</code> is <code>true</code>, this method removes the smallest key that is
+greater than or equal to the given key.</p>
+
+<p>The given key need not itself be present in the map.</p>
+</div><h4 id='method.succ_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_entry' class='fnname'>succ_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, key: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/map/struct.OccupiedEntry.html' title='tree::map::OccupiedEntry'>OccupiedEntry</a>&lt;K, V&gt;&gt; <span class='where'>where C: Compare&lt;Q, K&gt;</span></code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the successor of the given key.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method returns the entry corresponding to the smallest key
+that is strictly greater than the given key. If <code>inclusive</code> is <code>true</code>, this method returns
+the entry corresponding to the smallest key that is greater than or equal to the given key.</p>
+
+<p>The given key need not itself be present in the map.</p>
 </div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../../tree/map/struct.IntoIter.html' title='tree::map::IntoIter'>IntoIter</a>&lt;K, V&gt;</code></h4>
 <div class='docblock'><p>Returns an iterator that consumes the map.</p>
 

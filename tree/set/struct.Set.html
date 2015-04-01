@@ -43,7 +43,7 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a>::<wbr><a class='struct' href=''>Set</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2597' href='../../src/tree/set.rs.html#18-20'>[src]</a></span></h1>
+        </span><a id='src-2779' href='../../src/tree/set.rs.html#18-20'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Set&lt;T, C = Natural&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;T&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered set based on a binary search tree.</p>
@@ -267,6 +267,15 @@ than or equal to the given item.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>pred</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
 </pre>
+</div><h4 id='method.remove_pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_pred' class='fnname'>remove_pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Removes the predecessor of the given item from the set and returns it, or <code>None</code> if no such
+item present in the set.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method removes the greatest item that is strictly less than
+the given item. If <code>inclusive</code> is <code>true</code>, this method removes the greatest item that is
+less than or equal to the given item.</p>
+
+<p>The given item need not itself be present in the set.</p>
 </div><h4 id='method.succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ' class='fnname'>succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the successor of the given item, or
 <code>None</code> if no such item is present in the set.</p>
@@ -297,6 +306,15 @@ greater than or equal to the given item.</p>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>succ</span>(<span class='kw-2'>&amp;</span><span class='number'>4</span>, <span class='boolval'>true</span>), <span class='prelude-val'>None</span>);
 </pre>
+</div><h4 id='method.remove_succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.remove_succ' class='fnname'>remove_succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Removes the successor of the given item from the set and returns it, or <code>None</code> if no such
+item present in the set.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method removes the smallest item that is strictly greater
+than the given item. If <code>inclusive</code> is <code>true</code>, this method removes the smallest item that
+is greater than or equal to the given item.</p>
+
+<p>The given item need not itself be present in the set.</p>
 </div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../../tree/set/struct.IntoIter.html' title='tree::set::IntoIter'>IntoIter</a>&lt;T&gt;</code></h4>
 <div class='docblock'><p>Returns an iterator that consumes the set.</p>
 
