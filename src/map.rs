@@ -11,7 +11,8 @@ use std::iter::{self, IntoIterator};
 use std::marker::PhantomData;
 use std::mem::transmute;
 use std::ops;
-use super::node::{self, Dir, Left, LinkExt, Node, Right};
+use super::node::{self, Find, Max, Min, Neighbor, Node, Traverse, as_node_ref};
+use super::node::build::{Build, Get, GetMut, PathBuilder};
 
 pub use super::node::{OccupiedEntry, VacantEntry};
 
@@ -186,7 +187,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
-        let key_value = node::remove(&mut self.root, &self.cmp, key);
+        let key_value = Find { key: key, cmp: &self.cmp }
+            .traverse(PathBuilder::new(&mut self.root)).remove();
         if key_value.is_some() { self.len -= 1; }
         key_value
     }
@@ -207,7 +209,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(counts[&"c"], 1);
     /// ```
     pub fn entry(&mut self, key: K) -> Entry<K, V> {
-        node::entry(&mut self.root, &self.cmp, key, &mut self.len)
+        Find { key: &key, cmp: &self.cmp }.traverse(PathBuilder::new(&mut self.root))
+            .into_entry(&mut self.len, key)
     }
 
     /// Checks if the map contains the given key.
@@ -221,7 +224,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert!(map.contains_key(&1));
     /// ```
     pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool where C: Compare<Q, K> {
-        node::get(&self.root, &self.cmp, key).is_some()
+        self.get(key).is_some()
     }
 
     /// Returns a reference to the value associated with the given key, or `None` if the
@@ -236,7 +239,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.get(&1), Some(&"a"));
     /// ```
     pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V> where C: Compare<Q, K> {
-        node::get(&self.root, &self.cmp, key).key_value().map(|e| e.1)
+        Find { key: key, cmp: &self.cmp }.traverse(Get::new(&self.root)).map(|e| e.1)
     }
 
     /// Returns a mutable reference to the value associated with the given key, or `None`
@@ -260,7 +263,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
         where C: Compare<Q, K> {
 
-        node::get(&mut self.root, &self.cmp, key).key_value_mut().map(|e| e.1)
+        Find { key: key, cmp: &self.cmp }.traverse(GetMut::new(&mut self.root)).map(|e| e.1)
     }
 
     /// Returns a reference to the map's maximum key and a reference to its associated
@@ -279,7 +282,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"c")));
     /// ```
     pub fn max(&self) -> Option<(&K, &V)> {
-        Right::extremum(&self.root).key_value()
+        Max.traverse(Get::new(&self.root))
     }
 
     /// Returns a reference to the map's maximum key and a mutable reference to its
@@ -304,7 +307,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"cc")));
     /// ```
     pub fn max_mut(&mut self) -> Option<(&K, &mut V)> {
-        Right::extremum(&mut self.root).key_value_mut()
+        Max.traverse(GetMut::new(&mut self.root))
     }
 
     /// Removes the map's maximum key and returns it and its associated value, or `None` if the map
@@ -323,9 +326,14 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_max(), Some((3, "c")));
     /// ```
     pub fn remove_max(&mut self) -> Option<(K, V)> {
-        let key_value = Right::remove_extremum(&mut self.root).take();
+        let key_value = Max.traverse(PathBuilder::new(&mut self.root)).remove();
         if key_value.is_some() { self.len -= 1; }
         key_value
+    }
+
+    /// Returns the map's entry corresponding to its maximum key.
+    pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+        Max.traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
     }
 
     /// Returns a reference to the map's minimum key and a reference to its associated
@@ -344,7 +352,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"a")));
     /// ```
     pub fn min(&self) -> Option<(&K, &V)> {
-        Left::extremum(&self.root).key_value()
+        Min.traverse(Get::new(&self.root))
     }
 
     /// Returns a reference to the map's minimum key and a mutable reference to its
@@ -369,7 +377,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"aa")));
     /// ```
     pub fn min_mut(&mut self) -> Option<(&K, &mut V)> {
-        Left::extremum(&mut self.root).key_value_mut()
+        Min.traverse(GetMut::new(&mut self.root))
     }
 
     /// Removes the map's minimum key and returns it and its associated value, or `None` if the map
@@ -388,13 +396,22 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_min(), Some((1, "a")));
     /// ```
     pub fn remove_min(&mut self) -> Option<(K, V)> {
-        let key_value = Left::remove_extremum(&mut self.root).take();
+        let key_value = Min.traverse(PathBuilder::new(&mut self.root)).remove();
         if key_value.is_some() { self.len -= 1; }
         key_value
     }
 
-    /// Returns a reference to the greatest key that is strictly less than the given key and a
+    /// Returns the map's entry corresponding to its minimum key.
+    pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+        Min.traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+    }
+
+    /// Returns a reference to the predecessor of the given key and a
     /// reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method finds the greatest key that is strictly less than
+    /// the given key. If `inclusive` is `true`, this method finds the greatest key that is less
+    /// than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
     ///
@@ -407,18 +424,31 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.pred(&0), None);
-    /// assert_eq!(map.pred(&1), None);
-    /// assert_eq!(map.pred(&2), Some((&1, &"a")));
-    /// assert_eq!(map.pred(&3), Some((&2, &"b")));
-    /// assert_eq!(map.pred(&4), Some((&3, &"c")));
+    /// assert_eq!(map.pred(&0, false), None);
+    /// assert_eq!(map.pred(&1, false), None);
+    /// assert_eq!(map.pred(&2, false), Some((&1, &"a")));
+    /// assert_eq!(map.pred(&3, false), Some((&2, &"b")));
+    /// assert_eq!(map.pred(&4, false), Some((&3, &"c")));
+    ///
+    /// assert_eq!(map.pred(&0, true), None);
+    /// assert_eq!(map.pred(&1, true), Some((&1, &"a")));
+    /// assert_eq!(map.pred(&2, true), Some((&2, &"b")));
+    /// assert_eq!(map.pred(&3, true), Some((&3, &"c")));
+    /// assert_eq!(map.pred(&4, true), Some((&3, &"c")));
     /// ```
-    pub fn pred<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        Left::closest(&self.root, &self.cmp, key, false).key_value()
+    pub fn pred<Q: ?Sized>(&self, key: &Q, inclusive: bool) -> Option<(&K, &V)>
+        where C: Compare<Q, K> {
+
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
+            .traverse(Get::new(&self.root))
     }
 
-    /// Returns a reference to the greatest key that is strictly less than the given key and a
+    /// Returns a reference to the predecessor of the given key and a
     /// mutable reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method finds the greatest key that is strictly less than
+    /// the given key. If `inclusive` is `true`, this method finds the greatest key that is less
+    /// than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
     ///
@@ -432,78 +462,41 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let pred = map.pred_mut(&2).unwrap();
+    ///     let pred = map.pred_mut(&2, false).unwrap();
     ///     assert_eq!(pred, (&1, &mut "a"));
     ///     *pred.1 = "aa";
     /// }
     ///
-    /// assert_eq!(map.pred(&2), Some((&1, &"aa")));
-    /// ```
-    pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
-        Left::closest(&mut self.root, &self.cmp, key, false).key_value_mut()
-    }
-
-    /// Returns a reference to the greatest key that is less than or equal to the given key and a
-    /// reference to its associated value, or `None` if no such key is present in the map.
-    ///
-    /// The given key need not itself be present in the map.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut map = tree::Map::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
-    ///
-    /// assert_eq!(map.pred_or_eq(&0), None);
-    /// assert_eq!(map.pred_or_eq(&1), Some((&1, &"a")));
-    /// assert_eq!(map.pred_or_eq(&2), Some((&2, &"b")));
-    /// assert_eq!(map.pred_or_eq(&3), Some((&3, &"c")));
-    /// assert_eq!(map.pred_or_eq(&4), Some((&3, &"c")));
-    /// ```
-    pub fn pred_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        Left::closest(&self.root, &self.cmp, key, true).key_value()
-    }
-
-    /// Returns a reference to the greatest key that is less than or equal to the given key and a
-    /// mutable reference to its associated value, or `None` if no such key is present in the map.
-    ///
-    /// The given key need not itself be present in the map.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut map = tree::Map::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
+    /// assert_eq!(map.pred(&2, false), Some((&1, &"aa")));
     ///
     /// {
-    ///     let pred_or_eq = map.pred_or_eq_mut(&1).unwrap();
-    ///     assert_eq!(pred_or_eq, (&1, &mut "a"));
-    ///     *pred_or_eq.1 = "aa";
+    ///     let pred_or_eq = map.pred_mut(&1, true).unwrap();
+    ///     assert_eq!(pred_or_eq, (&1, &mut "aa"));
+    ///     *pred_or_eq.1 = "aaa";
     /// }
     ///
     /// {
-    ///     let pred_or_eq = map.pred_or_eq_mut(&4).unwrap();
+    ///     let pred_or_eq = map.pred_mut(&4, true).unwrap();
     ///     assert_eq!(pred_or_eq, (&3, &mut "c"));
     ///     *pred_or_eq.1 = "cc";
     /// }
     ///
-    /// assert_eq!(map.pred_or_eq(&1), Some((&1, &"aa")));
-    /// assert_eq!(map.pred_or_eq(&4), Some((&3, &"cc")));
+    /// assert_eq!(map.pred(&1, true), Some((&1, &"aaa")));
+    /// assert_eq!(map.pred(&4, true), Some((&3, &"cc")));
     /// ```
-    pub fn pred_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
+    pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        Left::closest(&mut self.root, &self.cmp, key, true).key_value_mut()
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
+            .traverse(GetMut::new(&mut self.root))
     }
 
-    /// Returns a reference to the smallest key that is strictly greater than the given key and a
+    /// Returns a reference to the successor of the given key and a
     /// reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method finds the smallest key that is strictly greater than
+    /// the given key. If `inclusive` is `true`, this method finds the smallest key that is greater
+    /// than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
     ///
@@ -516,18 +509,31 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.succ(&0), Some((&1, &"a")));
-    /// assert_eq!(map.succ(&1), Some((&2, &"b")));
-    /// assert_eq!(map.succ(&2), Some((&3, &"c")));
-    /// assert_eq!(map.succ(&3), None);
-    /// assert_eq!(map.succ(&4), None);
+    /// assert_eq!(map.succ(&0, false), Some((&1, &"a")));
+    /// assert_eq!(map.succ(&1, false), Some((&2, &"b")));
+    /// assert_eq!(map.succ(&2, false), Some((&3, &"c")));
+    /// assert_eq!(map.succ(&3, false), None);
+    /// assert_eq!(map.succ(&4, false), None);
+    ///
+    /// assert_eq!(map.succ(&0, true), Some((&1, &"a")));
+    /// assert_eq!(map.succ(&1, true), Some((&1, &"a")));
+    /// assert_eq!(map.succ(&2, true), Some((&2, &"b")));
+    /// assert_eq!(map.succ(&3, true), Some((&3, &"c")));
+    /// assert_eq!(map.succ(&4, true), None);
     /// ```
-    pub fn succ<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        Right::closest(&self.root, &self.cmp, key, false).key_value()
+    pub fn succ<Q: ?Sized>(&self, key: &Q, inclusive: bool) -> Option<(&K, &V)>
+        where C: Compare<Q, K> {
+
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
+            .traverse(Get::new(&self.root))
     }
 
-    /// Returns a reference to the smallest key that is strictly greater than the given key and a
+    /// Returns a reference to the successor of the given key and a
     /// mutable reference to its associated value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method finds the smallest key that is strictly greater than
+    /// the given key. If `inclusive` is `true`, this method finds the smallest key that is greater
+    /// than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
     ///
@@ -541,75 +547,33 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let succ = map.succ_mut(&2).unwrap();
+    ///     let succ = map.succ_mut(&2, false).unwrap();
     ///     assert_eq!(succ, (&3, &mut "c"));
     ///     *succ.1 = "cc";
     /// }
     ///
-    /// assert_eq!(map.succ(&2), Some((&3, &"cc")));
-    /// ```
-    pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)> where C: Compare<Q, K> {
-        Right::closest(&mut self.root, &self.cmp, key, false).key_value_mut()
-    }
-
-    /// Returns a reference to the smallest key that is greater than or equal to the given key and
-    /// a reference to its associated value, or `None` if no such key is present in the map.
-    ///
-    /// The given key need not itself be present in the map.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut map = tree::Map::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
-    ///
-    /// assert_eq!(map.succ_or_eq(&0), Some((&1, &"a")));
-    /// assert_eq!(map.succ_or_eq(&1), Some((&1, &"a")));
-    /// assert_eq!(map.succ_or_eq(&2), Some((&2, &"b")));
-    /// assert_eq!(map.succ_or_eq(&3), Some((&3, &"c")));
-    /// assert_eq!(map.succ_or_eq(&4), None);
-    /// ```
-    pub fn succ_or_eq<Q: ?Sized>(&self, key: &Q) -> Option<(&K, &V)> where C: Compare<Q, K> {
-        Right::closest(&self.root, &self.cmp, key, true).key_value()
-    }
-
-    /// Returns a reference to the smallest key that is greater than or equal to the given key and
-    /// a mutable reference to its associated value, or `None` if no such key is present in the
-    /// map.
-    ///
-    /// The given key need not itself be present in the map.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut map = tree::Map::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
+    /// assert_eq!(map.succ(&2, false), Some((&3, &"cc")));
     ///
     /// {
-    ///     let succ_or_eq = map.succ_or_eq_mut(&0).unwrap();
+    ///     let succ_or_eq = map.succ_mut(&0, true).unwrap();
     ///     assert_eq!(succ_or_eq, (&1, &mut "a"));
     ///     *succ_or_eq.1 = "aa";
     /// }
     ///
     /// {
-    ///     let succ_or_eq = map.succ_or_eq_mut(&3).unwrap();
-    ///     assert_eq!(succ_or_eq, (&3, &mut "c"));
-    ///     *succ_or_eq.1 = "cc";
+    ///     let succ_or_eq = map.succ_mut(&3, true).unwrap();
+    ///     assert_eq!(succ_or_eq, (&3, &mut "cc"));
+    ///     *succ_or_eq.1 = "ccc";
     /// }
     ///
-    /// assert_eq!(map.succ_or_eq(&0), Some((&1, &"aa")));
-    /// assert_eq!(map.succ_or_eq(&3), Some((&3, &"cc")));
+    /// assert_eq!(map.succ(&0, true), Some((&1, &"aa")));
+    /// assert_eq!(map.succ(&3, true), Some((&3, &"ccc")));
     /// ```
-    pub fn succ_or_eq_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<(&K, &mut V)>
+    pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        Right::closest(&mut self.root, &self.cmp, key, true).key_value_mut()
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
+            .traverse(GetMut::new(&mut self.root))
     }
 
     /// Returns an iterator that consumes the map.
@@ -655,7 +619,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), None);
     /// ```
     pub fn iter(&self) -> Iter<K, V> {
-        Iter(node::Iter::new(self.root.as_node_ref(), self.len))
+        Iter(node::Iter::new(as_node_ref(&self.root), self.len))
     }
 
     /// Returns an iterator over the map's entries with mutable references to the values.
@@ -746,7 +710,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
         -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        Range(node::Iter::range(self.root.as_node_ref(), self.len, &self.cmp, min, max))
+        Range(node::Iter::range(as_node_ref(&self.root), self.len, &self.cmp, min, max))
     }
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with mutable

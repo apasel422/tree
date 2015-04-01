@@ -2,7 +2,7 @@ use compare::Compare;
 use std::cmp::Ordering::*;
 use std::collections::{Bound, VecDeque};
 use self::visit::{Seen, Visit};
-use super::{Link, LinkExt, Node};
+use super::{Link, Node, as_node_ref};
 
 pub trait NodeRef {
     type Key;
@@ -18,8 +18,8 @@ impl<'a, K, V> NodeRef for &'a Node<K, V> {
     type Item = (&'a K, &'a V);
     fn key(&self) -> &K { &self.key }
     fn item(self) -> (&'a K, &'a V) { (&self.key, &self.value) }
-    fn left(&mut self) -> Option<&'a Node<K, V>> { self.left.as_node_ref() }
-    fn right(&mut self) -> Option<&'a Node<K, V>> { self.right.as_node_ref() }
+    fn left(&mut self) -> Option<&'a Node<K, V>> { as_node_ref(&self.left) }
+    fn right(&mut self) -> Option<&'a Node<K, V>> { as_node_ref(&self.right) }
 }
 
 impl<K, V> NodeRef for Box<Node<K, V>> {

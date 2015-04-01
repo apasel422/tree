@@ -246,32 +246,12 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// ```
     pub fn remove_min(&mut self) -> Option<T> { self.map.remove_min().map(|e| e.0) }
 
-    /// Returns a reference to the greatest item that is strictly less than the given item, or
+    /// Returns a reference to the predecessor of the given item, or
     /// `None` if no such item is present in the set.
     ///
-    /// The given item need not itself be present in the set.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut set = tree::Set::new();
-    ///
-    /// set.insert(2);
-    /// set.insert(1);
-    /// set.insert(3);
-    ///
-    /// assert_eq!(set.pred(&0), None);
-    /// assert_eq!(set.pred(&1), None);
-    /// assert_eq!(set.pred(&2), Some(&1));
-    /// assert_eq!(set.pred(&3), Some(&2));
-    /// assert_eq!(set.pred(&4), Some(&3));
-    /// ```
-    pub fn pred<Q: ?Sized>(&self, item: &Q) -> Option<&T> where C: Compare<Q, T> {
-        self.map.pred(item).map(|e| e.0)
-    }
-
-    /// Returns a reference to the greatest item that is less than or equal to the given item, or
-    /// `None` if no such item is present in the ste.
+    /// If `inclusive` is `false`, this method finds the greatest item that is strictly less than
+    /// the given item. If `inclusive` is `true`, this method finds the greatest item that is less
+    /// than or equal to the given item.
     ///
     /// The given item need not itself be present in the set.
     ///
@@ -284,42 +264,28 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.pred_or_eq(&0), None);
-    /// assert_eq!(set.pred_or_eq(&1), Some(&1));
-    /// assert_eq!(set.pred_or_eq(&2), Some(&2));
-    /// assert_eq!(set.pred_or_eq(&3), Some(&3));
-    /// assert_eq!(set.pred_or_eq(&4), Some(&3));
+    /// assert_eq!(set.pred(&0, false), None);
+    /// assert_eq!(set.pred(&1, false), None);
+    /// assert_eq!(set.pred(&2, false), Some(&1));
+    /// assert_eq!(set.pred(&3, false), Some(&2));
+    /// assert_eq!(set.pred(&4, false), Some(&3));
+    ///
+    /// assert_eq!(set.pred(&0, true), None);
+    /// assert_eq!(set.pred(&1, true), Some(&1));
+    /// assert_eq!(set.pred(&2, true), Some(&2));
+    /// assert_eq!(set.pred(&3, true), Some(&3));
+    /// assert_eq!(set.pred(&4, true), Some(&3));
     /// ```
-    pub fn pred_or_eq<Q: ?Sized>(&self, item: &Q) -> Option<&T> where C: Compare<Q, T> {
-        self.map.pred_or_eq(item).map(|e| e.0)
+    pub fn pred<Q: ?Sized>(&self, item: &Q, inclusive: bool) -> Option<&T> where C: Compare<Q, T> {
+        self.map.pred(item, inclusive).map(|e| e.0)
     }
 
-    /// Returns a reference to the smallest item that is strictly greater than the given item, or
+    /// Returns a reference to the successor of the given item, or
     /// `None` if no such item is present in the set.
     ///
-    /// The given item need not itself be present in the set.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut set = tree::Set::new();
-    ///
-    /// set.insert(2);
-    /// set.insert(1);
-    /// set.insert(3);
-    ///
-    /// assert_eq!(set.succ(&0), Some(&1));
-    /// assert_eq!(set.succ(&1), Some(&2));
-    /// assert_eq!(set.succ(&2), Some(&3));
-    /// assert_eq!(set.succ(&3), None);
-    /// assert_eq!(set.succ(&4), None);
-    /// ```
-    pub fn succ<Q: ?Sized>(&self, item: &Q) -> Option<&T> where C: Compare<Q, T> {
-        self.map.succ(item).map(|e| e.0)
-    }
-
-    /// Returns a reference to the smallest item that is greater than or equal to the given item,
-    /// or `None` if no such item is present in the set.
+    /// If `inclusive` is `false`, this method finds the smallest item that is strictly greater
+    /// than the given item. If `inclusive` is `true`, this method finds the smallest item that is
+    /// greater than or equal to the given item.
     ///
     /// The given item need not itself be present in the set.
     ///
@@ -332,14 +298,20 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.succ_or_eq(&0), Some(&1));
-    /// assert_eq!(set.succ_or_eq(&1), Some(&1));
-    /// assert_eq!(set.succ_or_eq(&2), Some(&2));
-    /// assert_eq!(set.succ_or_eq(&3), Some(&3));
-    /// assert_eq!(set.succ_or_eq(&4), None);
+    /// assert_eq!(set.succ(&0, false), Some(&1));
+    /// assert_eq!(set.succ(&1, false), Some(&2));
+    /// assert_eq!(set.succ(&2, false), Some(&3));
+    /// assert_eq!(set.succ(&3, false), None);
+    /// assert_eq!(set.succ(&4, false), None);
+    ///
+    /// assert_eq!(set.succ(&0, true), Some(&1));
+    /// assert_eq!(set.succ(&1, true), Some(&1));
+    /// assert_eq!(set.succ(&2, true), Some(&2));
+    /// assert_eq!(set.succ(&3, true), Some(&3));
+    /// assert_eq!(set.succ(&4, true), None);
     /// ```
-    pub fn succ_or_eq<Q: ?Sized>(&self, item: &Q) -> Option<&T> where C: Compare<Q, T> {
-        self.map.succ_or_eq(item).map(|e| e.0)
+    pub fn succ<Q: ?Sized>(&self, item: &Q, inclusive: bool) -> Option<&T> where C: Compare<Q, T> {
+        self.map.succ(item, inclusive).map(|e| e.0)
     }
 
     /// Returns an iterator that consumes the set.

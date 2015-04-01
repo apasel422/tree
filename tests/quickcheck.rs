@@ -432,12 +432,12 @@ mod pred {
 
     #[quickcheck]
     fn agrees_with_iter(map: Map, key: K) -> bool {
-        map.pred(&key) == map.iter().rev().find(|e| *e.0 < key)
+        map.pred(&key, false) == map.iter().rev().find(|e| *e.0 < key)
     }
 
     #[quickcheck]
     fn or_eq_agrees_with_iter(map: Map, key: K) -> bool {
-        map.pred_or_eq(&key) == map.iter().rev().find(|e| *e.0 <= key)
+        map.pred(&key, true) == map.iter().rev().find(|e| *e.0 <= key)
     }
 }
 
@@ -446,12 +446,12 @@ mod succ {
 
     #[quickcheck]
     fn agrees_with_iter(map: Map, key: K) -> bool {
-        map.succ(&key) == map.iter().find(|e| *e.0 > key)
+        map.succ(&key, false) == map.iter().find(|e| *e.0 > key)
     }
 
     #[quickcheck]
     fn or_eq_agrees_with_iter(map: Map, key: K) -> bool {
-        map.succ_or_eq(&key) == map.iter().find(|e| *e.0 >= key)
+        map.succ(&key, true) == map.iter().find(|e| *e.0 >= key)
     }
 }
 
