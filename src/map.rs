@@ -491,6 +491,37 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
             .traverse(GetMut::new(&mut self.root))
     }
 
+    /// Removes the predecessor of the given key from the map and returns it and its associated
+    /// value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method removes the greatest key that is strictly less than
+    /// the given key. If `inclusive` is `true`, this method removes the greatest key that is less
+    /// than or equal to the given key.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn remove_pred<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
+        where C: Compare<Q, K> {
+
+        let key_value = Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
+            .traverse(PathBuilder::new(&mut self.root)).remove();
+        if key_value.is_some() { self.len -= 1; }
+        key_value
+    }
+
+    /// Returns the entry corresponding to the predecessor of the given key.
+    ///
+    /// If `inclusive` is `false`, this method returns the entry corresponding to the greatest key
+    /// that is strictly less than the given key. If `inclusive` is `true`, this method returns
+    /// the entry corresponding to the greatest key that is less than or equal to the given key.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn pred_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
+        -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
+
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
+            .traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+    }
+
     /// Returns a reference to the successor of the given key and a
     /// reference to its associated value, or `None` if no such key is present in the map.
     ///
@@ -574,6 +605,37 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
         Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
             .traverse(GetMut::new(&mut self.root))
+    }
+
+    /// Removes the successor of the given key from the map and returns it and its associated
+    /// value, or `None` if no such key is present in the map.
+    ///
+    /// If `inclusive` is `false`, this method removes the smallest key that is strictly greater
+    /// than the given key. If `inclusive` is `true`, this method removes the smallest key that is
+    /// greater than or equal to the given key.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn remove_succ<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
+        where C: Compare<Q, K> {
+
+        let key_value = Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
+            .traverse(PathBuilder::new(&mut self.root)).remove();
+        if key_value.is_some() { self.len -= 1; }
+        key_value
+    }
+
+    /// Returns the entry corresponding to the successor of the given key.
+    ///
+    /// If `inclusive` is `false`, this method returns the entry corresponding to the smallest key
+    /// that is strictly greater than the given key. If `inclusive` is `true`, this method returns
+    /// the entry corresponding to the smallest key that is greater than or equal to the given key.
+    ///
+    /// The given key need not itself be present in the map.
+    pub fn succ_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
+        -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
+
+        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
+            .traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
     }
 
     /// Returns an iterator that consumes the map.

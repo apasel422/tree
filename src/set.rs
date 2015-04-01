@@ -280,6 +280,20 @@ impl<T, C> Set<T, C> where C: Compare<T> {
         self.map.pred(item, inclusive).map(|e| e.0)
     }
 
+    /// Removes the predecessor of the given item from the set and returns it, or `None` if no such
+    /// item present in the set.
+    ///
+    /// If `inclusive` is `false`, this method removes the greatest item that is strictly less than
+    /// the given item. If `inclusive` is `true`, this method removes the greatest item that is
+    /// less than or equal to the given item.
+    ///
+    /// The given item need not itself be present in the set.
+    pub fn remove_pred<Q: ?Sized>(&mut self, item: &Q, inclusive: bool) -> Option<T>
+        where C: Compare<Q, T> {
+
+        self.map.remove_pred(item, inclusive).map(|e| e.0)
+    }
+
     /// Returns a reference to the successor of the given item, or
     /// `None` if no such item is present in the set.
     ///
@@ -312,6 +326,20 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// ```
     pub fn succ<Q: ?Sized>(&self, item: &Q, inclusive: bool) -> Option<&T> where C: Compare<Q, T> {
         self.map.succ(item, inclusive).map(|e| e.0)
+    }
+
+    /// Removes the successor of the given item from the set and returns it, or `None` if no such
+    /// item present in the set.
+    ///
+    /// If `inclusive` is `false`, this method removes the smallest item that is strictly greater
+    /// than the given item. If `inclusive` is `true`, this method removes the smallest item that
+    /// is greater than or equal to the given item.
+    ///
+    /// The given item need not itself be present in the set.
+    pub fn remove_succ<Q: ?Sized>(&mut self, item: &Q, inclusive: bool) -> Option<T>
+        where C: Compare<Q, T> {
+
+        self.map.remove_succ(item, inclusive).map(|e| e.0)
     }
 
     /// Returns an iterator that consumes the set.
