@@ -168,6 +168,14 @@ impl<T, C> Set<T, C> where C: Compare<T> {
         self.map.remove(item).is_some()
     }
 
+    /// Returns the set's entry corresponding to the given item.
+    pub fn entry(&mut self, item: T) -> Entry<T> {
+        match self.map.entry(item) {
+            map::Entry::Occupied(e) => Entry::Occupied(OccupiedEntry(e)),
+            map::Entry::Vacant(e) => Entry::Vacant(VacantEntry(e)),
+        }
+    }
+
     /// Checks if the set contains the given item.
     ///
     /// # Examples
@@ -616,4 +624,31 @@ impl<'a, T> Iterator for Range<'a, T> {
 
 impl<'a, T> DoubleEndedIterator for Range<'a, T> {
     fn next_back(&mut self) -> Option<&'a T> { self.0.next_back().map(|e| e.0) }
+}
+
+/// An entry in the set.
+pub enum Entry<'a, T: 'a> {
+    /// An occupied entry.
+    Occupied(OccupiedEntry<'a, T>),
+    /// A vacant entry.
+    Vacant(VacantEntry<'a, T>),
+}
+
+/// An occupied entry.
+pub struct OccupiedEntry<'a, T: 'a>(map::OccupiedEntry<'a, T, ()>);
+
+impl<'a, T> OccupiedEntry<'a, T> {
+    /// Returns a reference to the entry's item.
+    pub fn get(&self) -> &T { self.0.key() }
+
+    /// Removes the entry from the set and returns its item.
+    pub fn remove(self) -> T { self.0.remove().0 }
+}
+
+/// A vacant entry.
+pub struct VacantEntry<'a, T: 'a>(map::VacantEntry<'a, T, ()>);
+
+impl<'a, T> VacantEntry<'a, T> {
+    /// Inserts the entry into the set with its item.
+    pub fn insert(self) { self.0.insert(()); }
 }
