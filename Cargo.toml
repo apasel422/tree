@@ -31,5 +31,4 @@ optional = true
 [dev-dependencies]
 
 quickcheck = "*"
-quickcheck_macros = "*"
 rand = "*"
