@@ -111,9 +111,9 @@ pub mod build {
     use std::mem::transmute;
     use super::{Link, Node, Path};
 
-    #[derive(Copy)]
+    #[derive(Clone, Copy)]
     pub struct Open;
-    #[derive(Copy)]
+    #[derive(Clone, Copy)]
     pub struct Closed;
 
     pub struct LinkRef<'a, K: 'a, V: 'a, S> {
