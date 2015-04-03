@@ -251,12 +251,12 @@ pub trait Traverse<K>: Sized {
         where B: Build<'a, K, V>;
 }
 
-pub struct Find<'q, Q: 'q + ?Sized, C> {
+pub struct Find<'q, Q: 'q + ?Sized, C: 'q + ?Sized> {
     pub key: &'q Q,
-    pub cmp: C,
+    pub cmp: &'q C,
 }
 
-impl<'q, Q: ?Sized, C, K> Traverse<K> for Find<'q, Q, C> where C: Compare<Q, K> {
+impl<'q, Q: ?Sized, C: ?Sized, K> Traverse<K> for Find<'q, Q, C> where C: Compare<Q, K> {
     fn traverse<'a, V, B>(self, (mut link, mut build): (LinkRef<'a, K, V, Open>, B)) -> B::Output
         where B: Build<'a, K, V> {
 
@@ -326,14 +326,14 @@ impl Extreme for Min {
         -> LinkRef<'a, K, V, Open> where B: Build<'a, K, V> { build.left(node) }
 }
 
-pub struct Neighbor<'q, Q: 'q + ?Sized, C, E> where E: Extreme {
+pub struct Neighbor<'q, Q: 'q + ?Sized, C: 'q + ?Sized, E> where E: Extreme {
     pub key: &'q Q,
-    pub cmp: C,
+    pub cmp: &'q C,
     pub inc: bool,
     pub ext: E,
 }
 
-impl<'q, Q: ?Sized, C, E, K> Traverse<K> for Neighbor<'q, Q, C, E>
+impl<'q, Q: ?Sized, C: ?Sized, E, K> Traverse<K> for Neighbor<'q, Q, C, E>
     where C: Compare<Q, K>, E: Extreme {
 
     fn traverse<'a, V, B>(self, (mut link, mut build): (LinkRef<'a, K, V, Open>, B)) -> B::Output
