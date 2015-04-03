@@ -211,6 +211,8 @@ unsafe code.</p>
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>Some</span>(<span class='number'>3</span>));
 </pre>
+</div><h4 id='method.max_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.max_entry' class='fnname'>max_entry</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt;</code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the set&#39;s maximum item.</p>
 </div><h4 id='method.min' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min' class='fnname'>min</a>(&amp;self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt;</code></h4>
 <div class='docblock'><p>Returns a reference to the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
 
@@ -239,6 +241,8 @@ unsafe code.</p>
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>Some</span>(<span class='number'>1</span>));
 </pre>
+</div><h4 id='method.min_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.min_entry' class='fnname'>min_entry</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt;</code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the set&#39;s minimum item.</p>
 </div><h4 id='method.pred' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred' class='fnname'>pred</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the predecessor of the given item, or
 <code>None</code> if no such item is present in the set.</p>
@@ -278,6 +282,14 @@ the given item. If <code>inclusive</code> is <code>true</code>, this method remo
 less than or equal to the given item.</p>
 
 <p>The given item need not itself be present in the set.</p>
+</div><h4 id='method.pred_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_entry' class='fnname'>pred_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the predecessor of the given item.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method returns the entry corresponding to the greatest item
+that is strictly less than the given item. If <code>inclusive</code> is <code>true</code>, this method returns
+the entry corresponding to the greatest item that is less than or equal to the given item.</p>
+
+<p>The given item need not itself be present in the set.</p>
 </div><h4 id='method.succ' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ' class='fnname'>succ</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;T&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns a reference to the successor of the given item, or
 <code>None</code> if no such item is present in the set.</p>
@@ -315,6 +327,15 @@ item present in the set.</p>
 <p>If <code>inclusive</code> is <code>false</code>, this method removes the smallest item that is strictly greater
 than the given item. If <code>inclusive</code> is <code>true</code>, this method removes the smallest item that
 is greater than or equal to the given item.</p>
+
+<p>The given item need not itself be present in the set.</p>
+</div><h4 id='method.succ_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_entry' class='fnname'>succ_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
+<div class='docblock'><p>Returns the entry corresponding to the successor of the given item.</p>
+
+<p>If <code>inclusive</code> is <code>false</code>, this method returns the entry corresponding to the smallest item
+that is strictly greater than the given item. If <code>inclusive</code> is <code>true</code>, this method returns
+the entry corresponding to the smallest item that is greater than or equal to the given
+item.</p>
 
 <p>The given item need not itself be present in the set.</p>
 </div><h4 id='method.into_iter' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_iter' class='fnname'>into_iter</a>(self) -&gt; <a class='struct' href='../../tree/set/struct.IntoIter.html' title='tree::set::IntoIter'>IntoIter</a>&lt;T&gt;</code></h4>
