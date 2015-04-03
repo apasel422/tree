@@ -3,7 +3,7 @@
 use compare::{Compare, Natural};
 use std::cmp::Ordering;
 use std::cmp::Ordering::*;
-use std::collections::Bound;
+#[cfg(feature = "range")] use std::collections::Bound;
 use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
@@ -713,6 +713,12 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
         IterMut { iter: self.iter(), _mut: PhantomData }
     }
 
+    #[cfg(test)]
+    pub fn root(&self) -> &node::Link<K, V> { &self.root }
+}
+
+#[cfg(feature = "range")]
+impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// Returns an iterator that consumes the map, yielding only those entries whose keys lie in
     /// the given range.
     ///
@@ -812,9 +818,6 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
         RangeMut { iter: self.range(min, max), _mut: PhantomData }
     }
-
-    #[cfg(test)]
-    pub fn root(&self) -> &node::Link<K, V> { &self.root }
 }
 
 impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
@@ -1059,15 +1062,18 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
 /// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// Acquire through [`Map::into_range`](struct.Map.html#method.into_range).
+#[cfg(feature = "range")]
 #[derive(Clone)]
 pub struct IntoRange<K, V>(node::Iter<Box<Node<K, V>>>);
 
+#[cfg(feature = "range")]
 impl<K, V> Iterator for IntoRange<K, V> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
 }
 
+#[cfg(feature = "range")]
 impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
     fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
 }
@@ -1078,18 +1084,22 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 /// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// Acquire through [`Map::range`](struct.Map.html#method.range).
+#[cfg(feature = "range")]
 pub struct Range<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
 
+#[cfg(feature = "range")]
 impl<'a, K, V> Clone for Range<'a, K, V> {
     fn clone(&self) -> Range<'a, K, V> { Range(self.0.clone()) }
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> Iterator for Range<'a, K, V> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
     fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
 }
@@ -1100,11 +1110,13 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 /// The iterator yields the entries in ascending order according to the map's comparator.
 ///
 /// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
+#[cfg(feature = "range")]
 pub struct RangeMut<'a, K: 'a, V: 'a> {
     iter: Range<'a, K, V>,
     _mut: PhantomData<&'a mut V>,
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
 
@@ -1116,6 +1128,7 @@ impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
     fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
         let next_back = self.iter.next_back();

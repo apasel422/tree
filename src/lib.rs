@@ -1,6 +1,6 @@
 //! An ordered map and set based on a binary search tree.
 
-#![feature(collections)]
+#![cfg_attr(feature = "range", feature(collections))]
 
 extern crate compare;
 

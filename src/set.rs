@@ -2,7 +2,7 @@
 
 use compare::{Compare, Natural};
 use std::cmp::Ordering;
-use std::collections::Bound;
+#[cfg(feature = "range")] use std::collections::Bound;
 use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
@@ -428,7 +428,10 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(it.next(), None);
     /// ```
     pub fn iter(&self) -> Iter<T> { Iter(self.map.iter()) }
+}
 
+#[cfg(feature = "range")]
+impl<T, C> Set<T, C> where C: Compare<T> {
     /// Returns an iterator that consumes the set, yielding only those items that lie in the given
     /// range.
     ///
@@ -629,15 +632,18 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {}
 /// The iterator yields the items in ascending order according to the set's comparator.
 ///
 /// Acquire through [`Set::into_range`](struct.Set.html#method.into_range).
+#[cfg(feature = "range")]
 #[derive(Clone)]
 pub struct IntoRange<T>(map::IntoRange<T, ()>);
 
+#[cfg(feature = "range")]
 impl<T> Iterator for IntoRange<T> {
     type Item = T;
     fn next(&mut self) -> Option<T> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
+#[cfg(feature = "range")]
 impl<T> DoubleEndedIterator for IntoRange<T> {
     fn next_back(&mut self) -> Option<T> { self.0.next_back().map(|e| e.0) }
 }
@@ -647,18 +653,22 @@ impl<T> DoubleEndedIterator for IntoRange<T> {
 /// The iterator yields the items in ascending order according to the set's comparator.
 ///
 /// Acquire through [`Set::range`](struct.Set.html#method.range).
+#[cfg(feature = "range")]
 pub struct Range<'a, T: 'a>(map::Range<'a, T, ()>);
 
+#[cfg(feature = "range")]
 impl<'a, T> Clone for Range<'a, T> {
     fn clone(&self) -> Range<'a, T> { Range(self.0.clone()) }
 }
 
+#[cfg(feature = "range")]
 impl<'a, T> Iterator for Range<'a, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<&'a T> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
+#[cfg(feature = "range")]
 impl<'a, T> DoubleEndedIterator for Range<'a, T> {
     fn next_back(&mut self) -> Option<&'a T> { self.0.next_back().map(|e| e.0) }
 }

@@ -1,4 +1,5 @@
-#![feature(collections, core, custom_attribute, plugin)]
+#![feature(core, custom_attribute, plugin)]
+#![cfg_attr(feature = "range", feature(collections))]
 #![plugin(quickcheck_macros)]
 
 extern crate quickcheck;
@@ -469,6 +470,7 @@ mod iter {
     }
 }
 
+#[cfg(feature = "range")]
 mod range {
     extern crate rand;
 

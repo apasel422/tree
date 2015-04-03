@@ -1,6 +1,7 @@
-use compare::Compare;
-use std::cmp::Ordering::*;
-use std::collections::{Bound, VecDeque};
+#[cfg(feature = "range")] use compare::Compare;
+#[cfg(feature = "range")] use std::cmp::Ordering::*;
+#[cfg(feature = "range")] use std::collections::Bound;
+use std::collections::VecDeque;
 use self::visit::{Seen, Visit};
 use super::{Link, Node, as_node_ref};
 
@@ -88,6 +89,7 @@ impl<N> Iter<N> where N: NodeRef {
         Iter { visits: root.into_iter().map(Visit::new).collect(), size: size }
     }
 
+    #[cfg(feature = "range")]
     pub fn range<C, Min: ?Sized, Max: ?Sized>(root: Option<N>, size: usize, cmp: &C,
                                               min: Bound<&Min>, max: Bound<&Max>)
         -> Self where C: Compare<Min, N::Key> + Compare<Max, N::Key> {
@@ -113,6 +115,7 @@ impl<N> Iter<N> where N: NodeRef {
         it
     }
 
+    #[cfg(feature = "range")]
     pub fn range_size_hint(&self) -> (usize, Option<usize>) {
         (self.visits.len(), Some(self.size))
     }
@@ -192,6 +195,7 @@ mod visit {
             }
         }
 
+        #[cfg(feature = "range")]
         pub fn key(&self) -> &N::Key { self.node.key() }
 
         pub fn item(self) -> N::Item { self.node.item() }

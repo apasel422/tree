@@ -2,7 +2,8 @@ language: rust
 sudo: false
 script:
     - cargo build
-    - cargo test
+    - cargo build --features range
+    - cargo test --features range
     - cargo doc --no-deps
 after_success: |
     [ $TRAVIS_BRANCH = master ] &&

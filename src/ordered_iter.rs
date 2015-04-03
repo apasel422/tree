@@ -18,16 +18,19 @@ impl<'a, K, V> OrderedMapIterator for map::IterMut<'a, K, V> where K: Ord {
     type Val = &'a mut V;
 }
 
+#[cfg(feature = "range")]
 impl<K, V> OrderedMapIterator for map::IntoRange<K, V> where K: Ord {
     type Key = K;
     type Val = V;
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> OrderedMapIterator for map::Range<'a, K, V> where K: Ord {
     type Key = &'a K;
     type Val = &'a V;
 }
 
+#[cfg(feature = "range")]
 impl<'a, K, V> OrderedMapIterator for map::RangeMut<'a, K, V> where K: Ord {
     type Key = &'a K;
     type Val = &'a mut V;
@@ -37,6 +40,8 @@ impl<T> OrderedSetIterator for set::IntoIter<T> where T: Ord {}
 
 impl<'a, T> OrderedSetIterator for set::Iter<'a, T> where T: Ord {}
 
+#[cfg(feature = "range")]
 impl<T> OrderedSetIterator for set::IntoRange<T> where T: Ord {}
 
+#[cfg(feature = "range")]
 impl<'a, T> OrderedSetIterator for set::Range<'a, T> where T: Ord {}
