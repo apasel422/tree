@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `VacantEntry` struct in crate `tree`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, VacantEntry">
+    <meta name="description" content="API documentation for the Rust `Entry` enum in crate `tree`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Entry">
 
-    <title>tree::map::VacantEntry - Rust</title>
+    <title>tree::set::Entry - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a></p><script>window.sidebarCurrent = {name: 'VacantEntry', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a></p><script>window.sidebarCurrent = {name: 'Entry', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -40,19 +40,18 @@
         </form>
     </nav>
 
-    <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>VacantEntry</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content enum">
+<h1 class='fqn'><span class='in-band'>Enum <a href='../index.html'>tree</a>::<wbr><a href='index.html'>set</a>::<wbr><a class='enum' href=''>Entry</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-7691' href='../../src/tree/node/mod.rs.html#463-467'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct VacantEntry&lt;'a, K: 'a, V: 'a&gt; {
-    // some fields omitted
-}</pre><div class='docblock'><p>A vacant entry.</p>
-
-<p>See <a href="struct.Map.html#method.entry"><code>Map::entry</code></a> for an example.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'a, K, V&gt; <a class='struct' href='../../tree/map/struct.VacantEntry.html' title='tree::map::VacantEntry'>VacantEntry</a>&lt;'a, K, V&gt;</code></h3><div class='impl-items'><h4 id='method.insert' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.insert' class='fnname'>insert</a>(self, value: V) -&gt; &amp;'a mut V</code></h4>
-<div class='docblock'><p>Inserts the entry into the map with its key and the given value, returning a mutable
-reference to the value with the same lifetime as the map.</p>
-</div></div></section>
+        </span><a id='src-4281' href='../../src/tree/set.rs.html#630-635'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum Entry&lt;'a, T: 'a&gt; {
+    Occupied(<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;'a, T&gt;),
+    Vacant(<a class='struct' href='../../tree/set/struct.VacantEntry.html' title='tree::set::VacantEntry'>VacantEntry</a>&lt;'a, T&gt;),
+}</pre><div class='docblock'><p>An entry in the set.</p>
+</div><h2 class='variants'>Variants</h2>
+<table><tr><td id='variant.Occupied'><a class='stability Unmarked' title='No stability level'></a><code>Occupied</code></td><td><div class='docblock'><p>An occupied entry.</p>
+</div></td></tr><tr><td id='variant.Vacant'><a class='stability Unmarked' title='No stability level'></a><code>Vacant</code></td><td><div class='docblock'><p>A vacant entry.</p>
+</div></td></tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
