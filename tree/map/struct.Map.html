@@ -43,7 +43,7 @@
     <section id='main' class="content struct">
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>tree</a>::<wbr><a href='index.html'>map</a>::<wbr><a class='struct' href=''>Map</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-45' href='../../src/tree/map.rs.html#25-29'>[src]</a></span></h1>
+        </span><a id='src-44' href='../../src/tree/map.rs.html#25-29'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Map&lt;K, V, C = Natural&lt;K&gt;&gt; <span class='where'>where C: Compare&lt;K&gt;</span> {
     // some fields omitted
 }</pre><div class='docblock'><p>An ordered map based on a binary search tree.</p>
@@ -571,76 +571,6 @@ the entry corresponding to the smallest key that is greater than or equal to the
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>], <span class='number'>6</span>);
-</pre>
-</div><h4 id='method.into_range' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.into_range' class='fnname'>into_range</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/map/struct.IntoRange.html' title='tree::map::IntoRange'>IntoRange</a>&lt;K, V&gt; <span class='where'>where C: Compare&lt;Min, K&gt; + Compare&lt;Max, K&gt;</span></code></h4>
-<div class='docblock'><p>Returns an iterator that consumes the map, yielding only those entries whose keys lie in
-the given range.</p>
-
-<p>The iterator yields the entries in ascending order according to the map&#39;s comparator.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bound</span>::{<span class='ident'>Excluded</span>, <span class='ident'>Unbounded</span>};
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
-
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>into_range</span>(<span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>), <span class='ident'>Unbounded</span>).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(),
-    [(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>), (<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>)]);
-</pre>
-</div><h4 id='method.range' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.range' class='fnname'>range</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/map/struct.Range.html' title='tree::map::Range'>Range</a>&lt;K, V&gt; <span class='where'>where C: Compare&lt;Min, K&gt; + Compare&lt;Max, K&gt;</span></code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries whose keys lie in the given range with immutable
-references to the values.</p>
-
-<p>The iterator yields the entries in ascending order according to the map&#39;s comparator.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bound</span>::{<span class='ident'>Included</span>, <span class='ident'>Excluded</span>, <span class='ident'>Unbounded</span>};
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
-
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>range</span>(<span class='ident'>Unbounded</span>, <span class='ident'>Unbounded</span>).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(),
-    [(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>1</span>), (<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>), (<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>3</span>)]);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>range</span>(<span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>), <span class='ident'>Included</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;f&quot;</span>)).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(),
-    [(<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>2</span>), (<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>3</span>)]);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>.<span class='ident'>range</span>(<span class='ident'>Included</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>), <span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>)).<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(),
-    [(<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>, <span class='kw-2'>&amp;</span><span class='number'>1</span>)]);
-</pre>
-</div><h4 id='method.range_mut' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.range_mut' class='fnname'>range_mut</a>&lt;Min: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>, Max: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, min: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Min&gt;, max: <a class='enum' href='http://doc.rust-lang.org/nightly/collections/enum.Bound.html' title='collections::Bound'>Bound</a>&lt;&amp;Max&gt;) -&gt; <a class='struct' href='../../tree/map/struct.RangeMut.html' title='tree::map::RangeMut'>RangeMut</a>&lt;K, V&gt; <span class='where'>where C: Compare&lt;Min, K&gt; + Compare&lt;Max, K&gt;</span></code></h4>
-<div class='docblock'><p>Returns an iterator over the map&#39;s entries whose keys lie in the given range with mutable
-references to the values.</p>
-
-<p>The iterator yields the entries in ascending order according to the map&#39;s comparator.</p>
-
-<h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bound</span>;
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Map</span>::<span class='ident'>new</span>();
-
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;b&quot;</span>, <span class='number'>2</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;a&quot;</span>, <span class='number'>1</span>);
-<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='string'>&quot;c&quot;</span>, <span class='number'>3</span>);
-
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>i</span> <span class='op'>=</span> <span class='number'>1</span>;
-
-<span class='kw'>for</span> (_, <span class='ident'>value</span>) <span class='kw'>in</span> <span class='ident'>map</span>.<span class='ident'>range_mut</span>(<span class='ident'>Bound</span>::<span class='ident'>Unbounded</span>, <span class='ident'>Bound</span>::<span class='ident'>Excluded</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>)) {
-    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>i</span>, <span class='op'>*</span><span class='ident'>value</span>);
-    <span class='op'>*</span><span class='ident'>value</span> <span class='op'>*=</span> <span class='number'>2</span>;
-    <span class='ident'>i</span> <span class='op'>+=</span> <span class='number'>1</span>;
-}
-
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;a&quot;</span>], <span class='number'>2</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;b&quot;</span>], <span class='number'>4</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>map</span>[<span class='kw-2'>&amp;</span><span class='string'>&quot;c&quot;</span>], <span class='number'>3</span>);
 </pre>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../tree/map/struct.Map.html' title='tree::map::Map'>Map</a>&lt;K, V, C&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, V: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, C: Compare&lt;K&gt;</span></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='http://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 class='impl'><a class='stability Stable' title='Stable'></a><code>impl&lt;K, V, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> for <a class='struct' href='../../tree/map/struct.Map.html' title='tree::map::Map'>Map</a>&lt;K, V, C&gt; <span class='where'>where C: Compare&lt;K&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a></span></code></h3><div class='impl-items'><h4 id='method.default' class='method'><a class='stability Stable' title='Stable'></a><code>fn <a href='#method.default' class='fnname'>default</a>() -&gt; <a class='struct' href='../../tree/map/struct.Map.html' title='tree::map::Map'>Map</a>&lt;K, V, C&gt;</code></h4>
