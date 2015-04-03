@@ -222,6 +222,11 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// ```
     pub fn remove_max(&mut self) -> Option<T> { self.map.remove_max().map(|e| e.0) }
 
+    /// Returns the entry corresponding to the set's maximum item.
+    pub fn max_entry(&mut self) -> Option<OccupiedEntry<T>> {
+        self.map.max_entry().map(OccupiedEntry)
+    }
+
     /// Returns a reference to the set's minimum item, or `None` if the set is empty.
     ///
     /// # Examples
@@ -253,6 +258,11 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(set.remove_min(), Some(1));
     /// ```
     pub fn remove_min(&mut self) -> Option<T> { self.map.remove_min().map(|e| e.0) }
+
+    /// Returns the entry corresponding to the set's minimum item.
+    pub fn min_entry(&mut self) -> Option<OccupiedEntry<T>> {
+        self.map.min_entry().map(OccupiedEntry)
+    }
 
     /// Returns a reference to the predecessor of the given item, or
     /// `None` if no such item is present in the set.
@@ -302,6 +312,19 @@ impl<T, C> Set<T, C> where C: Compare<T> {
         self.map.remove_pred(item, inclusive).map(|e| e.0)
     }
 
+    /// Returns the entry corresponding to the predecessor of the given item.
+    ///
+    /// If `inclusive` is `false`, this method returns the entry corresponding to the greatest item
+    /// that is strictly less than the given item. If `inclusive` is `true`, this method returns
+    /// the entry corresponding to the greatest item that is less than or equal to the given item.
+    ///
+    /// The given item need not itself be present in the set.
+    pub fn pred_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
+        -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
+
+        self.map.pred_entry(item, inclusive).map(OccupiedEntry)
+    }
+
     /// Returns a reference to the successor of the given item, or
     /// `None` if no such item is present in the set.
     ///
@@ -348,6 +371,20 @@ impl<T, C> Set<T, C> where C: Compare<T> {
         where C: Compare<Q, T> {
 
         self.map.remove_succ(item, inclusive).map(|e| e.0)
+    }
+
+    /// Returns the entry corresponding to the successor of the given item.
+    ///
+    /// If `inclusive` is `false`, this method returns the entry corresponding to the smallest item
+    /// that is strictly greater than the given item. If `inclusive` is `true`, this method returns
+    /// the entry corresponding to the smallest item that is greater than or equal to the given
+    /// item.
+    ///
+    /// The given item need not itself be present in the set.
+    pub fn succ_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
+        -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
+
+        self.map.succ_entry(item, inclusive).map(OccupiedEntry)
     }
 
     /// Returns an iterator that consumes the set.
