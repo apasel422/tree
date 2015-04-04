@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Extreme",""],["Traverse",""]],"mod":[["build",""]],"struct":[["OccupiedEntry","An occupied entry."],["VacantEntry","A vacant entry."]]});
+initSidebarItems({"struct":[["OccupiedEntry","An occupied entry."],["VacantEntry","A vacant entry."]],"mod":[["build",""]],"trait":[["Extreme",""],["Traverse",""]]});
