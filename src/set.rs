@@ -673,6 +673,17 @@ impl<T, C> Set<T, C, OrderStat> where C: Compare<T> {
     /// assert_eq!(set.select(3), None);
     /// ```
     pub fn select(&self, index: usize) -> Option<&T> { self.map.select(index).map(|e| e.0) }
+
+    /// Removes the item at the given in-order index in the set, or `None` if the index is out of
+    /// bounds.
+    pub fn remove_select(&mut self, index: usize) -> Option<T> {
+        self.map.remove_select(index).map(|e| e.0)
+    }
+
+    /// Returns the entry corresponding to the item at the given in-order index.
+    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<T, OrderStat>> {
+        self.map.select_entry(index).map(OccupiedEntry)
+    }
 }
 
 impl<T, C, A> Debug for Set<T, C, A> where T: Debug, C: Compare<T>, A: Augment {

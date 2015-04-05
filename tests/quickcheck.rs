@@ -5,11 +5,13 @@ extern crate quickcheck;
 extern crate tree;
 
 use compare::Compare;
-use quickcheck::{Arbitrary, Gen, quickcheck};
+use quickcheck::{Arbitrary, Gen};
+use tree::{Augment, OrderStat};
 use tree::map::{self, Map};
 
-pub trait OccupiedEntry<K, C> where C: Compare<K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>>;
+pub trait OccupiedEntry<K, C, A> where C: Compare<K>, A: Augment {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>>;
 }
 
 #[derive(Clone, Debug)]
@@ -20,26 +22,28 @@ impl<R> Arbitrary for RemoveEntry<R> where R: Arbitrary {
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(RemoveEntry)) }
 }
 
-impl<R, K, C> Remove<K, C> for RemoveEntry<R> where R: OccupiedEntry<K, C>, C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> {
+impl<R, K, C, A> Remove<K, C, A> for RemoveEntry<R>
+    where R: OccupiedEntry<K, C, A>, C: Compare<K>, A: Augment {
+
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> {
         self.0.entry(map).map(map::OccupiedEntry::remove)
     }
 }
 
 macro_rules! occupied_entry {
-    ($K:ty, $V:ty, $R:ty) => {
+    ($M:ty, $R:ty) => {
         mod occupied_entry {
-            remove!{$K, $V, ::RemoveEntry<$R>}
+            remove!{$M, ::RemoveEntry<$R>}
         }
     }
 }
 
-pub trait Remove<K, C> where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)>;
+pub trait Remove<K, C, A> where C: Compare<K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)>;
 }
 
 macro_rules! remove {
-    ($K:ty, $V:ty, $R:ty) => {
+    ($M:ty, $R:ty) => {
         mod remove {
             use Remove;
             use quickcheck::{TestResult, quickcheck};
@@ -47,7 +51,7 @@ macro_rules! remove {
 
             #[test]
             fn removes_key() {
-                fn test(mut map: Map<$K, $V>, removal: $R) -> TestResult {
+                fn test(mut map: $M, removal: $R) -> TestResult {
                     match removal.remove(&mut map) {
                         None => TestResult::discard(),
                         Some((ref key, _)) => TestResult::from_bool(
@@ -59,12 +63,12 @@ macro_rules! remove {
                     }
                 }
 
-                quickcheck(test as fn(Map<$K, $V>, $R) -> TestResult);
+                quickcheck(test as fn($M, $R) -> TestResult);
             }
 
             #[test]
             fn affects_no_others() {
-                fn test(mut map: Map<$K, $V>, removal: $R) -> bool {
+                fn test(mut map: $M, removal: $R) -> bool {
                     let old_map = map.clone();
 
                     match removal.remove(&mut map) {
@@ -75,12 +79,12 @@ macro_rules! remove {
                     }
                 }
 
-                quickcheck(test as fn(Map<$K, $V>, $R) -> bool);
+                quickcheck(test as fn($M, $R) -> bool);
             }
 
             #[test]
             fn sets_len() {
-                fn test(mut map: Map<$K, $V>, removal: $R) -> bool {
+                fn test(mut map: $M, removal: $R) -> bool {
                     let old_len = map.len();
 
                     match removal.remove(&mut map) {
@@ -89,7 +93,7 @@ macro_rules! remove {
                     }
                 }
 
-                quickcheck(test as fn(Map<$K, $V>, $R) -> bool);
+                quickcheck(test as fn($M, $R) -> bool);
             }
         }
     }
@@ -103,12 +107,14 @@ impl<Q> Arbitrary for Find<Q> where Q: Arbitrary {
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(Find)) }
 }
 
-impl<Q, K, C> Remove<K, C> for Find<Q> where C: Compare<K> + Compare<Q, K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove(&self.0) }
+impl<Q, K, C, A> Remove<K, C, A> for Find<Q> where C: Compare<K> + Compare<Q, K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> { map.remove(&self.0) }
 }
 
-impl<K, C> OccupiedEntry<K, C> for Find<K> where K: Clone, C: Compare<K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
+impl<K, C, A> OccupiedEntry<K, C, A> for Find<K> where K: Clone, C: Compare<K>, A: Augment {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>> {
+
         match map.entry(self.0.clone()) {
             map::Entry::Occupied(e) => Some(e),
             map::Entry::Vacant(_) => None,
@@ -237,8 +243,8 @@ mod find {
     }
 
     insert!{u32, u16, ::Find<u32>}
-    occupied_entry!{u32, u16, ::Find<u32>}
-    remove!{u32, u16, ::Find<u32>}
+    occupied_entry!{Map<u32, u16>, ::Find<u32>}
+    remove!{Map<u32, u16>, ::Find<u32>}
 }
 
 #[derive(Clone, Debug)]
@@ -246,12 +252,14 @@ struct Max;
 
 impl Arbitrary for Max { fn arbitrary<G: Gen>(_gen: &mut G) -> Self { Max } }
 
-impl<K, C> Remove<K, C> for Max where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_max() }
+impl<K, C, A> Remove<K, C, A> for Max where C: Compare<K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> { map.remove_max() }
 }
 
-impl<K, C> OccupiedEntry<K, C> for Max where C: Compare<K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
+impl<K, C, A> OccupiedEntry<K, C, A> for Max where C: Compare<K>, A: Augment {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>> {
+
         map.max_entry()
     }
 }
@@ -269,8 +277,8 @@ mod max {
         quickcheck(test as fn(Map<u32, u16>) -> bool);
     }
 
-    occupied_entry!{u32, u16, ::Max}
-    remove!{u32, u16, ::Max}
+    occupied_entry!{Map<u32, u16>, ::Max}
+    remove!{Map<u32, u16>, ::Max}
 }
 
 #[derive(Clone, Debug)]
@@ -278,12 +286,14 @@ struct Min;
 
 impl Arbitrary for Min { fn arbitrary<G: Gen>(_gen: &mut G) -> Self { Min } }
 
-impl<K, C> Remove<K, C> for Min where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_min() }
+impl<K, C, A> Remove<K, C, A> for Min where C: Compare<K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> { map.remove_min() }
 }
 
-impl<K, C> OccupiedEntry<K, C> for Min where C: Compare<K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
+impl<K, C, A> OccupiedEntry<K, C, A> for Min where C: Compare<K>, A: Augment {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>> {
+
         map.min_entry()
     }
 }
@@ -301,8 +311,8 @@ mod min {
         quickcheck(test as fn(Map<u32, u16>) -> bool);
     }
 
-    occupied_entry!{u32, u16, ::Min}
-    remove!{u32, u16, ::Min}
+    occupied_entry!{Map<u32, u16>, ::Min}
+    remove!{Map<u32, u16>, ::Min}
 }
 
 #[derive(Clone, Debug)]
@@ -316,14 +326,18 @@ impl<Q> Arbitrary for Succ<Q> where Q: Arbitrary {
     }
 }
 
-impl<Q, K, C> Remove<K, C> for Succ<Q> where C: Compare<K> + Compare<Q, K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> {
+impl<Q, K, C, A> Remove<K, C, A> for Succ<Q> where C: Compare<K> + Compare<Q, K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> {
         map.remove_succ(&self.0, self.1)
     }
 }
 
-impl<Q, K, C> OccupiedEntry<K, C> for Succ<Q> where C: Compare<K> + Compare<Q, K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
+impl<Q, K, C, A> OccupiedEntry<K, C, A> for Succ<Q>
+    where C: Compare<K> + Compare<Q, K>, A: Augment {
+
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>> {
+
         map.succ_entry(&self.0, self.1)
     }
 }
@@ -350,8 +364,8 @@ mod succ {
         quickcheck(test as fn(Map<u32, u16>, u32) -> bool);
     }
 
-    occupied_entry!{u32, u16, ::Succ<u32>}
-    remove!{u32, u16, ::Succ<u32>}
+    occupied_entry!{Map<u32, u16>, ::Succ<u32>}
+    remove!{Map<u32, u16>, ::Succ<u32>}
 }
 
 #[derive(Clone, Debug)]
@@ -365,14 +379,18 @@ impl<Q> Arbitrary for Pred<Q> where Q: Arbitrary {
     }
 }
 
-impl<Q, K, C> Remove<K, C> for Pred<Q> where C: Compare<K> + Compare<Q, K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> {
+impl<Q, K, C, A> Remove<K, C, A> for Pred<Q> where C: Compare<K> + Compare<Q, K>, A: Augment {
+    fn remove<V>(&self, map: &mut Map<K, V, C, A>) -> Option<(K, V)> {
         map.remove_pred(&self.0, self.1)
     }
 }
 
-impl<Q, K, C> OccupiedEntry<K, C> for Pred<Q> where C: Compare<K> + Compare<Q, K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
+impl<Q, K, C, A> OccupiedEntry<K, C, A> for Pred<Q>
+    where C: Compare<K> + Compare<Q, K>, A: Augment {
+
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, A>)
+        -> Option<map::OccupiedEntry<'a, K, V, A>> {
+
         map.pred_entry(&self.0, self.1)
     }
 }
@@ -399,8 +417,8 @@ mod pred {
         quickcheck(test as fn(Map<u32, u16>, u32) -> bool);
     }
 
-    occupied_entry!{u32, u16, ::Pred<u32>}
-    remove!{u32, u16, ::Pred<u32>}
+    occupied_entry!{Map<u32, u16>, ::Pred<u32>}
+    remove!{Map<u32, u16>, ::Pred<u32>}
 }
 
 mod iter {
@@ -531,14 +549,42 @@ mod range {
     }
 }
 
-#[test]
-fn select() {
-    use compare::Natural;
-    use tree::OrderStat;
+#[derive(Clone, Debug)]
+pub struct Select(u8);
 
-    fn test(map: Map<u32, u16, Natural<u32>, OrderStat>) -> bool {
-        map.iter().enumerate().all(|(i, e)| map.select(i) == Some(e))
+impl Arbitrary for Select {
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { Select(Arbitrary::arbitrary(gen)) }
+    fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(Select)) }
+}
+
+impl<K, C> OccupiedEntry<K, C, OrderStat> for Select where C: Compare<K> {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, C, OrderStat>)
+        -> Option<map::OccupiedEntry<'a, K, V, OrderStat>> {
+
+        map.select_entry(self.0 as usize)
+    }
+}
+
+impl<K, C> Remove<K, C, OrderStat> for Select where C: Compare<K> {
+    fn remove<V>(&self, map: &mut Map<K, V, C, OrderStat>) -> Option<(K, V)> {
+        map.remove_select(self.0 as usize)
+    }
+}
+
+mod select {
+    use compare::Natural;
+    use quickcheck::quickcheck;
+    use tree::{Map, OrderStat};
+
+    #[test]
+    fn agrees_with_iter() {
+        fn test(map: Map<u32, u16, Natural<u32>, OrderStat>) -> bool {
+            map.iter().enumerate().all(|(i, e)| map.select(i) == Some(e))
+        }
+
+        quickcheck(test as fn(Map<u32, u16, Natural<u32>, OrderStat>) -> bool);
     }
 
-    quickcheck(test as fn(Map<u32, u16, Natural<u32>, OrderStat>) -> bool);
+    remove!{Map<u32, u16, ::compare::Natural<u32>, ::tree::OrderStat>, ::Select}
+    occupied_entry!{Map<u32, u16, ::compare::Natural<u32>, ::tree::OrderStat>, ::Select}
 }

@@ -991,12 +991,13 @@ impl<K, V, C> Map<K, V, C, OrderStat> where C: Compare<K> {
         node::select(&mut self.root, GetMut::default(), index)
     }
 
-    /// TODO
+    /// Removes the key at the given in-order index in the map and returns it and its associated
+    /// value, or `None` if the index is out of bounds.
     pub fn remove_select(&mut self, index: usize) -> Option<(K, V)> {
         node::select(&mut self.root, PathBuilder::default(), index).remove(&mut self.len)
     }
 
-    /// TODO
+    /// Returns the entry corresponding to the the key at the given in-order index.
     pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<K, V, OrderStat>> {
         node::select(&mut self.root, PathBuilder::default(), index)
             .into_occupied_entry(&mut self.len)
