@@ -35,6 +35,9 @@ impl Augment for () {
 }
 
 /// An augment that allows a map or set to support efficient access by in-order index.
+///
+/// See [`Map::select`](map/struct.Map.html#method.select) or [`Set::select`]
+/// (set/struct.Set.html#method.select) for an example.
 #[derive(Clone)]
 pub struct OrderStat(usize);
 
