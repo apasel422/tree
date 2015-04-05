@@ -944,6 +944,27 @@ impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
 }
 
 impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
+    /// Returns the index of the given key in the map, or `None` if the map does not contain the
+    /// key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// assert_eq!(map.rank(&"a"), None);
+    ///
+    /// map.insert("b", "bb");
+    /// map.insert("a", "aa");
+    /// map.insert("c", "cc");
+    ///
+    /// assert_eq!(map.rank(&"a"), Some(0));
+    /// assert_eq!(map.rank(&"b"), Some(1));
+    /// assert_eq!(map.rank(&"c"), Some(2));
+    /// ```
+    pub fn rank<Q: ?Sized>(&self, key: &Q) -> Option<usize> where C: Compare<Q, K> {
+        node::rank(&self.root, &self.cmp, key)
+    }
+
     /// Returns a reference to the key at the given in-order index in the map and a reference to
     /// its associated value, or `None` if the index is out of bounds.
     ///

@@ -5,7 +5,7 @@ extern crate quickcheck;
 extern crate tree;
 
 use compare::Compare;
-use quickcheck::{Arbitrary, Gen};
+use quickcheck::{Arbitrary, Gen, quickcheck};
 use tree::{Augment, OrderStat};
 use tree::map::{self, Map};
 
@@ -591,4 +591,13 @@ mod select {
 
     remove!{Map<u32, u16, ::tree::OrderStat>, ::Select}
     occupied_entry!{Map<u32, u16, ::tree::OrderStat>, ::Select}
+}
+
+#[test]
+fn rank_agrees_with_iter() {
+    fn test(map: Map<u32, u16, OrderStat>) -> bool {
+        map.iter().enumerate().all(|(i, e)| map.rank(e.0) == Some(i))
+    }
+
+    quickcheck(test as fn(Map<u32, u16, OrderStat>) -> bool);
 }

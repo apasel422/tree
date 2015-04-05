@@ -654,6 +654,27 @@ impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
 }
 
 impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
+    /// Returns the index of the given item in the set, or `None` if the set does not contain the
+    /// item.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::<_, tree::OrderStat>::with_augment();
+    /// assert_eq!(set.rank(&"a"), None);
+    ///
+    /// set.insert("b");
+    /// set.insert("a");
+    /// set.insert("c");
+    ///
+    /// assert_eq!(set.rank(&"a"), Some(0));
+    /// assert_eq!(set.rank(&"b"), Some(1));
+    /// assert_eq!(set.rank(&"c"), Some(2));
+    /// ```
+    pub fn rank<Q: ?Sized>(&self, item: &Q) -> Option<usize> where C: Compare<Q, T> {
+        self.map.rank(item)
+    }
+
     /// Returns a reference to the item at the given in-order index in the set, or `None` if the
     /// index is out of bounds.
     ///

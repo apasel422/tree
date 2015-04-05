@@ -282,6 +282,26 @@ pub fn find<'a, B, C: ?Sized, Q: ?Sized>(mut link: B::Link, mut build: B, cmp: &
     }
 }
 
+pub fn rank<K, V, C, Q: ?Sized>(mut link: &Link<K, V, OrderStat>, cmp: &C, key: &Q)
+    -> Option<usize> where C: Compare<Q, K> {
+
+    let mut r = 0;
+
+    loop {
+        match *link {
+            None => return None,
+            Some(ref node) => match cmp.compare(key, &node.key) {
+                Less => link = &node.left,
+                Equal => return Some(r + node.left.as_ref().map_or(0, |left| left.augment.0)),
+                Greater => {
+                    r += node.left.as_ref().map_or(0, |left| left.augment.0) + 1;
+                    link = &node.right;
+                }
+            },
+        }
+    }
+}
+
 pub fn select<'a, B>(mut link: B::Link, mut build: B, mut index: usize) -> B::Output
     where B: Build<'a, Augment = OrderStat> {
 
