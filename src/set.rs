@@ -15,8 +15,8 @@ use super::map::{self, Map};
 /// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct Set<T, C = Natural<T>, A = ()> where C: Compare<T>, A: Augment {
-    map: Map<T, (), C, A>,
+pub struct Set<T, A = (), C = Natural<T>> where A: Augment, C: Compare<T> {
+    map: Map<T, (), A, C>,
 }
 
 impl<T> Set<T> where T: Ord {
@@ -40,7 +40,7 @@ impl<T> Set<T> where T: Ord {
     pub fn new() -> Self { Set { map: Map::new() } }
 }
 
-impl<T, C> Set<T, C> where C: Compare<T> {
+impl<T, C> Set<T, (), C> where C: Compare<T> {
     /// Creates an empty set ordered according to the given comparator.
     ///
     /// # Examples
@@ -67,12 +67,12 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     pub fn with_cmp(cmp: C) -> Self { Set { map: Map::with_cmp(cmp) } }
 }
 
-impl<T, A> Set<T, Natural<T>, A> where T: Ord, A: Augment {
+impl<T, A> Set<T, A> where T: Ord, A: Augment {
     /// TODO
     pub fn with_augment() -> Self { Set { map: Map::with_augment() } }
 }
 
-impl<T, C, A> Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
     /// TODO
     pub fn with_cmp_and_augment(cmp: C) -> Self { Set { map: Map::with_cmp_and_augment(cmp) } }
 
@@ -115,7 +115,7 @@ impl<T, C, A> Set<T, C, A> where C: Compare<T>, A: Augment {
     /// let set = tree::Set::new();
     /// assert!(set.cmp().compares_lt(&1, &2));
     ///
-    /// let set: tree::Set<_, _> = tree::Set::with_cmp(natural().rev());
+    /// let set: tree::Set<i32, (), _> = tree::Set::with_cmp(natural().rev());
     /// assert!(set.cmp().compares_gt(&1, &2));
     /// # }
     /// ```
@@ -594,7 +594,7 @@ impl<T, C, A> Set<T, C, A> where C: Compare<T>, A: Augment {
 }
 
 #[cfg(feature = "range")]
-impl<T, C, A> Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
     /// Returns an iterator that consumes the set, yielding only those items that lie in the given
     /// range.
     ///
@@ -653,7 +653,7 @@ impl<T, C, A> Set<T, C, A> where C: Compare<T>, A: Augment {
     }
 }
 
-impl<T, C> Set<T, C, OrderStat> where C: Compare<T> {
+impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
     /// Returns a reference to the item at the given in-order index in the set, or `None` if the
     /// index is out of bounds.
     ///
@@ -686,7 +686,7 @@ impl<T, C> Set<T, C, OrderStat> where C: Compare<T> {
     }
 }
 
-impl<T, C, A> Debug for Set<T, C, A> where T: Debug, C: Compare<T>, A: Augment {
+impl<T, A, C> Debug for Set<T, A, C> where T: Debug, A: Augment, C: Compare<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -701,17 +701,17 @@ impl<T, C, A> Debug for Set<T, C, A> where T: Debug, C: Compare<T>, A: Augment {
     }
 }
 
-impl<T, C, A> Default for Set<T, C, A> where C: Compare<T> + Default, A: Augment {
+impl<T, A, C> Default for Set<T, A, C> where A: Augment, C: Compare<T> + Default {
     fn default() -> Self { Set { map: Map::default() } }
 }
 
-impl<T, C, A> Extend<T> for Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> Extend<T> for Set<T, A, C> where A: Augment, C: Compare<T> {
     fn extend<I: IntoIterator<Item=T>>(&mut self, it: I) {
         for item in it { self.insert(item); }
     }
 }
 
-impl<T, C, A> iter::FromIterator<T> for Set<T, C, A> where C: Compare<T> + Default, A: Augment {
+impl<T, A, C> iter::FromIterator<T> for Set<T, A, C> where A: Augment, C: Compare<T> + Default {
     fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Self {
         let mut set = Set::default();
         set.extend(it);
@@ -719,40 +719,40 @@ impl<T, C, A> iter::FromIterator<T> for Set<T, C, A> where C: Compare<T> + Defau
     }
 }
 
-impl<T, C, A> Hash for Set<T, C, A> where T: Hash, C: Compare<T>, A: Augment {
+impl<T, A, C> Hash for Set<T, A, C> where T: Hash, A: Augment, C: Compare<T> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
-impl<T, C> ::std::ops::Index<usize> for Set<T, C, OrderStat> where C: Compare<T> {
+impl<T, C> ::std::ops::Index<usize> for Set<T, OrderStat, C> where C: Compare<T> {
     type Output = T;
     fn index(&self, index: usize) -> &T { self.select(index).expect("index out of bounds") }
 }
 
-impl<'a, T, C, A> IntoIterator for &'a Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<'a, T, A, C> IntoIterator for &'a Set<T, A, C> where A: Augment, C: Compare<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T, A>;
     fn into_iter(self) -> Iter<'a, T, A> { self.iter() }
 }
 
-impl<T, C, A> IntoIterator for Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> IntoIterator for Set<T, A, C> where A: Augment, C: Compare<T> {
     type Item = T;
     type IntoIter = IntoIter<T, A>;
     fn into_iter(self) -> IntoIter<T, A> { self.into_iter() }
 }
 
-impl<T, C, A> PartialEq for Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> PartialEq for Set<T, A, C> where A: Augment, C: Compare<T> {
     fn eq(&self, other: &Self) -> bool { self.map == other.map }
 }
 
-impl<T, C, A> Eq for Set<T, C, A> where C: Compare<T>, A: Augment {}
+impl<T, A, C> Eq for Set<T, A, C> where A: Augment, C: Compare<T> {}
 
-impl<T, C, A> PartialOrd for Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> PartialOrd for Set<T, A, C> where A: Augment, C: Compare<T> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.map.partial_cmp(&other.map)
     }
 }
 
-impl<T, C, A> Ord for Set<T, C, A> where C: Compare<T>, A: Augment {
+impl<T, A, C> Ord for Set<T, A, C> where A: Augment, C: Compare<T> {
     fn cmp(&self, other: &Self) -> Ordering { Ord::cmp(&self.map, &other.map) }
 }
 

@@ -20,7 +20,7 @@ pub use super::node::{OccupiedEntry, VacantEntry};
 /// while the key is in the map. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct Map<K, V, C = Natural<K>, A = ()> where C: Compare<K>, A: Augment {
+pub struct Map<K, V, A = (), C = Natural<K>> where A: Augment, C: Compare<K> {
     root: node::Link<K, V, A>,
     len: usize,
     cmp: C,
@@ -47,7 +47,7 @@ impl<K, V> Map<K, V> where K: Ord {
     pub fn new() -> Self { Map::with_cmp(Natural::default()) }
 }
 
-impl<K, V, C> Map<K, V, C> where C: Compare<K> {
+impl<K, V, C> Map<K, V, (), C> where C: Compare<K> {
     /// Creates an empty map ordered according to the given comparator.
     ///
     /// # Examples
@@ -74,12 +74,12 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn with_cmp(cmp: C) -> Self { Map::with_cmp_and_augment(cmp) }
 }
 
-impl<K, V, A> Map<K, V, Natural<K>, A> where K: Ord, A: Augment {
+impl<K, V, A> Map<K, V, A> where K: Ord, A: Augment {
     /// TODO
     pub fn with_augment() -> Self { Map::with_cmp_and_augment(::compare::natural()) }
 }
 
-impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
     /// TODO
     pub fn with_cmp_and_augment(cmp: C) -> Self { Map { root: None, len: 0, cmp: cmp } }
 
@@ -122,7 +122,7 @@ impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
     /// let map: tree::Map<i32, &str> = tree::Map::new();
     /// assert!(map.cmp().compares_lt(&1, &2));
     ///
-    /// let map: tree::Map<i32, &str, _> = tree::Map::with_cmp(natural().rev());
+    /// let map: tree::Map<i32, &str, (), _> = tree::Map::with_cmp(natural().rev());
     /// assert!(map.cmp().compares_gt(&1, &2));
     /// # }
     /// ```
@@ -839,7 +839,7 @@ impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
 }
 
 #[cfg(feature = "range")]
-impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
     /// Returns an iterator that consumes the map, yielding only those entries whose keys lie in
     /// the given range.
     ///
@@ -943,7 +943,7 @@ impl<K, V, C, A> Map<K, V, C, A> where C: Compare<K>, A: Augment {
     }
 }
 
-impl<K, V, C> Map<K, V, C, OrderStat> where C: Compare<K> {
+impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
     /// Returns a reference to the key at the given in-order index in the map and a reference to
     /// its associated value, or `None` if the index is out of bounds.
     ///
@@ -1004,7 +1004,7 @@ impl<K, V, C> Map<K, V, C, OrderStat> where C: Compare<K> {
     }
 }
 
-impl<K, V, C, A> Debug for Map<K, V, C, A> where K: Debug, V: Debug, C: Compare<K>, A: Augment {
+impl<K, V, A, C> Debug for Map<K, V, A, C> where K: Debug, V: Debug, A: Augment, C: Compare<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -1019,18 +1019,18 @@ impl<K, V, C, A> Debug for Map<K, V, C, A> where K: Debug, V: Debug, C: Compare<
     }
 }
 
-impl<K, V, C, A> Default for Map<K, V, C, A> where C: Compare<K> + Default, A: Augment {
+impl<K, V, A, C> Default for Map<K, V, A, C> where A: Augment, C: Compare<K> + Default {
     fn default() -> Self { Map::with_cmp_and_augment(C::default()) }
 }
 
-impl<K, V, C, A> Extend<(K, V)> for Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<K, V, A, C> Extend<(K, V)> for Map<K, V, A, C> where A: Augment, C: Compare<K> {
     fn extend<I: IntoIterator<Item=(K, V)>>(&mut self, it: I) {
         for (k, v) in it { self.insert(k, v); }
     }
 }
 
-impl<K, V, C, A> iter::FromIterator<(K, V)> for Map<K, V, C, A>
-    where C: Compare<K> + Default, A: Augment {
+impl<K, V, A, C> iter::FromIterator<(K, V)> for Map<K, V, A, C>
+    where A: Augment, C: Compare<K> + Default {
 
     fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Self {
         let mut map = Map::default();
@@ -1039,43 +1039,43 @@ impl<K, V, C, A> iter::FromIterator<(K, V)> for Map<K, V, C, A>
     }
 }
 
-impl<K, V, C, A> Hash for Map<K, V, C, A> where K: Hash, V: Hash, C: Compare<K>, A: Augment {
+impl<K, V, A, C> Hash for Map<K, V, A, C> where K: Hash, V: Hash, A: Augment, C: Compare<K> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) {
         for e in self.iter() { e.hash(h); }
     }
 }
 
-impl<'a, K, V, C, A, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, C, A>
-    where C: Compare<K> + Compare<Q, K>, A: Augment {
+impl<'a, K, V, A, C, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, A, C>
+    where A: Augment, C: Compare<K> + Compare<Q, K> {
 
     type Output = V;
     fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
 }
 
-impl<K, V, C> ops::Index<usize> for Map<K, V, C, OrderStat> where C: Compare<K> {
+impl<K, V, C> ops::Index<usize> for Map<K, V, OrderStat, C> where C: Compare<K> {
     type Output = V;
     fn index(&self, index: usize) -> &V { self.select(index).expect("index out of bounds").1 }
 }
 
-impl<'a, K, V, C, A> IntoIterator for &'a Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<'a, K, V, A, C> IntoIterator for &'a Map<K, V, A, C> where A: Augment, C: Compare<K> {
     type Item = (&'a K, &'a V);
     type IntoIter = Iter<'a, K, V, A>;
     fn into_iter(self) -> Iter<'a, K, V, A> { self.iter() }
 }
 
-impl<'a, K, V, C, A> IntoIterator for &'a mut Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<'a, K, V, A, C> IntoIterator for &'a mut Map<K, V, A, C> where A: Augment, C: Compare<K> {
     type Item = (&'a K, &'a mut V);
     type IntoIter = IterMut<'a, K, V, A>;
     fn into_iter(self) -> IterMut<'a, K, V, A> { self.iter_mut() }
 }
 
-impl<K, V, C, A> IntoIterator for Map<K, V, C, A> where C: Compare<K>, A: Augment {
+impl<K, V, A, C> IntoIterator for Map<K, V, A, C> where A: Augment, C: Compare<K> {
     type Item = (K, V);
     type IntoIter = IntoIter<K, V, A>;
     fn into_iter(self) -> IntoIter<K, V, A> { self.into_iter() }
 }
 
-impl<K, V, C, A> PartialEq for Map<K, V, C, A> where V: PartialEq, C: Compare<K>, A: Augment {
+impl<K, V, A, C> PartialEq for Map<K, V, A, C> where V: PartialEq, A: Augment, C: Compare<K> {
     fn eq(&self, other: &Self) -> bool {
         self.len() == other.len() && self.iter().zip(other.iter()).all(|(l, r)| {
             self.cmp.compares_eq(&l.0, &r.0) && l.1 == r.1
@@ -1083,9 +1083,9 @@ impl<K, V, C, A> PartialEq for Map<K, V, C, A> where V: PartialEq, C: Compare<K>
     }
 }
 
-impl<K, V, C, A> Eq for Map<K, V, C, A> where V: Eq, C: Compare<K>, A: Augment {}
+impl<K, V, A, C> Eq for Map<K, V, A, C> where V: Eq, A: Augment, C: Compare<K> {}
 
-impl<K, V, C, A> PartialOrd for Map<K, V, C, A> where V: PartialOrd, C: Compare<K>, A: Augment {
+impl<K, V, A, C> PartialOrd for Map<K, V, A, C> where V: PartialOrd, A: Augment, C: Compare<K> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let mut l = self.iter();
         let mut r = other.iter();
@@ -1107,7 +1107,7 @@ impl<K, V, C, A> PartialOrd for Map<K, V, C, A> where V: PartialOrd, C: Compare<
     }
 }
 
-impl<K, V, C, A> Ord for Map<K, V, C, A> where V: Ord, C: Compare<K>, A: Augment {
+impl<K, V, A, C> Ord for Map<K, V, A, C> where V: Ord, A: Augment, C: Compare<K> {
     fn cmp(&self, other: &Self) -> Ordering {
         let mut l = self.iter();
         let mut r = other.iter();
