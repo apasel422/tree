@@ -75,12 +75,12 @@ impl<K, V, C> Map<K, V, (), C> where C: Compare<K> {
 }
 
 impl<K, V, A> Map<K, V, A> where K: Ord, A: Augment {
-    /// TODO
-    pub fn with_augment() -> Self { Map::with_cmp_and_augment(::compare::natural()) }
+    /// Creates an augmented empty map ordered according to the natural order of its keys.
+    pub fn with_augment() -> Self { Map::with_cmp_and_augment(Natural::default()) }
 }
 
 impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
-    /// TODO
+    /// Creates an augmented empty map ordered according to the given comparator.
     pub fn with_cmp_and_augment(cmp: C) -> Self { Map { root: None, len: 0, cmp: cmp } }
 
     /// Checks if the map is empty.

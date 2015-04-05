@@ -34,6 +34,7 @@ impl Augment for () {
     fn bottom_up(&mut self, _: Option<&Self>, _: Option<&Self>) {}
 }
 
+/// An augment that allows a map or set to support efficient access by in-order index.
 #[derive(Clone)]
 pub struct OrderStat(usize);
 

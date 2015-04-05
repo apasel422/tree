@@ -68,12 +68,12 @@ impl<T, C> Set<T, (), C> where C: Compare<T> {
 }
 
 impl<T, A> Set<T, A> where T: Ord, A: Augment {
-    /// TODO
+    /// Creates an augmented empty set ordered according to the natural order of its items.
     pub fn with_augment() -> Self { Set { map: Map::with_augment() } }
 }
 
 impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
-    /// TODO
+    /// Creates an augmented empty set ordered according to the given comparator.
     pub fn with_cmp_and_augment(cmp: C) -> Self { Set { map: Map::with_cmp_and_augment(cmp) } }
 
     /// Checks if the set is empty.
