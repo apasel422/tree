@@ -46,7 +46,7 @@ impl<K, V> Map<K, V> where K: Ord {
     /// assert_eq!(it.next(), Some((&3, &"c")));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn new() -> Self { Map::with_cmp(::compare::natural()) }
+    pub fn new() -> Self { Map::with_cmp(Natural::default()) }
 }
 
 impl<K, V, C> Map<K, V, C> where C: Compare<K> {
@@ -836,7 +836,7 @@ impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
 }
 
 impl<K, V, C> Default for Map<K, V, C> where C: Compare<K> + Default {
-    fn default() -> Self { Map::with_cmp(Default::default()) }
+    fn default() -> Self { Map::with_cmp(C::default()) }
 }
 
 impl<K, V, C> Extend<(K, V)> for Map<K, V, C> where C: Compare<K> {
@@ -849,7 +849,7 @@ impl<K, V, C> iter::FromIterator<(K, V)> for Map<K, V, C>
     where C: Compare<K> + Default {
 
     fn from_iter<I: IntoIterator<Item=(K, V)>>(it: I) -> Self {
-        let mut map: Self = Default::default();
+        let mut map = Map::default();
         map.extend(it);
         map
     }

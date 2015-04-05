@@ -506,7 +506,7 @@ impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
 }
 
 impl<T, C> Default for Set<T, C> where C: Compare<T> + Default {
-    fn default() -> Self { Set::with_cmp(Default::default()) }
+    fn default() -> Self { Set::with_cmp(C::default()) }
 }
 
 impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
@@ -517,7 +517,7 @@ impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
 
 impl<T, C> iter::FromIterator<T> for Set<T, C> where C: Compare<T> + Default {
     fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Self {
-        let mut set: Self = Default::default();
+        let mut set = Set::default();
         set.extend(it);
         set
     }

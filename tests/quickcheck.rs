@@ -16,7 +16,7 @@ pub trait OccupiedEntry<K, C> where C: Compare<K> {
 pub struct RemoveEntry<R>(R);
 
 impl<R> Arbitrary for RemoveEntry<R> where R: Arbitrary {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Self { RemoveEntry(Arbitrary::arbitrary(gen)) }
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { RemoveEntry(R::arbitrary(gen)) }
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(RemoveEntry)) }
 }
 
@@ -99,7 +99,7 @@ macro_rules! remove {
 struct Find<Q>(Q);
 
 impl<Q> Arbitrary for Find<Q> where Q: Arbitrary {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Self { Find(Arbitrary::arbitrary(gen)) }
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { Find(Q::arbitrary(gen)) }
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(Find)) }
 }
 
@@ -133,7 +133,7 @@ impl<K> Insert<K> for Find<K> where K: Clone {
 pub struct FindEntry<K>(K);
 
 impl<K> Arbitrary for FindEntry<K> where K: Arbitrary {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Self { FindEntry(Arbitrary::arbitrary(gen)) }
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { FindEntry(K::arbitrary(gen)) }
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(FindEntry)) }
 }
 
@@ -309,9 +309,7 @@ mod min {
 struct Succ<Q>(Q, bool);
 
 impl<Q> Arbitrary for Succ<Q> where Q: Arbitrary {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Self {
-        Succ(Arbitrary::arbitrary(gen), Arbitrary::arbitrary(gen))
-    }
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { Succ(Q::arbitrary(gen), bool::arbitrary(gen)) }
 
     fn shrink(&self) -> Box<Iterator<Item=Self>> {
         Box::new((self.0.clone(), self.1).shrink().map(|(key, inc)| Succ(key, inc)))
@@ -360,9 +358,7 @@ mod succ {
 struct Pred<Q>(Q, bool);
 
 impl<Q> Arbitrary for Pred<Q> where Q: Arbitrary {
-    fn arbitrary<G: Gen>(gen: &mut G) -> Self {
-        Pred(Arbitrary::arbitrary(gen), Arbitrary::arbitrary(gen))
-    }
+    fn arbitrary<G: Gen>(gen: &mut G) -> Self { Pred(Q::arbitrary(gen), bool::arbitrary(gen)) }
 
     fn shrink(&self) -> Box<Iterator<Item=Self>> {
         Box::new((self.0.clone(), self.1).shrink().map(|(key, inc)| Pred(key, inc)))
@@ -473,8 +469,8 @@ mod range {
     impl<T> Arbitrary for Bound<T> where T: Arbitrary {
         fn arbitrary<G: Gen>(gen: &mut G) -> Self {
             Bound(match gen.gen_range(0, 3) {
-                0 => Included(Arbitrary::arbitrary(gen)),
-                1 => Excluded(Arbitrary::arbitrary(gen)),
+                0 => Included(T::arbitrary(gen)),
+                1 => Excluded(T::arbitrary(gen)),
                 _ => Unbounded,
             })
         }
