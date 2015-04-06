@@ -499,6 +499,25 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.remove_pred(&1, false), None);
+    /// assert!(map.contains_key(&1));
+    ///
+    /// assert_eq!(map.remove_pred(&2, false), Some((1, "a")));
+    /// assert!(!map.contains_key(&1));
+    ///
+    /// assert_eq!(map.remove_pred(&2, true), Some((2, "b")));
+    /// assert!(!map.contains_key(&2));
+    /// ```
     pub fn remove_pred<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
@@ -615,6 +634,25 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// greater than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert_eq!(map.remove_succ(&3, false), None);
+    /// assert!(map.contains_key(&3));
+    ///
+    /// assert_eq!(map.remove_succ(&2, false), Some((3, "c")));
+    /// assert!(!map.contains_key(&3));
+    ///
+    /// assert_eq!(map.remove_succ(&2, true), Some((2, "b")));
+    /// assert!(!map.contains_key(&2));
+    /// ```
     pub fn remove_succ<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
         where C: Compare<Q, K> {
 

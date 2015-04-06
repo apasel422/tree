@@ -306,6 +306,25 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// less than or equal to the given item.
     ///
     /// The given item need not itself be present in the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert_eq!(set.remove_pred(&1, false), None);
+    /// assert!(set.contains(&1));
+    ///
+    /// assert_eq!(set.remove_pred(&2, false), Some(1));
+    /// assert!(!set.contains(&1));
+    ///
+    /// assert_eq!(set.remove_pred(&2, true), Some(2));
+    /// assert!(!set.contains(&2));
+    /// ```
     pub fn remove_pred<Q: ?Sized>(&mut self, item: &Q, inclusive: bool) -> Option<T>
         where C: Compare<Q, T> {
 
@@ -367,6 +386,25 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// is greater than or equal to the given item.
     ///
     /// The given item need not itself be present in the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert_eq!(set.remove_succ(&3, false), None);
+    /// assert!(set.contains(&3));
+    ///
+    /// assert_eq!(set.remove_succ(&2, false), Some(3));
+    /// assert!(!set.contains(&3));
+    ///
+    /// assert_eq!(set.remove_succ(&2, true), Some(2));
+    /// assert!(!set.contains(&2));
+    /// ```
     pub fn remove_succ<Q: ?Sized>(&mut self, item: &Q, inclusive: bool) -> Option<T>
         where C: Compare<Q, T> {
 
