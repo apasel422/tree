@@ -654,29 +654,40 @@ impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
 }
 
 impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
-    /// Returns the index of the given item in the set, or `None` if the set does not contain the
-    /// item.
+    /// Returns the in-order index of the given item in the set.
+    ///
+    /// If the item is present in the set, the result is `Ok`; otherwise, the `Err` value indicates
+    /// what the index of the item would be if it were present.
+    ///
+    /// The index is zero-based.
     ///
     /// # Examples
     ///
     /// ```
     /// let mut set = tree::Set::<_, tree::OrderStat>::with_augment();
-    /// assert_eq!(set.rank(&"a"), None);
+    /// assert_eq!(set.rank(&"a"), Err(0));
     ///
     /// set.insert("b");
     /// set.insert("a");
     /// set.insert("c");
     ///
-    /// assert_eq!(set.rank(&"a"), Some(0));
-    /// assert_eq!(set.rank(&"b"), Some(1));
-    /// assert_eq!(set.rank(&"c"), Some(2));
+    /// assert_eq!(set.rank(&"a"), Ok(0));
+    /// assert_eq!(set.rank(&"b"), Ok(1));
+    /// assert_eq!(set.rank(&"c"), Ok(2));
+    ///
+    /// assert_eq!(set.rank(&""), Err(0));
+    /// assert_eq!(set.rank(&"aa"), Err(1));
+    /// assert_eq!(set.rank(&"bb"), Err(2));
+    /// assert_eq!(set.rank(&"cc"), Err(3));
     /// ```
-    pub fn rank<Q: ?Sized>(&self, item: &Q) -> Option<usize> where C: Compare<Q, T> {
+    pub fn rank<Q: ?Sized>(&self, item: &Q) -> Result<usize, usize> where C: Compare<Q, T> {
         self.map.rank(item)
     }
 
     /// Returns a reference to the item at the given in-order index in the set, or `None` if the
     /// index is out of bounds.
+    ///
+    /// The index is zero-based.
     ///
     /// # Examples
     ///
@@ -697,11 +708,15 @@ impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
 
     /// Removes the item at the given in-order index in the set, or `None` if the index is out of
     /// bounds.
+    ///
+    /// The index is zero-based.
     pub fn remove_select(&mut self, index: usize) -> Option<T> {
         self.map.remove_select(index).map(|e| e.0)
     }
 
     /// Returns the entry corresponding to the item at the given in-order index.
+    ///
+    /// The index is zero-based.
     pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<T, OrderStat>> {
         self.map.select_entry(index).map(OccupiedEntry)
     }

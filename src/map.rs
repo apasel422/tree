@@ -944,29 +944,40 @@ impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
 }
 
 impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
-    /// Returns the index of the given key in the map, or `None` if the map does not contain the
-    /// key.
+    /// Returns the in-order index of the given key in the map.
+    ///
+    /// If the key is present in the map, the result is `Ok`; otherwise, the `Err` value indicates
+    /// what the index of the key would be if it were present.
+    ///
+    /// The index is zero-based.
     ///
     /// # Examples
     ///
     /// ```
     /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
-    /// assert_eq!(map.rank(&"a"), None);
+    /// assert_eq!(map.rank(&"a"), Err(0));
     ///
-    /// map.insert("b", "bb");
-    /// map.insert("a", "aa");
-    /// map.insert("c", "cc");
+    /// map.insert("b", ());
+    /// map.insert("a", ());
+    /// map.insert("c", ());
     ///
-    /// assert_eq!(map.rank(&"a"), Some(0));
-    /// assert_eq!(map.rank(&"b"), Some(1));
-    /// assert_eq!(map.rank(&"c"), Some(2));
+    /// assert_eq!(map.rank(&"a"), Ok(0));
+    /// assert_eq!(map.rank(&"b"), Ok(1));
+    /// assert_eq!(map.rank(&"c"), Ok(2));
+    ///
+    /// assert_eq!(map.rank(&""), Err(0));
+    /// assert_eq!(map.rank(&"aa"), Err(1));
+    /// assert_eq!(map.rank(&"bb"), Err(2));
+    /// assert_eq!(map.rank(&"cc"), Err(3));
     /// ```
-    pub fn rank<Q: ?Sized>(&self, key: &Q) -> Option<usize> where C: Compare<Q, K> {
+    pub fn rank<Q: ?Sized>(&self, key: &Q) -> Result<usize, usize> where C: Compare<Q, K> {
         node::rank(&self.root, &self.cmp, key)
     }
 
     /// Returns a reference to the key at the given in-order index in the map and a reference to
     /// its associated value, or `None` if the index is out of bounds.
+    ///
+    /// The index is zero-based.
     ///
     /// # Examples
     ///
@@ -989,6 +1000,8 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
 
     /// Returns a reference to the key at the given in-order index in the map and a mutable
     /// reference to its associated value, or `None` if the index is out of bounds.
+    ///
+    /// The index is zero-based.
     ///
     /// # Examples
     ///
@@ -1014,11 +1027,15 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
 
     /// Removes the key at the given in-order index in the map and returns it and its associated
     /// value, or `None` if the index is out of bounds.
+    ///
+    /// The index is zero-based.
     pub fn remove_select(&mut self, index: usize) -> Option<(K, V)> {
         node::select(&mut self.root, PathBuilder::default(), index).remove(&mut self.len)
     }
 
     /// Returns the entry corresponding to the the key at the given in-order index.
+    ///
+    /// The index is zero-based.
     pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<K, V, OrderStat>> {
         node::select(&mut self.root, PathBuilder::default(), index)
             .into_occupied_entry(&mut self.len)

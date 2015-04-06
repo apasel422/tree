@@ -5,7 +5,7 @@ extern crate quickcheck;
 extern crate tree;
 
 use compare::Compare;
-use quickcheck::{Arbitrary, Gen, quickcheck};
+use quickcheck::{Arbitrary, Gen};
 use tree::{Augment, OrderStat};
 use tree::map::{self, Map};
 
@@ -593,11 +593,37 @@ mod select {
     occupied_entry!{Map<u32, u16, ::tree::OrderStat>, ::Select}
 }
 
-#[test]
-fn rank_agrees_with_iter() {
-    fn test(map: Map<u32, u16, OrderStat>) -> bool {
-        map.iter().enumerate().all(|(i, e)| map.rank(e.0) == Some(i))
+mod rank {
+    use quickcheck::quickcheck;
+    use tree::{Map, OrderStat};
+
+    #[test]
+    fn agrees_with_iter_when_present() {
+        fn test(map: Map<u32, u16, OrderStat>) -> bool {
+            map.iter().enumerate().all(|(i, e)| map.rank(e.0) == Ok(i))
+        }
+
+        quickcheck(test as fn(Map<u32, u16, OrderStat>) -> bool);
     }
 
-    quickcheck(test as fn(Map<u32, u16, OrderStat>) -> bool);
+    #[test]
+    fn agrees_with_iter_when_absent() {
+        fn test(map: Map<u32, u16, OrderStat>, key: u32) -> bool {
+            use std::cmp::Ordering::*;
+
+            let mut r = 0;
+
+            for e in &map {
+                match e.0.cmp(&key) {
+                    Less => r += 1,
+                    Equal => return map.rank(&key) == Ok(r),
+                    Greater => break,
+                }
+            }
+
+            map.rank(&key) == Err(r)
+        }
+
+        quickcheck(test as fn(Map<u32, u16, OrderStat>, u32) -> bool);
+    }
 }
