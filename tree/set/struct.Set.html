@@ -282,6 +282,24 @@ the given item. If <code>inclusive</code> is <code>true</code>, this method remo
 less than or equal to the given item.</p>
 
 <p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_pred</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>, <span class='boolval'>false</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_pred</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='boolval'>false</span>), <span class='prelude-val'>Some</span>(<span class='number'>1</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_pred</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>(<span class='number'>2</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+</pre>
 </div><h4 id='method.pred_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.pred_entry' class='fnname'>pred_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns the entry corresponding to the predecessor of the given item.</p>
 
@@ -329,6 +347,24 @@ than the given item. If <code>inclusive</code> is <code>true</code>, this method
 is greater than or equal to the given item.</p>
 
 <p>The given item need not itself be present in the set.</p>
+
+<h1 id="examples" class='section-header'><a
+                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
+
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
+<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>3</span>);
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_succ</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>, <span class='boolval'>false</span>), <span class='prelude-val'>None</span>);
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_succ</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='boolval'>false</span>), <span class='prelude-val'>Some</span>(<span class='number'>3</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>3</span>));
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_succ</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>, <span class='boolval'>true</span>), <span class='prelude-val'>Some</span>(<span class='number'>2</span>));
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>));
+</pre>
 </div><h4 id='method.succ_entry' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.succ_entry' class='fnname'>succ_entry</a>&lt;Q: ?<a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt;(&amp;mut self, item: &amp;Q, inclusive: <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../tree/set/struct.OccupiedEntry.html' title='tree::set::OccupiedEntry'>OccupiedEntry</a>&lt;T&gt;&gt; <span class='where'>where C: Compare&lt;Q, T&gt;</span></code></h4>
 <div class='docblock'><p>Returns the entry corresponding to the successor of the given item.</p>
 
