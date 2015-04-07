@@ -11,8 +11,8 @@ use std::iter::{self, IntoIterator};
 use std::marker::PhantomData;
 use std::mem::transmute;
 use std::ops;
-use super::node::{self, Find, Max, Min, Neighbor, Node, Traverse, as_node_ref};
-use super::node::build::{Build, Get, GetMut, PathBuilder};
+use super::node::{self, Extreme, Max, Min, Node, as_node_ref};
+use super::node::build::{Get, GetMut, PathBuilder};
 
 pub use super::node::{OccupiedEntry, VacantEntry};
 
@@ -187,10 +187,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
-        let key_value = Find { key: key, cmp: &self.cmp }
-            .traverse(PathBuilder::new(&mut self.root)).remove();
-        if key_value.is_some() { self.len -= 1; }
-        key_value
+        node::find(&mut self.root, PathBuilder::default(), &self.cmp, key).remove(&mut self.len)
     }
 
     /// Returns the map's entry corresponding to the given key.
@@ -209,7 +206,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(counts[&"c"], 1);
     /// ```
     pub fn entry(&mut self, key: K) -> Entry<K, V> {
-        Find { key: &key, cmp: &self.cmp }.traverse(PathBuilder::new(&mut self.root))
+        node::find(&mut self.root, PathBuilder::default(), &self.cmp, &key)
             .into_entry(&mut self.len, key)
     }
 
@@ -239,7 +236,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.get(&1), Some(&"a"));
     /// ```
     pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V> where C: Compare<Q, K> {
-        Find { key: key, cmp: &self.cmp }.traverse(Get::new(&self.root)).map(|e| e.1)
+        node::find(&self.root, Get::default(), &self.cmp, key).map(|e| e.1)
     }
 
     /// Returns a mutable reference to the value associated with the given key, or `None`
@@ -263,7 +260,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
         where C: Compare<Q, K> {
 
-        Find { key: key, cmp: &self.cmp }.traverse(GetMut::new(&mut self.root)).map(|e| e.1)
+        node::find(&mut self.root, GetMut::default(), &self.cmp, key).map(|e| e.1)
     }
 
     /// Returns a reference to the map's maximum key and a reference to its associated
@@ -282,7 +279,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"c")));
     /// ```
     pub fn max(&self) -> Option<(&K, &V)> {
-        Max.traverse(Get::new(&self.root))
+        Max::extreme(&self.root, Get::default())
     }
 
     /// Returns a reference to the map's maximum key and a mutable reference to its
@@ -307,7 +304,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.max(), Some((&3, &"cc")));
     /// ```
     pub fn max_mut(&mut self) -> Option<(&K, &mut V)> {
-        Max.traverse(GetMut::new(&mut self.root))
+        Max::extreme(&mut self.root, GetMut::default())
     }
 
     /// Removes the map's maximum key and returns it and its associated value, or `None` if the map
@@ -326,14 +323,12 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_max(), Some((3, "c")));
     /// ```
     pub fn remove_max(&mut self) -> Option<(K, V)> {
-        let key_value = Max.traverse(PathBuilder::new(&mut self.root)).remove();
-        if key_value.is_some() { self.len -= 1; }
-        key_value
+        Max::extreme(&mut self.root, PathBuilder::default()).remove(&mut self.len)
     }
 
     /// Returns the map's entry corresponding to its maximum key.
     pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
-        Max.traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+        Max::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 
     /// Returns a reference to the map's minimum key and a reference to its associated
@@ -352,7 +347,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"a")));
     /// ```
     pub fn min(&self) -> Option<(&K, &V)> {
-        Min.traverse(Get::new(&self.root))
+        Min::extreme(&self.root, Get::default())
     }
 
     /// Returns a reference to the map's minimum key and a mutable reference to its
@@ -377,7 +372,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.min(), Some((&1, &"aa")));
     /// ```
     pub fn min_mut(&mut self) -> Option<(&K, &mut V)> {
-        Min.traverse(GetMut::new(&mut self.root))
+        Min::extreme(&mut self.root, GetMut::default())
     }
 
     /// Removes the map's minimum key and returns it and its associated value, or `None` if the map
@@ -396,14 +391,12 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map.remove_min(), Some((1, "a")));
     /// ```
     pub fn remove_min(&mut self) -> Option<(K, V)> {
-        let key_value = Min.traverse(PathBuilder::new(&mut self.root)).remove();
-        if key_value.is_some() { self.len -= 1; }
-        key_value
+        Min::extreme(&mut self.root, PathBuilder::default()).remove(&mut self.len)
     }
 
     /// Returns the map's entry corresponding to its minimum key.
     pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
-        Min.traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+        Min::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 
     /// Returns a reference to the predecessor of the given key and a
@@ -439,8 +432,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn pred<Q: ?Sized>(&self, key: &Q, inclusive: bool) -> Option<(&K, &V)>
         where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
-            .traverse(Get::new(&self.root))
+        Min::closest(&self.root, Get::default(), &self.cmp, key, inclusive)
     }
 
     /// Returns a reference to the predecessor of the given key and a
@@ -487,8 +479,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn pred_mut<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
-            .traverse(GetMut::new(&mut self.root))
+        Min::closest(&mut self.root, GetMut::default(), &self.cmp, key, inclusive)
     }
 
     /// Removes the predecessor of the given key from the map and returns it and its associated
@@ -521,10 +512,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn remove_pred<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
-        let key_value = Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
-            .traverse(PathBuilder::new(&mut self.root)).remove();
-        if key_value.is_some() { self.len -= 1; }
-        key_value
+        Min::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
+            .remove(&mut self.len)
     }
 
     /// Returns the entry corresponding to the predecessor of the given key.
@@ -537,8 +526,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn pred_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
         -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Min }
-            .traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+        Min::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
+            .into_occupied_entry(&mut self.len)
     }
 
     /// Returns a reference to the successor of the given key and a
@@ -574,8 +563,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn succ<Q: ?Sized>(&self, key: &Q, inclusive: bool) -> Option<(&K, &V)>
         where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
-            .traverse(Get::new(&self.root))
+        Max::closest(&self.root, Get::default(), &self.cmp, key, inclusive)
     }
 
     /// Returns a reference to the successor of the given key and a
@@ -622,8 +610,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn succ_mut<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(&K, &mut V)>
         where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
-            .traverse(GetMut::new(&mut self.root))
+        Max::closest(&mut self.root, GetMut::default(), &self.cmp, key, inclusive)
     }
 
     /// Removes the successor of the given key from the map and returns it and its associated
@@ -656,10 +643,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn remove_succ<Q: ?Sized>(&mut self, key: &Q, inclusive: bool) -> Option<(K, V)>
         where C: Compare<Q, K> {
 
-        let key_value = Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
-            .traverse(PathBuilder::new(&mut self.root)).remove();
-        if key_value.is_some() { self.len -= 1; }
-        key_value
+        Max::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
+            .remove(&mut self.len)
     }
 
     /// Returns the entry corresponding to the successor of the given key.
@@ -672,8 +657,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn succ_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
         -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
 
-        Neighbor { key: key, cmp: &self.cmp, inc: inclusive, ext: Max }
-            .traverse(PathBuilder::new(&mut self.root)).into_occupied_entry(&mut self.len)
+        Max::closest(&mut self.root, PathBuilder::default(), &self.cmp, key, inclusive)
+            .into_occupied_entry(&mut self.len)
     }
 
     /// Returns an iterator that consumes the map.
