@@ -197,7 +197,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// assert!(set.contains(&4));
     /// ```
-    pub fn entry(&mut self, item: T) -> Entry<T> {
+    pub fn entry<Q>(&mut self, item: Q) -> Entry<T, Q> where C: Compare<Q, T>, Q: Into<T> {
         match self.map.entry(item) {
             map::Entry::Occupied(e) => Entry::Occupied(OccupiedEntry(e)),
             map::Entry::Vacant(e) => Entry::Vacant(VacantEntry(e)),
@@ -826,11 +826,11 @@ impl<'a, T> DoubleEndedIterator for Range<'a, T> {
 }
 
 /// An entry in the set.
-pub enum Entry<'a, T: 'a> {
+pub enum Entry<'a, T: 'a, Q = T> where Q: Into<T> {
     /// An occupied entry.
     Occupied(OccupiedEntry<'a, T>),
     /// A vacant entry.
-    Vacant(VacantEntry<'a, T>),
+    Vacant(VacantEntry<'a, T, Q>),
 }
 
 /// An occupied entry.
@@ -845,9 +845,9 @@ impl<'a, T> OccupiedEntry<'a, T> {
 }
 
 /// A vacant entry.
-pub struct VacantEntry<'a, T: 'a>(map::VacantEntry<'a, T, ()>);
+pub struct VacantEntry<'a, T: 'a, Q = T>(map::VacantEntry<'a, T, (), Q>) where Q: Into<T>;
 
-impl<'a, T> VacantEntry<'a, T> {
+impl<'a, T, Q> VacantEntry<'a, T, Q> where Q: Into<T> {
     /// Inserts the entry into the set with its item.
     pub fn insert(self) { self.0.insert(()); }
 }

@@ -202,7 +202,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(counts[&"b"], 2);
     /// assert_eq!(counts[&"c"], 1);
     /// ```
-    pub fn entry(&mut self, key: K) -> Entry<K, V> {
+    pub fn entry<Q>(&mut self, key: Q) -> Entry<K, V, Q> where C: Compare<Q, K>, Q: Into<K> {
         node::find(&mut self.root, PathBuilder::default(), &self.cmp, &key)
             .into_entry(&mut self.len, key)
     }
@@ -1264,14 +1264,14 @@ impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
 /// An entry in the map.
 ///
 /// See [`Map::entry`](struct.Map.html#method.entry) for an example.
-pub enum Entry<'a, K: 'a, V: 'a> {
+pub enum Entry<'a, K: 'a, V: 'a, Q = K> where Q: Into<K> {
     /// An occupied entry.
     Occupied(OccupiedEntry<'a, K, V>),
     /// A vacant entry.
-    Vacant(VacantEntry<'a, K, V>),
+    Vacant(VacantEntry<'a, K, V, Q>),
 }
 
-impl<'a, K, V> Entry<'a, K, V> {
+impl<'a, K, V, Q> Entry<'a, K, V, Q> where Q: Into<K> {
     /// Returns the entry's value, inserting the given default if the entry is vacant.
     pub fn or_insert(self, default: V) -> &'a mut V {
         match self {

@@ -355,7 +355,7 @@ pub struct Path<'a, K: 'a, V: 'a> {
 }
 
 impl<'a, K, V> Path<'a, K, V> {
-    pub fn into_entry(self, len: &'a mut usize, key: K) -> Entry<'a, K, V> {
+    pub fn into_entry<Q>(self, len: &'a mut usize, key: Q) -> Entry<'a, K, V, Q> where Q: Into<K> {
         if self.link.is_some() {
             Entry::Occupied(OccupiedEntry { path: self, len: len })
         } else {
@@ -439,19 +439,19 @@ impl<'a, K, V> OccupiedEntry<'a, K, V> {
 /// A vacant entry.
 ///
 /// See [`Map::entry`](struct.Map.html#method.entry) for an example.
-pub struct VacantEntry<'a, K: 'a, V: 'a> {
+pub struct VacantEntry<'a, K: 'a, V: 'a, Q = K> where Q: Into<K> {
     path: Path<'a, K, V>,
     len: &'a mut usize,
-    key: K,
+    key: Q,
 }
 
-impl<'a, K, V> VacantEntry<'a, K, V> {
+impl<'a, K, V, Q> VacantEntry<'a, K, V, Q> where Q: Into<K> {
     /// Inserts the entry into the map with its key and the given value, returning a mutable
     /// reference to the value with the same lifetime as the map.
     pub fn insert(self, value: V) -> &'a mut V {
         *self.len += 1;
 
-        *self.path.link = Some(Box::new(Node::new(self.key, value)));
+        *self.path.link = Some(Box::new(Node::new(self.key.into(), value)));
         let value = &mut self.path.link.as_mut().unwrap().value;
 
         for node in self.path.path.into_iter().rev() {
