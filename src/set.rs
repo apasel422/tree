@@ -169,6 +169,35 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     }
 
     /// Returns the set's entry corresponding to the given item.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tree::set::Entry;
+    ///
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// match set.entry(1) {
+    ///     Entry::Occupied(e) => {
+    ///         assert_eq!(*e.get(), 1);
+    ///         assert_eq!(e.remove(), 1);
+    ///     }
+    ///     Entry::Vacant(_) => panic!("expected an occupied entry"),
+    /// }
+    ///
+    /// assert!(!set.contains(&1));
+    ///
+    /// match set.entry(4) {
+    ///     Entry::Occupied(_) => panic!("expected a vacant entry"),
+    ///     Entry::Vacant(e) => e.insert(),
+    /// }
+    ///
+    /// assert!(set.contains(&4));
+    /// ```
     pub fn entry(&mut self, item: T) -> Entry<T> {
         match self.map.entry(item) {
             map::Entry::Occupied(e) => Entry::Occupied(OccupiedEntry(e)),
@@ -223,6 +252,25 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     pub fn remove_max(&mut self) -> Option<T> { self.map.remove_max().map(|e| e.0) }
 
     /// Returns the entry corresponding to the set's maximum item.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    /// assert!(set.max_entry().is_none());
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// {
+    ///     let mut e = set.max_entry().unwrap();
+    ///     assert_eq!(*e.get(), 3);
+    ///     assert_eq!(e.remove(), 3);
+    /// }
+    ///
+    /// assert!(!set.contains(&3));
+    /// ```
     pub fn max_entry(&mut self) -> Option<OccupiedEntry<T>> {
         self.map.max_entry().map(OccupiedEntry)
     }
@@ -260,6 +308,25 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     pub fn remove_min(&mut self) -> Option<T> { self.map.remove_min().map(|e| e.0) }
 
     /// Returns the entry corresponding to the set's minimum item.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    /// assert!(set.min_entry().is_none());
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// {
+    ///     let mut e = set.min_entry().unwrap();
+    ///     assert_eq!(*e.get(), 1);
+    ///     assert_eq!(e.remove(), 1);
+    /// }
+    ///
+    /// assert!(!set.contains(&1));
+    /// ```
     pub fn min_entry(&mut self) -> Option<OccupiedEntry<T>> {
         self.map.min_entry().map(OccupiedEntry)
     }
@@ -338,6 +405,30 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// the entry corresponding to the greatest item that is less than or equal to the given item.
     ///
     /// The given item need not itself be present in the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert!(set.pred_entry(&1, false).is_none());
+    ///
+    /// {
+    ///     let mut e = set.pred_entry(&4, true).unwrap();
+    ///     assert_eq!(*e.get(), 3);
+    /// }
+    ///
+    /// {
+    ///     let e = set.pred_entry(&3, false).unwrap();
+    ///     assert_eq!(e.remove(), 2);
+    /// }
+    ///
+    /// assert!(!set.contains(&2));
+    /// ```
     pub fn pred_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
         -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
 
@@ -419,6 +510,30 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// item.
     ///
     /// The given item need not itself be present in the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// assert!(set.succ_entry(&3, false).is_none());
+    ///
+    /// {
+    ///     let mut e = set.succ_entry(&0, true).unwrap();
+    ///     assert_eq!(*e.get(), 1);
+    /// }
+    ///
+    /// {
+    ///     let e = set.succ_entry(&1, false).unwrap();
+    ///     assert_eq!(e.remove(), 2);
+    /// }
+    ///
+    /// assert!(!set.contains(&2));
+    /// ```
     pub fn succ_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
         -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
 

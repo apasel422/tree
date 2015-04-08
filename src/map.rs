@@ -327,6 +327,25 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     }
 
     /// Returns the map's entry corresponding to its maximum key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    /// assert!(map.max_entry().is_none());
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let mut e = map.max_entry().unwrap();
+    ///     assert_eq!(*e.key(), 3);
+    ///     assert_eq!(e.insert("cc"), "c");
+    /// }
+    ///
+    /// assert_eq!(map[&3], "cc");
+    /// ```
     pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
         Max::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
@@ -395,6 +414,25 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     }
 
     /// Returns the map's entry corresponding to its minimum key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    /// assert!(map.min_entry().is_none());
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// {
+    ///     let mut e = map.min_entry().unwrap();
+    ///     assert_eq!(*e.key(), 1);
+    ///     assert_eq!(e.insert("aa"), "a");
+    /// }
+    ///
+    /// assert_eq!(map[&1], "aa");
+    /// ```
     pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
         Min::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
@@ -523,6 +561,33 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// the entry corresponding to the greatest key that is less than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert!(map.pred_entry(&1, false).is_none());
+    ///
+    /// {
+    ///     let mut e = map.pred_entry(&4, true).unwrap();
+    ///     assert_eq!(*e.key(), 3);
+    ///     assert_eq!(e.insert("cc"), "c");
+    /// }
+    ///
+    /// assert_eq!(map[&3], "cc");
+    ///
+    /// {
+    ///     let e = map.pred_entry(&3, false).unwrap();
+    ///     assert_eq!(e.remove(), (2, "b"));
+    /// }
+    ///
+    /// assert!(!map.contains_key(&2));
+    /// ```
     pub fn pred_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
         -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
 
@@ -654,6 +719,33 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// the entry corresponding to the smallest key that is greater than or equal to the given key.
     ///
     /// The given key need not itself be present in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// assert!(map.succ_entry(&3, false).is_none());
+    ///
+    /// {
+    ///     let mut e = map.succ_entry(&0, true).unwrap();
+    ///     assert_eq!(*e.key(), 1);
+    ///     assert_eq!(e.insert("aa"), "a");
+    /// }
+    ///
+    /// assert_eq!(map[&1], "aa");
+    ///
+    /// {
+    ///     let e = map.succ_entry(&1, false).unwrap();
+    ///     assert_eq!(e.remove(), (2, "b"));
+    /// }
+    ///
+    /// assert!(!map.contains_key(&2));
+    /// ```
     pub fn succ_entry<Q: ?Sized>(&mut self, key: &Q, inclusive: bool)
         -> Option<OccupiedEntry<K, V>> where C: Compare<Q, K> {
 
