@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["IntoIter","An iterator that consumes the set."],["Iter","An iterator over the set."],["OccupiedEntry","An occupied entry."],["Set","An ordered set based on a binary search tree."],["VacantEntry","A vacant entry."]],"enum":[["Entry","An entry in the set."]]});
+initSidebarItems({"enum":[["Entry","An entry in the set."]],"struct":[["IntoIter","An iterator that consumes the set."],["Iter","An iterator over the set."],["OccupiedEntry","An occupied entry."],["Set","An ordered set based on a binary search tree."],["VacantEntry","A vacant entry."]]});
