@@ -7,7 +7,7 @@ use compare::Compare;
 use self::build::{Build, PathBuilder};
 use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
-use super::{Augment, OrderStat};
+use super::{Augment, Rank};
 use super::map::Entry;
 
 pub use self::iter::{Iter, MarkedNode, MutMarkedNode};
@@ -282,7 +282,7 @@ pub fn find<'a, B, C: ?Sized, Q: ?Sized>(mut link: B::Link, mut build: B, cmp: &
     }
 }
 
-pub fn rank<K, V, C, Q: ?Sized>(mut link: &Link<K, V, OrderStat>, cmp: &C, key: &Q)
+pub fn rank<K, V, C, Q: ?Sized>(mut link: &Link<K, V, Rank>, cmp: &C, key: &Q)
     -> Result<usize, usize> where C: Compare<Q, K> {
 
     let mut r = 0;
@@ -303,7 +303,7 @@ pub fn rank<K, V, C, Q: ?Sized>(mut link: &Link<K, V, OrderStat>, cmp: &C, key: 
 }
 
 pub fn select<'a, B>(mut link: B::Link, mut build: B, mut index: usize) -> B::Output
-    where B: Build<'a, Augment = OrderStat> {
+    where B: Build<'a, Augment = Rank> {
 
     loop {
         link = match B::into_option(link) {

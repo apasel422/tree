@@ -6,7 +6,7 @@ use std::cmp::Ordering;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter;
-use super::{Augment, OrderStat};
+use super::{Augment, Rank};
 use super::map::{self, Map};
 
 /// An ordered set based on a binary search tree.
@@ -653,7 +653,7 @@ impl<T, A, C> Set<T, A, C> where A: Augment, C: Compare<T> {
     }
 }
 
-impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
+impl<T, C> Set<T, Rank, C> where C: Compare<T> {
     /// Returns the in-order index of the given item in the set.
     ///
     /// If the item is present in the set, the result is `Ok`; otherwise, the `Err` value indicates
@@ -664,7 +664,7 @@ impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// let mut set = tree::Set::<_, tree::OrderStat>::with_augment();
+    /// let mut set = tree::Set::<_, tree::Rank>::with_augment();
     /// assert_eq!(set.rank(&"a"), Err(0));
     ///
     /// set.insert("b");
@@ -692,7 +692,7 @@ impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
     /// # Examples
     ///
     /// ```
-    /// let mut set = tree::Set::<_, tree::OrderStat>::with_augment();
+    /// let mut set = tree::Set::<_, tree::Rank>::with_augment();
     /// assert_eq!(set.select(0), None);
     ///
     /// set.insert(2);
@@ -717,7 +717,7 @@ impl<T, C> Set<T, OrderStat, C> where C: Compare<T> {
     /// Returns the entry corresponding to the item at the given in-order index.
     ///
     /// The index is zero-based.
-    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<T, OrderStat>> {
+    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<T, Rank>> {
         self.map.select_entry(index).map(OccupiedEntry)
     }
 }
@@ -759,7 +759,7 @@ impl<T, A, C> Hash for Set<T, A, C> where T: Hash, A: Augment, C: Compare<T> {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
-impl<T, C> ::std::ops::Index<usize> for Set<T, OrderStat, C> where C: Compare<T> {
+impl<T, C> ::std::ops::Index<usize> for Set<T, Rank, C> where C: Compare<T> {
     type Output = T;
     fn index(&self, index: usize) -> &T { self.select(index).expect("index out of bounds") }
 }

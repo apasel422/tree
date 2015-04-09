@@ -8,7 +8,7 @@ use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter;
 use std::ops;
-use super::{Augment, OrderStat};
+use super::{Augment, Rank};
 use super::node::{self, Extreme, Max, Min, MarkedNode, MutMarkedNode, Node};
 use super::node::build::{Get, GetMut, PathBuilder};
 
@@ -943,7 +943,7 @@ impl<K, V, A, C> Map<K, V, A, C> where A: Augment, C: Compare<K> {
     }
 }
 
-impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
+impl<K, V, C> Map<K, V, Rank, C> where C: Compare<K> {
     /// Returns the in-order index of the given key in the map.
     ///
     /// If the key is present in the map, the result is `Ok`; otherwise, the `Err` value indicates
@@ -954,7 +954,7 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// let mut map = tree::Map::<_, _, tree::Rank>::with_augment();
     /// assert_eq!(map.rank(&"a"), Err(0));
     ///
     /// map.insert("b", ());
@@ -982,7 +982,7 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// let mut map = tree::Map::<_, _, tree::Rank>::with_augment();
     /// assert_eq!(map.select(0), None);
     ///
     /// map.insert(2, "b");
@@ -1006,7 +1006,7 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// let mut map = tree::Map::<_, _, tree::OrderStat>::with_augment();
+    /// let mut map = tree::Map::<_, _, tree::Rank>::with_augment();
     /// assert_eq!(map.select(1), None);
     ///
     /// map.insert(2, "b");
@@ -1036,7 +1036,7 @@ impl<K, V, C> Map<K, V, OrderStat, C> where C: Compare<K> {
     /// Returns the entry corresponding to the the key at the given in-order index.
     ///
     /// The index is zero-based.
-    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<K, V, OrderStat>> {
+    pub fn select_entry(&mut self, index: usize) -> Option<OccupiedEntry<K, V, Rank>> {
         node::select(&mut self.root, PathBuilder::default(), index)
             .into_occupied_entry(&mut self.len)
     }
@@ -1090,7 +1090,7 @@ impl<'a, K, V, A, C, Q: ?Sized> ops::Index<&'a Q> for Map<K, V, A, C>
     fn index(&self, key: &Q) -> &V { self.get(key).expect("key not found") }
 }
 
-impl<K, V, C> ops::Index<usize> for Map<K, V, OrderStat, C> where C: Compare<K> {
+impl<K, V, C> ops::Index<usize> for Map<K, V, Rank, C> where C: Compare<K> {
     type Output = V;
     fn index(&self, index: usize) -> &V { self.select(index).expect("index out of bounds").1 }
 }

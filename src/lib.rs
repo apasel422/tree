@@ -39,10 +39,10 @@ impl Augment for () {
 /// See [`Map::select`](map/struct.Map.html#method.select) or [`Set::select`]
 /// (set/struct.Set.html#method.select) for an example.
 #[derive(Clone)]
-pub struct OrderStat(usize);
+pub struct Rank(usize);
 
-impl Augment for OrderStat {
-    fn new() -> Self { OrderStat(1) }
+impl Augment for Rank {
+    fn new() -> Self { Rank(1) }
 
     fn bottom_up(&mut self, left: Option<&Self>, right: Option<&Self>) {
         self.0 = left.map_or(0, |left| left.0) + right.map_or(0, |right| right.0) + 1;

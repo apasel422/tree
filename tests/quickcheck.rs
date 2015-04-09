@@ -6,7 +6,7 @@ extern crate tree;
 
 use compare::Compare;
 use quickcheck::{Arbitrary, Gen};
-use tree::{Augment, OrderStat};
+use tree::{Augment, Rank};
 use tree::map::{self, Map};
 
 pub trait OccupiedEntry<K, A, C> where A: Augment, C: Compare<K> {
@@ -562,53 +562,53 @@ impl Arbitrary for Select {
     fn shrink(&self) -> Box<Iterator<Item=Self>> { Box::new(self.0.shrink().map(Select)) }
 }
 
-impl<K, C> OccupiedEntry<K, OrderStat, C> for Select where C: Compare<K> {
-    fn entry<'a, V>(&self, map: &'a mut Map<K, V, OrderStat, C>)
-        -> Option<map::OccupiedEntry<'a, K, V, OrderStat>> {
+impl<K, C> OccupiedEntry<K, Rank, C> for Select where C: Compare<K> {
+    fn entry<'a, V>(&self, map: &'a mut Map<K, V, Rank, C>)
+        -> Option<map::OccupiedEntry<'a, K, V, Rank>> {
 
         map.select_entry(self.0 as usize)
     }
 }
 
-impl<K, C> Remove<K, OrderStat, C> for Select where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, OrderStat, C>) -> Option<(K, V)> {
+impl<K, C> Remove<K, Rank, C> for Select where C: Compare<K> {
+    fn remove<V>(&self, map: &mut Map<K, V, Rank, C>) -> Option<(K, V)> {
         map.remove_select(self.0 as usize)
     }
 }
 
 mod select {
     use quickcheck::quickcheck;
-    use tree::{Map, OrderStat};
+    use tree::{Map, Rank};
 
     #[test]
     fn agrees_with_iter() {
-        fn test(map: Map<u32, u16, OrderStat>) -> bool {
+        fn test(map: Map<u32, u16, Rank>) -> bool {
             map.iter().enumerate().all(|(i, e)| map.select(i) == Some(e))
         }
 
-        quickcheck(test as fn(Map<u32, u16, OrderStat>) -> bool);
+        quickcheck(test as fn(Map<u32, u16, Rank>) -> bool);
     }
 
-    remove!{Map<u32, u16, ::tree::OrderStat>, ::Select}
-    occupied_entry!{Map<u32, u16, ::tree::OrderStat>, ::Select}
+    remove!{Map<u32, u16, ::tree::Rank>, ::Select}
+    occupied_entry!{Map<u32, u16, ::tree::Rank>, ::Select}
 }
 
 mod rank {
     use quickcheck::quickcheck;
-    use tree::{Map, OrderStat};
+    use tree::{Map, Rank};
 
     #[test]
     fn agrees_with_iter_when_present() {
-        fn test(map: Map<u32, u16, OrderStat>) -> bool {
+        fn test(map: Map<u32, u16, Rank>) -> bool {
             map.iter().enumerate().all(|(i, e)| map.rank(e.0) == Ok(i))
         }
 
-        quickcheck(test as fn(Map<u32, u16, OrderStat>) -> bool);
+        quickcheck(test as fn(Map<u32, u16, Rank>) -> bool);
     }
 
     #[test]
     fn agrees_with_iter_when_absent() {
-        fn test(map: Map<u32, u16, OrderStat>, key: u32) -> bool {
+        fn test(map: Map<u32, u16, Rank>, key: u32) -> bool {
             use std::cmp::Ordering::*;
 
             let mut r = 0;
@@ -624,6 +624,6 @@ mod rank {
             map.rank(&key) == Err(r)
         }
 
-        quickcheck(test as fn(Map<u32, u16, OrderStat>, u32) -> bool);
+        quickcheck(test as fn(Map<u32, u16, Rank>, u32) -> bool);
     }
 }
