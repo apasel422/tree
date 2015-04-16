@@ -243,8 +243,7 @@ pub mod build {
 
         fn build_closed(self, link: Closed<'a, K, V>) -> Path<'a, K, V> {
             Path {
-                path: self.path.into_iter().take_while(|l| *l as *const _ != link.link)
-                    .skip(1).collect(),
+                path: self.path.into_iter().take_while(|l| *l as *const _ != link.link).collect(),
                 link: unsafe { &mut *(link.link as *mut _) },
             }
         }
@@ -255,17 +254,17 @@ pub fn find<'a, B, C: ?Sized, Q: ?Sized>(mut link: B::Link, mut build: B, cmp: &
     -> B::Output where B: Build<'a>, C: Compare<Q, B::Key> {
 
     loop {
+        let closed = B::closed(&link);
+
         link = match B::into_option(link) {
-            None => break,
+            None => return build.build_closed(closed),
             Some(node) => match cmp.compare(key, &node.key) {
                 Less => build.left(node),
-                Equal => break,
+                Equal => return build.build_closed(closed),
                 Greater => build.right(node),
             },
         };
     }
-
-    build.build_open(link)
 }
 
 pub trait Extreme: Sized {
@@ -277,18 +276,18 @@ pub trait Extreme: Sized {
 
     fn extreme<'a, B>(mut link: B::Link, mut build: B) -> B::Output where B: Build<'a> {
         loop {
+            let closed = B::closed(&link);
+
             link = match B::into_option(link) {
-                None => break,
+                None => return build.build_closed(closed),
                 Some(node) =>
                     if Self::has_forward(&*node) {
                         Self::forward(node, &mut build)
                     } else {
-                        break;
+                        return build.build_closed(closed);
                     },
             };
         }
-
-        build.build_open(link)
     }
 
     fn closest<'a, B, C: ?Sized, Q: ?Sized>(mut link: B::Link, mut build: B, cmp: &C, key: &Q,
