@@ -306,13 +306,15 @@ pub fn select<'a, B>(mut link: B::Link, mut build: B, mut index: usize) -> B::Ou
     where B: Build<'a, Augment = Rank> {
 
     loop {
+        let closed = B::closed(&link);
+
         link = match B::into_option(link) {
-            None => break,
+            None => return build.build_closed(closed),
             Some(node) => {
                 let r = node.left.as_ref().map_or(0, |left| left.augment.0);
 
                 match index.cmp(&r) {
-                    Equal => break,
+                    Equal => return build.build_closed(closed),
                     Less => build.left(node),
                     Greater => {
                         index -= r + 1;
@@ -320,10 +322,8 @@ pub fn select<'a, B>(mut link: B::Link, mut build: B, mut index: usize) -> B::Ou
                     }
                 }
             }
-        }
+        };
     }
-
-    build.build_open(link)
 }
 
 pub trait Extreme: Sized {
