@@ -11,7 +11,7 @@ use std::iter::{self, IntoIterator};
 use std::marker::PhantomData;
 use std::mem::transmute;
 use std::ops;
-use super::node::{self, Extreme, Max, Min, Node, as_node_ref};
+use super::node::{self, Extreme, Max, Min, MarkedNode, Node};
 use super::node::build::{Get, GetMut, PathBuilder};
 
 pub use super::node::{OccupiedEntry, VacantEntry};
@@ -796,7 +796,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(it.next(), None);
     /// ```
     pub fn iter(&self) -> Iter<K, V> {
-        Iter(node::Iter::new(as_node_ref(&self.root), self.len))
+        Iter(node::Iter::new(self.root.as_ref().map(MarkedNode::new), self.len))
     }
 
     /// Returns an iterator over the map's entries with mutable references to the values.
@@ -893,7 +893,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
         -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        Range(node::Iter::range(as_node_ref(&self.root), self.len, &self.cmp, min, max))
+        Range(node::Iter::range(self.root.as_ref().map(MarkedNode::new), self.len, &self.cmp, min, max))
     }
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with mutable
@@ -1109,7 +1109,7 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
+pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<MarkedNode<'a, K, V>>);
 
 impl<'a, K, V> Clone for Iter<'a, K, V> {
     fn clone(&self) -> Iter<'a, K, V> { Iter(self.0.clone()) }
@@ -1200,7 +1200,7 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 ///
 /// Acquire through [`Map::range`](struct.Map.html#method.range).
 #[cfg(feature = "range")]
-pub struct Range<'a, K: 'a, V: 'a>(node::Iter<&'a Node<K, V>>);
+pub struct Range<'a, K: 'a, V: 'a>(node::Iter<MarkedNode<'a, K, V>>);
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Clone for Range<'a, K, V> {

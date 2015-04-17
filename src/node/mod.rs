@@ -10,11 +10,7 @@ use std::default::Default;
 use std::mem::{self, replace, swap};
 use super::map::Entry;
 
-pub use self::iter::Iter;
-
-pub fn as_node_ref<K, V>(link: &Link<K, V>) -> Option<&Node<K, V>> {
-    link.as_ref().map(|node| &**node)
-}
+pub use self::iter::{Iter, MarkedNode};
 
 pub type Link<K, V> = Option<Box<Node<K, V>>>;
 
