@@ -7,10 +7,8 @@ use std::cmp::Ordering::*;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter;
-use std::marker::PhantomData;
-use std::mem::transmute;
 use std::ops;
-use super::node::{self, Extreme, Max, Min, MarkedNode, Node};
+use super::node::{self, Extreme, Max, Min, MarkedNode, MutMarkedNode, Node};
 use super::node::build::{Get, GetMut, PathBuilder};
 
 pub use super::node::{OccupiedEntry, VacantEntry};
@@ -824,7 +822,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// assert_eq!(map[&"c"], 6);
     /// ```
     pub fn iter_mut(&mut self) -> IterMut<K, V> {
-        IterMut { iter: self.iter(), _mut: PhantomData }
+        IterMut(node::Iter::new(self.root.as_mut().map(MutMarkedNode::new), self.len))
     }
 
     #[cfg(test)]
@@ -930,7 +928,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn range_mut<Min: ?Sized, Max: ?Sized>(&mut self, min: Bound<&Min>, max: Bound<&Max>)
         -> RangeMut<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        RangeMut { iter: self.range(min, max), _mut: PhantomData }
+        RangeMut(node::Iter::range(self.root.as_mut().map(MutMarkedNode::new), self.len, &self.cmp,
+            min, max))
     }
 }
 
@@ -1160,20 +1159,12 @@ impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {
 ///     println!("{:?}: {:?}", key, value);
 /// }
 /// ```
-pub struct IterMut<'a, K: 'a, V: 'a> {
-    iter: Iter<'a, K, V>,
-    _mut: PhantomData<&'a mut V>,
-}
+pub struct IterMut<'a, K: 'a, V: 'a>(node::Iter<MutMarkedNode<'a, K, V>>);
 
 impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
-
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next = self.iter.next();
-        unsafe { transmute(next)  }
-    }
-
-    fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
+    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn count(self) -> usize { self.len() }
     fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
@@ -1182,14 +1173,11 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
 }
 
 impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next_back = self.iter.next_back();
-        unsafe { transmute(next_back) }
-    }
+    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
 }
 
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
-    fn len(&self) -> usize { self.iter.len() }
+    fn len(&self) -> usize { self.0.len() }
 }
 
 /// An iterator that consumes the map, yielding only those entries whose keys lie in a given range.
@@ -1254,21 +1242,13 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 ///
 /// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
 #[cfg(feature = "range")]
-pub struct RangeMut<'a, K: 'a, V: 'a> {
-    iter: Range<'a, K, V>,
-    _mut: PhantomData<&'a mut V>,
-}
+pub struct RangeMut<'a, K: 'a, V: 'a>(node::Iter<MutMarkedNode<'a, K, V>>);
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
-
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next = self.iter.next();
-        unsafe { transmute(next) }
-    }
-
-    fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
+    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
     fn max(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
@@ -1277,10 +1257,7 @@ impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
 
 #[cfg(feature = "range")]
 impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> {
-        let next_back = self.iter.next_back();
-        unsafe { transmute(next_back) }
-    }
+    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
 }
 
 /// An entry in the map.

@@ -9,7 +9,7 @@ use std::cmp::Ordering::*;
 use std::mem::{self, replace, swap};
 use super::map::Entry;
 
-pub use self::iter::{Iter, MarkedNode};
+pub use self::iter::{Iter, MarkedNode, MutMarkedNode};
 
 pub type Link<K, V> = Option<Box<Node<K, V>>>;
 

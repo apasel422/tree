@@ -2,6 +2,7 @@
 #[cfg(feature = "range")] use std::cmp::Ordering::*;
 #[cfg(feature = "range")] use std::collections::Bound;
 use std::collections::VecDeque;
+use std::marker::PhantomData;
 use super::Node;
 
 pub trait NodeRef {
@@ -52,6 +53,52 @@ impl<'a, K, V> NodeRef for MarkedNode<'a, K, V> {
         } else {
             self.seen_r = true;
             self.node.right.as_ref().map(MarkedNode::new)
+        }
+    }
+}
+
+pub struct MutMarkedNode<'a, K: 'a, V: 'a> {
+    node: *mut Node<K, V>,
+    seen_l: bool,
+    seen_r: bool,
+    _marker: PhantomData<&'a mut Node<K, V>>,
+}
+
+impl<'a, K, V> MutMarkedNode<'a, K, V> {
+    pub fn new(node: &'a mut Box<Node<K, V>>) -> Self {
+        MutMarkedNode { node: &mut **node, seen_l: false, seen_r: false, _marker: PhantomData }
+    }
+}
+
+unsafe impl<'a, K, V> Send for MutMarkedNode<'a, K, V> where K: Send, V: Send {}
+unsafe impl<'a, K, V> Sync for MutMarkedNode<'a, K, V> where K: Sync, V: Sync {}
+
+impl<'a, K, V> NodeRef for MutMarkedNode<'a, K, V> {
+    type Key = K;
+    type Item = (&'a K, &'a mut V);
+
+    fn key(&self) -> &K { &unsafe { &*self.node}.key }
+
+    fn item(self) -> (&'a K, &'a mut V) {
+        let node = unsafe { &mut *self.node };
+        (&node.key, &mut node.value)
+    }
+
+    fn left(&mut self) -> Option<Self> {
+        if self.seen_l {
+            None
+        } else {
+            self.seen_l = true;
+            unsafe { &mut *self.node}.left.as_mut().map(MutMarkedNode::new)
+        }
+    }
+
+    fn right(&mut self) -> Option<Self> {
+        if self.seen_r {
+            None
+        } else {
+            self.seen_r = true;
+            unsafe { &mut *self.node}.right.as_mut().map(MutMarkedNode::new)
         }
     }
 }
