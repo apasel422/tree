@@ -3,10 +3,9 @@
 use compare::{Compare, Natural};
 use std::cmp::Ordering;
 #[cfg(feature = "range")] use std::collections::Bound;
-use std::default::Default;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
-use std::iter::{self, IntoIterator};
+use std::iter;
 use super::map::{self, Map};
 
 /// An ordered set based on a binary search tree.

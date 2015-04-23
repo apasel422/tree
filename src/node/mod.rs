@@ -6,7 +6,6 @@ mod test;
 use compare::Compare;
 use self::build::{Build, PathBuilder};
 use std::cmp::Ordering::*;
-use std::default::Default;
 use std::mem::{self, replace, swap};
 use super::map::Entry;
 
@@ -104,7 +103,6 @@ pub fn insert<K, V, C>(link: &mut Link<K, V>, cmp: &C, key: K, value: V) -> Opti
 }
 
 pub mod build {
-    use std::default::Default;
     use std::marker::PhantomData;
     use super::{Link, Node, Path};
 

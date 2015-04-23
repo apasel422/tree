@@ -2,7 +2,6 @@ extern crate quickcheck;
 
 use compare::Compare;
 use self::quickcheck::{Arbitrary, Gen};
-use std::default::Default;
 use super::{Map, Set};
 
 impl<K, V, C> Arbitrary for Map<K, V, C>
