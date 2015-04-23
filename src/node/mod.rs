@@ -10,6 +10,7 @@ use std::mem::{self, replace, swap};
 use super::map::Entry;
 
 pub use self::iter::{Iter, MarkedNode, MutMarkedNode};
+#[cfg(feature = "range")] pub use self::iter::Range;
 
 pub type Link<K, V> = Option<Box<Node<K, V>>>;
 

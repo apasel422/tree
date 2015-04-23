@@ -168,37 +168,6 @@ impl<N> Iter<N> where N: NodeRef {
     pub fn new(root: Option<N>, size: usize) -> Self {
         Iter { nodes: root.into_iter().collect(), size: size }
     }
-
-    #[cfg(feature = "range")]
-    pub fn range<C, Min: ?Sized, Max: ?Sized>(root: Option<N>, size: usize, cmp: &C,
-                                              min: Bound<&Min>, max: Bound<&Max>)
-        -> Self where C: Compare<Min, N::Key> + Compare<Max, N::Key> {
-
-        fn bound_to_opt<T>(bound: Bound<T>) -> Option<(T, bool)> {
-            match bound {
-                Bound::Unbounded => None,
-                Bound::Included(bound) => Some((bound, true)),
-                Bound::Excluded(bound) => Some((bound, false)),
-            }
-        }
-
-        enum Op<T> {
-            PopPush(Option<T>, bool),
-            Push(Option<T>),
-        }
-
-        let mut it = Iter::new(root, size);
-
-        bound!(it, cmp, min, Less, Greater, left, right, back_mut, pop_back, push_back);
-        bound!(it, cmp, max, Greater, Less, right, left, front_mut, pop_front, push_front);
-
-        it
-    }
-
-    #[cfg(feature = "range")]
-    pub fn range_size_hint(&self) -> (usize, Option<usize>) {
-        (self.nodes.len(), Some(self.size))
-    }
 }
 
 impl<N> Iterator for Iter<N> where N: NodeRef {
@@ -241,4 +210,48 @@ impl<N> DoubleEndedIterator for Iter<N> where N: NodeRef {
 
 impl<N> ExactSizeIterator for Iter<N> where N: NodeRef {
     fn len(&self) -> usize { self.size }
+}
+
+#[cfg(feature = "range")]
+#[derive(Clone)]
+pub struct Range<N>(Iter<N>) where N: NodeRef;
+
+#[cfg(feature = "range")]
+impl<N> Range<N> where N: NodeRef {
+    pub fn new<C, Min: ?Sized, Max: ?Sized>(root: Option<N>, size: usize, cmp: &C,
+                                            min: Bound<&Min>, max: Bound<&Max>) -> Self
+        where C: Compare<Min, N::Key> + Compare<Max, N::Key> {
+
+        fn bound_to_opt<T>(bound: Bound<T>) -> Option<(T, bool)> {
+            match bound {
+                Bound::Unbounded => None,
+                Bound::Included(bound) => Some((bound, true)),
+                Bound::Excluded(bound) => Some((bound, false)),
+            }
+        }
+
+        enum Op<T> {
+            PopPush(Option<T>, bool),
+            Push(Option<T>),
+        }
+
+        let mut it = Iter::new(root, size);
+
+        bound!(it, cmp, min, Less, Greater, left, right, back_mut, pop_back, push_back);
+        bound!(it, cmp, max, Greater, Less, right, left, front_mut, pop_front, push_front);
+
+        Range(it)
+    }
+}
+
+#[cfg(feature = "range")]
+impl<N> Iterator for Range<N> where N: NodeRef {
+    type Item = N::Item;
+    fn next(&mut self) -> Option<N::Item> { self.0.next() }
+    fn size_hint(&self) -> (usize, Option<usize>) { (self.0.nodes.len(), Some(self.0.size)) }
+}
+
+#[cfg(feature = "range")]
+impl<N> DoubleEndedIterator for Range<N> where N: NodeRef {
+    fn next_back(&mut self) -> Option<N::Item> { self.0.next_back() }
 }

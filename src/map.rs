@@ -857,7 +857,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn into_range<Min: ?Sized, Max: ?Sized>(mut self, min: Bound<&Min>, max: Bound<&Max>)
         -> IntoRange<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        IntoRange(node::Iter::range(self.root.take(), self.len, &self.cmp, min, max))
+        IntoRange(node::Range::new(self.root.take(), self.len, &self.cmp, min, max))
     }
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with immutable
@@ -890,7 +890,8 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
         -> Range<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        Range(node::Iter::range(self.root.as_ref().map(MarkedNode::new), self.len, &self.cmp, min, max))
+        Range(node::Range::new(self.root.as_ref().map(MarkedNode::new), self.len, &self.cmp, min,
+            max))
     }
 
     /// Returns an iterator over the map's entries whose keys lie in the given range with mutable
@@ -928,7 +929,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     pub fn range_mut<Min: ?Sized, Max: ?Sized>(&mut self, min: Bound<&Min>, max: Bound<&Max>)
         -> RangeMut<K, V> where C: Compare<Min, K> + Compare<Max, K> {
 
-        RangeMut(node::Iter::range(self.root.as_mut().map(MutMarkedNode::new), self.len, &self.cmp,
+        RangeMut(node::Range::new(self.root.as_mut().map(MutMarkedNode::new), self.len, &self.cmp,
             min, max))
     }
 }
@@ -1187,13 +1188,13 @@ impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
 /// Acquire through [`Map::into_range`](struct.Map.html#method.into_range).
 #[cfg(feature = "range")]
 #[derive(Clone)]
-pub struct IntoRange<K, V>(node::Iter<Box<Node<K, V>>>);
+pub struct IntoRange<K, V>(node::Range<Box<Node<K, V>>>);
 
 #[cfg(feature = "range")]
 impl<K, V> Iterator for IntoRange<K, V> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<(K, V)> { self.next_back() }
     fn max(mut self) -> Option<(K, V)> { self.next_back() }
@@ -1212,7 +1213,7 @@ impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
 ///
 /// Acquire through [`Map::range`](struct.Map.html#method.range).
 #[cfg(feature = "range")]
-pub struct Range<'a, K: 'a, V: 'a>(node::Iter<MarkedNode<'a, K, V>>);
+pub struct Range<'a, K: 'a, V: 'a>(node::Range<MarkedNode<'a, K, V>>);
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Clone for Range<'a, K, V> {
@@ -1223,7 +1224,7 @@ impl<'a, K, V> Clone for Range<'a, K, V> {
 impl<'a, K, V> Iterator for Range<'a, K, V> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
-    fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+    fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
     fn max(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
@@ -1242,7 +1243,7 @@ impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
 ///
 /// Acquire through [`Map::range_mut`](struct.Map.html#method.range_mut).
 #[cfg(feature = "range")]
-pub struct RangeMut<'a, K: 'a, V: 'a>(node::Iter<MutMarkedNode<'a, K, V>>);
+pub struct RangeMut<'a, K: 'a, V: 'a>(node::Range<MutMarkedNode<'a, K, V>>);
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
