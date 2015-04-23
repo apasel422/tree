@@ -191,3 +191,7 @@ impl<N> DoubleEndedIterator for Iter<N> where N: NodeRef {
         }
     }
 }
+
+impl<N> ExactSizeIterator for Iter<N> where N: NodeRef {
+    fn len(&self) -> usize { self.size }
+}

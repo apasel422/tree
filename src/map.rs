@@ -1081,13 +1081,20 @@ impl<K, V> Iterator for IntoIter<K, V> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+
+    fn count(self) -> usize { self.len() }
+    fn last(mut self) -> Option<(K, V)> { self.next_back() }
+    fn max(mut self) -> Option<(K, V)> { self.next_back() }
+    fn min(mut self) -> Option<(K, V)> { self.next() }
 }
 
 impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
     fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
 }
 
-impl<K, V> ExactSizeIterator for IntoIter<K, V> {}
+impl<K, V> ExactSizeIterator for IntoIter<K, V> {
+    fn len(&self) -> usize { self.0.len() }
+}
 
 /// An iterator over the map's entries with immutable references to the values.
 ///
@@ -1118,13 +1125,20 @@ impl<'a, K, V> Iterator for Iter<'a, K, V> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+
+    fn count(self) -> usize { self.len() }
+    fn last(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
+    fn max(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
+    fn min(mut self) -> Option<(&'a K, &'a V)> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for Iter<'a, K, V> {
     fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
 }
 
-impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {}
+impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {
+    fn len(&self) -> usize { self.0.len() }
+}
 
 /// An iterator over the map's entries with mutable references to the values.
 ///
@@ -1160,6 +1174,11 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
+
+    fn count(self) -> usize { self.len() }
+    fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
+    fn max(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
+    fn min(mut self) -> Option<(&'a K, &'a mut V)> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
@@ -1169,7 +1188,9 @@ impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
     }
 }
 
-impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {}
+impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
+    fn len(&self) -> usize { self.iter.len() }
+}
 
 /// An iterator that consumes the map, yielding only those entries whose keys lie in a given range.
 ///
@@ -1185,6 +1206,10 @@ impl<K, V> Iterator for IntoRange<K, V> {
     type Item = (K, V);
     fn next(&mut self) -> Option<(K, V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+
+    fn last(mut self) -> Option<(K, V)> { self.next_back() }
+    fn max(mut self) -> Option<(K, V)> { self.next_back() }
+    fn min(mut self) -> Option<(K, V)> { self.next() }
 }
 
 #[cfg(feature = "range")]
@@ -1211,6 +1236,10 @@ impl<'a, K, V> Iterator for Range<'a, K, V> {
     type Item = (&'a K, &'a V);
     fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.range_size_hint() }
+
+    fn last(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
+    fn max(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
+    fn min(mut self) -> Option<(&'a K, &'a V)> { self.next() }
 }
 
 #[cfg(feature = "range")]
@@ -1240,6 +1269,10 @@ impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) { self.iter.size_hint() }
+
+    fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
+    fn max(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
+    fn min(mut self) -> Option<(&'a K, &'a mut V)> { self.next() }
 }
 
 #[cfg(feature = "range")]
