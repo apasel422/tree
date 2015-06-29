@@ -730,12 +730,12 @@ pub struct IntoIter<T>(map::IntoIter<T, ()>);
 
 impl<T> Iterator for IntoIter<T> {
     type Item = T;
-    fn next(&mut self) -> Option<T> { self.0.next().map(|e| e.0) }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
 impl<T> DoubleEndedIterator for IntoIter<T> {
-    fn next_back(&mut self) -> Option<T> { self.0.next_back().map(|e| e.0) }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
 impl<T> ExactSizeIterator for IntoIter<T> {}
@@ -762,17 +762,17 @@ impl<T> ExactSizeIterator for IntoIter<T> {}
 pub struct Iter<'a, T: 'a>(map::Iter<'a, T, ()>);
 
 impl<'a, T> Clone for Iter<'a, T> {
-    fn clone(&self) -> Iter<'a, T> { Iter(self.0.clone()) }
+    fn clone(&self) -> Self { Iter(self.0.clone()) }
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
-    fn next(&mut self) -> Option<&'a T> { self.0.next().map(|e| e.0) }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
 impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
-    fn next_back(&mut self) -> Option<&'a T> { self.0.next_back().map(|e| e.0) }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
 impl<'a, T> ExactSizeIterator for Iter<'a, T> {}
@@ -789,13 +789,13 @@ pub struct IntoRange<T>(map::IntoRange<T, ()>);
 #[cfg(feature = "range")]
 impl<T> Iterator for IntoRange<T> {
     type Item = T;
-    fn next(&mut self) -> Option<T> { self.0.next().map(|e| e.0) }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
 #[cfg(feature = "range")]
 impl<T> DoubleEndedIterator for IntoRange<T> {
-    fn next_back(&mut self) -> Option<T> { self.0.next_back().map(|e| e.0) }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
 /// An iterator over the set's items that lie in a given range.
@@ -808,19 +808,19 @@ pub struct Range<'a, T: 'a>(map::Range<'a, T, ()>);
 
 #[cfg(feature = "range")]
 impl<'a, T> Clone for Range<'a, T> {
-    fn clone(&self) -> Range<'a, T> { Range(self.0.clone()) }
+    fn clone(&self) -> Self { Range(self.0.clone()) }
 }
 
 #[cfg(feature = "range")]
 impl<'a, T> Iterator for Range<'a, T> {
     type Item = &'a T;
-    fn next(&mut self) -> Option<&'a T> { self.0.next().map(|e| e.0) }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 }
 
 #[cfg(feature = "range")]
 impl<'a, T> DoubleEndedIterator for Range<'a, T> {
-    fn next_back(&mut self) -> Option<&'a T> { self.0.next_back().map(|e| e.0) }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
 /// An entry in the set.

@@ -28,7 +28,7 @@ impl<K, V> Node<K, V> {
         Node { left: None, right: None, level: 1, key: key, value: value }
     }
 
-    fn rebalance(node: &mut Box<Node<K, V>>) {
+    fn rebalance(node: &mut Box<Self>) {
         let left_level = node.left.as_ref().map_or(0, |node| node.level);
         let right_level = node.right.as_ref().map_or(0, |node| node.level);
 
@@ -145,21 +145,21 @@ pub mod build {
         type Link = &'a Link<K, V>;
         type Output = Option<(&'a K, &'a V)>;
 
-        fn closed(link: & &'a Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: &Self::Link) -> Closed<'a, K, V> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a Link<K, V>) -> Option<&'a Box<Node<K, V>>> { link.as_ref() }
+        fn into_option(link: Self::Link) -> Option<Self::Node> { link.as_ref() }
 
-        fn left(&mut self, node: &'a Box<Node<K, V>>) -> &'a Link<K, V> { &node.left }
+        fn left(&mut self, node: Self::Node) -> Self::Link { &node.left }
 
-        fn right(&mut self, node: &'a Box<Node<K, V>>) -> &'a Link<K, V> { &node.right }
+        fn right(&mut self, node: Self::Node) -> Self::Link { &node.right }
 
-        fn build_open(self, link: &'a Link<K, V>) -> Option<(&'a K, &'a V)> {
+        fn build_open(self, link: Self::Link) -> Self::Output {
             link.as_ref().map(|node| (&node.key, &node.value))
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Option<(&'a K, &'a V)> {
+        fn build_closed(self, link: Closed<'a, Self::Key, Self::Value>) -> Self::Output {
             self.build_open(unsafe { &*link.link })
         }
     }
@@ -177,23 +177,23 @@ pub mod build {
         type Link = &'a mut Link<K, V>;
         type Output = Option<(&'a K, &'a mut V)>;
 
-        fn closed(link: & &'a mut Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: &Self::Link) -> Closed<'a, K, V> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a mut Link<K, V>) -> Option<&'a mut Box<Node<K, V>>> {
+        fn into_option(link: Self::Link) -> Option<Self::Node> {
             link.as_mut()
         }
 
-        fn left(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> { &mut node.left }
+        fn left(&mut self, node: Self::Node) -> Self::Link { &mut node.left }
 
-        fn right(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> { &mut node.right }
+        fn right(&mut self, node: Self::Node) -> Self::Link { &mut node.right }
 
-        fn build_open(self, link: &'a mut Link<K, V>) -> Option<(&'a K, &'a mut V)> {
+        fn build_open(self, link: Self::Link) -> Self::Output {
             link.as_mut().map(|node| { let node = &mut **node; (&node.key, &mut node.value) })
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Option<(&'a K, &'a mut V)> {
+        fn build_closed(self, link: Closed<'a, Self::Key, Self::Value>) -> Self::Output {
             self.build_open(unsafe { &mut *(link.link as *mut _) })
         }
     }
@@ -214,29 +214,29 @@ pub mod build {
         type Link = &'a mut Link<K, V>;
         type Output = Path<'a, K, V>;
 
-        fn closed(link: & &'a mut Link<K, V>) -> Closed<'a, K, V> {
+        fn closed(link: &Self::Link) -> Closed<'a, K, V> {
             Closed { link: *link, _marker: PhantomData }
         }
 
-        fn into_option(link: &'a mut Link<K, V>) -> Option<&'a mut Box<Node<K, V>>> {
+        fn into_option(link: Self::Link) -> Option<Self::Node> {
             link.as_mut()
         }
 
-        fn left(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> {
+        fn left(&mut self, node: Self::Node) -> Self::Link {
             self.path.push(node);
             &mut node.left
         }
 
-        fn right(&mut self, node: &'a mut Box<Node<K, V>>) -> &'a mut Link<K, V> {
+        fn right(&mut self, node: Self::Node) -> Self::Link {
             self.path.push(node);
             &mut node.right
         }
 
-        fn build_open(self, link: &'a mut Link<K, V>) -> Path<'a, K, V> {
+        fn build_open(self, link: Self::Link) -> Self::Output {
             Path { path: self.path, link: link }
         }
 
-        fn build_closed(self, link: Closed<'a, K, V>) -> Path<'a, K, V> {
+        fn build_closed(self, link: Closed<'a, K, V>) -> Self::Output {
             Path {
                 path: self.path.into_iter().take_while(|l| *l as *const _ != link.link).collect(),
                 link: unsafe { &mut *(link.link as *mut _) },

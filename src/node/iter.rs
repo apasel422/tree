@@ -35,8 +35,8 @@ impl<'a, K, V> MarkedNode<'a, K, V> {
 impl<'a, K, V> NodeRef for MarkedNode<'a, K, V> {
     type Key = K;
     type Item = (&'a K, &'a V);
-    fn key(&self) -> &K { &self.node.key }
-    fn item(self) -> (&'a K, &'a V) { (&self.node.key, &self.node.value) }
+    fn key(&self) -> &Self::Key { &self.node.key }
+    fn item(self) -> Self::Item { (&self.node.key, &self.node.value) }
 
     fn left(&mut self) -> Option<Self> {
         if self.seen_l {
@@ -77,9 +77,9 @@ impl<'a, K, V> NodeRef for MutMarkedNode<'a, K, V> {
     type Key = K;
     type Item = (&'a K, &'a mut V);
 
-    fn key(&self) -> &K { &unsafe { &*self.node}.key }
+    fn key(&self) -> &Self::Key { &unsafe { &*self.node}.key }
 
-    fn item(self) -> (&'a K, &'a mut V) {
+    fn item(self) -> Self::Item {
         let node = unsafe { &mut *self.node };
         (&node.key, &mut node.value)
     }
@@ -106,8 +106,8 @@ impl<'a, K, V> NodeRef for MutMarkedNode<'a, K, V> {
 impl<K, V> NodeRef for Box<Node<K, V>> {
     type Key = K;
     type Item = (K, V);
-    fn key(&self) -> &K { &self.key }
-    fn item(self) -> (K, V) { let node = *self; (node.key, node.value) }
+    fn key(&self) -> &Self::Key { &self.key }
+    fn item(self) -> Self::Item { let node = *self; (node.key, node.value) }
     fn left(&mut self) -> Option<Self> { self.left.take() }
     fn right(&mut self) -> Option<Self> { self.right.take() }
 }

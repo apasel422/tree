@@ -1075,17 +1075,17 @@ pub struct IntoIter<K, V>(node::Iter<Box<Node<K, V>>>);
 
 impl<K, V> Iterator for IntoIter<K, V> {
     type Item = (K, V);
-    fn next(&mut self) -> Option<(K, V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn count(self) -> usize { self.len() }
-    fn last(mut self) -> Option<(K, V)> { self.next_back() }
-    fn max(mut self) -> Option<(K, V)> { self.next_back() }
-    fn min(mut self) -> Option<(K, V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
-    fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 impl<K, V> ExactSizeIterator for IntoIter<K, V> {
@@ -1114,22 +1114,22 @@ impl<K, V> ExactSizeIterator for IntoIter<K, V> {
 pub struct Iter<'a, K: 'a, V: 'a>(node::Iter<MarkedNode<'a, K, V>>);
 
 impl<'a, K, V> Clone for Iter<'a, K, V> {
-    fn clone(&self) -> Iter<'a, K, V> { Iter(self.0.clone()) }
+    fn clone(&self) -> Self { Iter(self.0.clone()) }
 }
 
 impl<'a, K, V> Iterator for Iter<'a, K, V> {
     type Item = (&'a K, &'a V);
-    fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn count(self) -> usize { self.len() }
-    fn last(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
-    fn max(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
-    fn min(mut self) -> Option<(&'a K, &'a V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for Iter<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 impl<'a, K, V> ExactSizeIterator for Iter<'a, K, V> {
@@ -1160,17 +1160,17 @@ pub struct IterMut<'a, K: 'a, V: 'a>(node::Iter<MutMarkedNode<'a, K, V>>);
 
 impl<'a, K, V> Iterator for IterMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn count(self) -> usize { self.len() }
-    fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
-    fn max(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
-    fn min(mut self) -> Option<(&'a K, &'a mut V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 impl<'a, K, V> ExactSizeIterator for IterMut<'a, K, V> {
@@ -1189,17 +1189,17 @@ pub struct IntoRange<K, V>(node::Range<Box<Node<K, V>>>);
 #[cfg(feature = "range")]
 impl<K, V> Iterator for IntoRange<K, V> {
     type Item = (K, V);
-    fn next(&mut self) -> Option<(K, V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
-    fn last(mut self) -> Option<(K, V)> { self.next_back() }
-    fn max(mut self) -> Option<(K, V)> { self.next_back() }
-    fn min(mut self) -> Option<(K, V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
 impl<K, V> DoubleEndedIterator for IntoRange<K, V> {
-    fn next_back(&mut self) -> Option<(K, V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 /// An iterator over the map's entries whose keys lie in a given range with immutable references to
@@ -1213,23 +1213,23 @@ pub struct Range<'a, K: 'a, V: 'a>(node::Range<MarkedNode<'a, K, V>>);
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Clone for Range<'a, K, V> {
-    fn clone(&self) -> Range<'a, K, V> { Range(self.0.clone()) }
+    fn clone(&self) -> Self { Range(self.0.clone()) }
 }
 
 #[cfg(feature = "range")]
 impl<'a, K, V> Iterator for Range<'a, K, V> {
     type Item = (&'a K, &'a V);
-    fn next(&mut self) -> Option<(&'a K, &'a V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
-    fn last(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
-    fn max(mut self) -> Option<(&'a K, &'a V)> { self.next_back() }
-    fn min(mut self) -> Option<(&'a K, &'a V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
 impl<'a, K, V> DoubleEndedIterator for Range<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 /// An iterator over the map's entries whose keys lie in a given range with mutable references to
@@ -1244,17 +1244,17 @@ pub struct RangeMut<'a, K: 'a, V: 'a>(node::Range<MutMarkedNode<'a, K, V>>);
 #[cfg(feature = "range")]
 impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     type Item = (&'a K, &'a mut V);
-    fn next(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next() }
+    fn next(&mut self) -> Option<Self::Item> { self.0.next() }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
-    fn last(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
-    fn max(mut self) -> Option<(&'a K, &'a mut V)> { self.next_back() }
-    fn min(mut self) -> Option<(&'a K, &'a mut V)> { self.next() }
+    fn last(mut self) -> Option<Self::Item> { self.next_back() }
+    fn max(mut self) -> Option<Self::Item> { self.next_back() }
+    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
 impl<'a, K, V> DoubleEndedIterator for RangeMut<'a, K, V> {
-    fn next_back(&mut self) -> Option<(&'a K, &'a mut V)> { self.0.next_back() }
+    fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back() }
 }
 
 /// An entry in the map.
