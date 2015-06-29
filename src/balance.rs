@@ -39,6 +39,11 @@ pub trait Balance: Default {
     fn rebalance_remove<N>(node: &mut N) where N: Node<Balance = Self>;
 }
 
+impl Balance for () {
+    fn rebalance_insert<N>(_node: &mut N) where N: Node<Balance = Self> {}
+    fn rebalance_remove<N>(_node: &mut N) where N: Node<Balance = Self> {}
+}
+
 /// Metadata for the AA balance scheme.
 #[derive(Clone, Copy, Debug)]
 pub struct Aa(usize);
