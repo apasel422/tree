@@ -1080,8 +1080,6 @@ impl<K, V> Iterator for IntoIter<K, V> {
 
     fn count(self) -> usize { self.len() }
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<K, V> DoubleEndedIterator for IntoIter<K, V> {
@@ -1124,8 +1122,6 @@ impl<'a, K, V> Iterator for Iter<'a, K, V> {
 
     fn count(self) -> usize { self.len() }
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for Iter<'a, K, V> {
@@ -1165,8 +1161,6 @@ impl<'a, K, V> Iterator for IterMut<'a, K, V> {
 
     fn count(self) -> usize { self.len() }
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 impl<'a, K, V> DoubleEndedIterator for IterMut<'a, K, V> {
@@ -1193,8 +1187,6 @@ impl<K, V> Iterator for IntoRange<K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
@@ -1223,8 +1215,6 @@ impl<'a, K, V> Iterator for Range<'a, K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
@@ -1248,8 +1238,6 @@ impl<'a, K, V> Iterator for RangeMut<'a, K, V> {
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
 
     fn last(mut self) -> Option<Self::Item> { self.next_back() }
-    fn max(mut self) -> Option<Self::Item> { self.next_back() }
-    fn min(mut self) -> Option<Self::Item> { self.next() }
 }
 
 #[cfg(feature = "range")]
