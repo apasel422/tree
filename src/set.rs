@@ -6,6 +6,7 @@ use std::cmp::Ordering;
 use std::fmt::{self, Debug};
 use std::hash::{self, Hash};
 use std::iter;
+use super::{Aa, Balance};
 use super::map::{self, Map};
 
 /// An ordered set based on a binary search tree.
@@ -14,8 +15,8 @@ use super::map::{self, Map};
 /// while the item is in the set. This is normally only possible through `Cell`, `RefCell`, or
 /// unsafe code.
 #[derive(Clone)]
-pub struct Set<T, C = Natural<T>> where C: Compare<T> {
-    map: Map<T, (), C>,
+pub struct Set<T, C = Natural<T>, B = Aa> where C: Compare<T>, B: Balance {
+    map: Map<T, (), C, B>,
 }
 
 impl<T> Set<T> where T: Ord {
@@ -64,7 +65,9 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// # }
     /// ```
     pub fn with_cmp(cmp: C) -> Self { Set { map: Map::with_cmp(cmp) } }
+}
 
+impl<T, C, B> Set<T, C, B> where C: Compare<T>, B: Balance {
     /// Checks if the set is empty.
     ///
     /// # Examples
@@ -197,7 +200,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// assert!(set.contains(&4));
     /// ```
-    pub fn entry(&mut self, item: T) -> Entry<T> {
+    pub fn entry(&mut self, item: T) -> Entry<T, B> {
         match self.map.entry(item) {
             map::Entry::Occupied(e) => Entry::Occupied(OccupiedEntry(e)),
             map::Entry::Vacant(e) => Entry::Vacant(VacantEntry(e)),
@@ -270,7 +273,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// assert!(!set.contains(&3));
     /// ```
-    pub fn max_entry(&mut self) -> Option<OccupiedEntry<T>> {
+    pub fn max_entry(&mut self) -> Option<OccupiedEntry<T, B>> {
         self.map.max_entry().map(OccupiedEntry)
     }
 
@@ -326,7 +329,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// assert!(!set.contains(&1));
     /// ```
-    pub fn min_entry(&mut self) -> Option<OccupiedEntry<T>> {
+    pub fn min_entry(&mut self) -> Option<OccupiedEntry<T, B>> {
         self.map.min_entry().map(OccupiedEntry)
     }
 
@@ -429,7 +432,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert!(!set.contains(&2));
     /// ```
     pub fn pred_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
-        -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
+        -> Option<OccupiedEntry<T, B>> where C: Compare<Q, T> {
 
         self.map.pred_entry(item, inclusive).map(OccupiedEntry)
     }
@@ -534,7 +537,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert!(!set.contains(&2));
     /// ```
     pub fn succ_entry<Q: ?Sized>(&mut self, item: &Q, inclusive: bool)
-        -> Option<OccupiedEntry<T>> where C: Compare<Q, T> {
+        -> Option<OccupiedEntry<T, B>> where C: Compare<Q, T> {
 
         self.map.succ_entry(item, inclusive).map(OccupiedEntry)
     }
@@ -558,11 +561,11 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// assert_eq!(it.next(), Some(&3));
     /// assert_eq!(it.next(), None);
     /// ```
-    pub fn iter(&self) -> Iter<T> { Iter(self.map.iter()) }
+    pub fn iter(&self) -> Iter<T, B> { Iter(self.map.iter()) }
 }
 
 #[cfg(feature = "range")]
-impl<T, C> Set<T, C> where C: Compare<T> {
+impl<T, C, B> Set<T, C, B> where C: Compare<T>, B: Balance {
     /// Returns an iterator that consumes the set, yielding only those items that lie in the given
     /// range.
     ///
@@ -586,7 +589,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// # }
     /// ```
     pub fn into_range<Min: ?Sized, Max: ?Sized>(self, min: Bound<&Min>, max: Bound<&Max>)
-        -> IntoRange<T> where C: Compare<Min, T> + Compare<Max, T> {
+        -> IntoRange<T, B> where C: Compare<Min, T> + Compare<Max, T> {
 
         IntoRange(self.map.into_range(min, max))
     }
@@ -615,13 +618,13 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     /// # }
     /// ```
     pub fn range<Min: ?Sized, Max: ?Sized>(&self, min: Bound<&Min>, max: Bound<&Max>)
-        -> Range<T> where C: Compare<Min, T> + Compare<Max, T> {
+        -> Range<T, B> where C: Compare<Min, T> + Compare<Max, T> {
 
         Range(self.map.range(min, max))
     }
 }
 
-impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
+impl<T, C, B> Debug for Set<T, C, B> where T: Debug, C: Compare<T>, B: Balance {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         try!(write!(f, "{{"));
 
@@ -636,17 +639,17 @@ impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
     }
 }
 
-impl<T, C> Default for Set<T, C> where C: Compare<T> + Default {
-    fn default() -> Self { Set::with_cmp(C::default()) }
+impl<T, C, B> Default for Set<T, C, B> where C: Compare<T> + Default, B: Balance {
+    fn default() -> Self { Set { map: Map::default() } }
 }
 
-impl<T, C> Extend<T> for Set<T, C> where C: Compare<T> {
+impl<T, C, B> Extend<T> for Set<T, C, B> where C: Compare<T>, B: Balance {
     fn extend<I: IntoIterator<Item=T>>(&mut self, it: I) {
         for item in it { self.insert(item); }
     }
 }
 
-impl<T, C> iter::FromIterator<T> for Set<T, C> where C: Compare<T> + Default {
+impl<T, C, B> iter::FromIterator<T> for Set<T, C, B> where C: Compare<T> + Default, B: Balance {
     fn from_iter<I: IntoIterator<Item=T>>(it: I) -> Self {
         let mut set = Set::default();
         set.extend(it);
@@ -654,19 +657,19 @@ impl<T, C> iter::FromIterator<T> for Set<T, C> where C: Compare<T> + Default {
     }
 }
 
-impl<T, C> Hash for Set<T, C> where T: Hash, C: Compare<T> {
+impl<T, C, B> Hash for Set<T, C, B> where T: Hash, C: Compare<T>, B: Balance {
     fn hash<H: hash::Hasher>(&self, h: &mut H) { self.map.hash(h); }
 }
 
-impl<'a, T, C> IntoIterator for &'a Set<T, C> where C: Compare<T> {
+impl<'a, T, C, B> IntoIterator for &'a Set<T, C, B> where C: Compare<T>, B: Balance {
     type Item = &'a T;
-    type IntoIter = Iter<'a, T>;
-    fn into_iter(self) -> Iter<'a, T> { self.iter() }
+    type IntoIter = Iter<'a, T, B>;
+    fn into_iter(self) -> Iter<'a, T, B> { self.iter() }
 }
 
-impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
+impl<T, C, B> IntoIterator for Set<T, C, B> where C: Compare<T>, B: Balance {
     type Item = T;
-    type IntoIter = IntoIter<T>;
+    type IntoIter = IntoIter<T, B>;
 
     /// Returns an iterator that consumes the set.
     ///
@@ -687,7 +690,7 @@ impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
     /// assert_eq!(it.next(), Some(3));
     /// assert_eq!(it.next(), None);
     /// ```
-    fn into_iter(self) -> IntoIter<T> { IntoIter(self.map.into_iter()) }
+    fn into_iter(self) -> IntoIter<T, B> { IntoIter(self.map.into_iter()) }
 }
 
 impl<T, C> PartialEq for Set<T, C> where C: Compare<T> {
@@ -726,9 +729,9 @@ impl<T, C> Ord for Set<T, C> where C: Compare<T> {
 /// }
 /// ```
 #[derive(Clone)]
-pub struct IntoIter<T>(map::IntoIter<T, ()>);
+pub struct IntoIter<T, B = Aa>(map::IntoIter<T, (), B>);
 
-impl<T> Iterator for IntoIter<T> {
+impl<T, B> Iterator for IntoIter<T, B> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -736,11 +739,11 @@ impl<T> Iterator for IntoIter<T> {
     fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
-impl<T> DoubleEndedIterator for IntoIter<T> {
+impl<T, B> DoubleEndedIterator for IntoIter<T, B> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
-impl<T> ExactSizeIterator for IntoIter<T> {
+impl<T, B> ExactSizeIterator for IntoIter<T, B> {
     fn len(&self) -> usize { self.0.len() }
 }
 
@@ -763,13 +766,13 @@ impl<T> ExactSizeIterator for IntoIter<T> {
 ///     println!("{:?}", item);
 /// }
 /// ```
-pub struct Iter<'a, T: 'a>(map::Iter<'a, T, ()>);
+pub struct Iter<'a, T: 'a, B: 'a = Aa>(map::Iter<'a, T, (), B>);
 
-impl<'a, T> Clone for Iter<'a, T> {
+impl<'a, T, B> Clone for Iter<'a, T, B> {
     fn clone(&self) -> Self { Iter(self.0.clone()) }
 }
 
-impl<'a, T> Iterator for Iter<'a, T> {
+impl<'a, T, B> Iterator for Iter<'a, T, B> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -777,11 +780,11 @@ impl<'a, T> Iterator for Iter<'a, T> {
     fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
-impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
+impl<'a, T, B> DoubleEndedIterator for Iter<'a, T, B> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
-impl<'a, T> ExactSizeIterator for Iter<'a, T> {
+impl<'a, T, B> ExactSizeIterator for Iter<'a, T, B> {
     fn len(&self) -> usize { self.0.len() }
 }
 
@@ -792,10 +795,10 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {
 /// Acquire through [`Set::into_range`](struct.Set.html#method.into_range).
 #[cfg(feature = "range")]
 #[derive(Clone)]
-pub struct IntoRange<T>(map::IntoRange<T, ()>);
+pub struct IntoRange<T, B = Aa>(map::IntoRange<T, (), B>);
 
 #[cfg(feature = "range")]
-impl<T> Iterator for IntoRange<T> {
+impl<T, B> Iterator for IntoRange<T, B> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -803,7 +806,7 @@ impl<T> Iterator for IntoRange<T> {
 }
 
 #[cfg(feature = "range")]
-impl<T> DoubleEndedIterator for IntoRange<T> {
+impl<T, B> DoubleEndedIterator for IntoRange<T, B> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
@@ -813,15 +816,15 @@ impl<T> DoubleEndedIterator for IntoRange<T> {
 ///
 /// Acquire through [`Set::range`](struct.Set.html#method.range).
 #[cfg(feature = "range")]
-pub struct Range<'a, T: 'a>(map::Range<'a, T, ()>);
+pub struct Range<'a, T: 'a, B: 'a = Aa>(map::Range<'a, T, (), B>);
 
 #[cfg(feature = "range")]
-impl<'a, T> Clone for Range<'a, T> {
+impl<'a, T, B> Clone for Range<'a, T, B> {
     fn clone(&self) -> Self { Range(self.0.clone()) }
 }
 
 #[cfg(feature = "range")]
-impl<'a, T> Iterator for Range<'a, T> {
+impl<'a, T, B> Iterator for Range<'a, T, B> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
@@ -829,22 +832,22 @@ impl<'a, T> Iterator for Range<'a, T> {
 }
 
 #[cfg(feature = "range")]
-impl<'a, T> DoubleEndedIterator for Range<'a, T> {
+impl<'a, T, B> DoubleEndedIterator for Range<'a, T, B> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
 /// An entry in the set.
-pub enum Entry<'a, T: 'a> {
+pub enum Entry<'a, T: 'a, B: 'a = Aa> where B: Balance {
     /// An occupied entry.
-    Occupied(OccupiedEntry<'a, T>),
+    Occupied(OccupiedEntry<'a, T, B>),
     /// A vacant entry.
-    Vacant(VacantEntry<'a, T>),
+    Vacant(VacantEntry<'a, T, B>),
 }
 
 /// An occupied entry.
-pub struct OccupiedEntry<'a, T: 'a>(map::OccupiedEntry<'a, T, ()>);
+pub struct OccupiedEntry<'a, T: 'a, B: 'a = Aa>(map::OccupiedEntry<'a, T, (), B>) where B: Balance;
 
-impl<'a, T> OccupiedEntry<'a, T> {
+impl<'a, T, B> OccupiedEntry<'a, T, B> where B: Balance {
     /// Returns a reference to the entry's item.
     pub fn get(&self) -> &T { self.0.key() }
 
@@ -853,9 +856,9 @@ impl<'a, T> OccupiedEntry<'a, T> {
 }
 
 /// A vacant entry.
-pub struct VacantEntry<'a, T: 'a>(map::VacantEntry<'a, T, ()>);
+pub struct VacantEntry<'a, T: 'a, B: 'a = Aa>(map::VacantEntry<'a, T, (), B>) where B: Balance;
 
-impl<'a, T> VacantEntry<'a, T> {
+impl<'a, T, B> VacantEntry<'a, T, B> where B: Balance {
     /// Inserts the entry into the set with its item.
     pub fn insert(self) { self.0.insert(()); }
 }

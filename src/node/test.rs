@@ -4,7 +4,7 @@ extern crate rand;
 use self::quickcheck::{Arbitrary, Gen, TestResult, quickcheck};
 use self::rand::Rng;
 use super::{Link, Node};
-use Map;
+use {Aa, Map};
 
 /// An operation on a `Map`.
 #[derive(Clone, Debug)]
@@ -74,26 +74,26 @@ impl<K> Op<K> where K: Clone + Ord {
 
 // Adapted from https://github.com/Gankro/collect-rs/tree/map.rs
 fn assert_andersson_tree<K, V>(map: &Map<K, V>) where K: Ord {
-    fn check_left<K, V>(link: &Link<K, V>, parent: &Node<K, V>) where K: Ord {
+    fn check_left<K, V>(link: &Link<K, V, Aa>, parent: &Node<K, V, Aa>) where K: Ord {
         match *link {
-            None => assert_eq!(parent.level, 1),
+            None => assert_eq!(parent.balance.level(), 1),
             Some(ref node) => {
                 assert!(node.key < parent.key);
-                assert_eq!(node.level, parent.level - 1);
+                assert_eq!(node.balance.level(), parent.balance.level() - 1);
                 check_left(&node.left, node);
                 check_right(&node.right, node, false);
             }
         }
     }
 
-    fn check_right<K, V>(link: &Link<K, V>, parent: &Node<K, V>, parent_red: bool) where K: Ord {
+    fn check_right<K, V>(link: &Link<K, V, Aa>, parent: &Node<K, V, Aa>, parent_red: bool) where K: Ord {
         match *link {
-            None => assert_eq!(parent.level, 1),
+            None => assert_eq!(parent.balance.level(), 1),
             Some(ref node) => {
                 assert!(node.key > parent.key);
-                let red = node.level == parent.level;
+                let red = node.balance.level() == parent.balance.level();
                 if parent_red { assert!(!red); }
-                assert!(red || node.level == parent.level - 1);
+                assert!(red || node.balance.level() == parent.balance.level() - 1);
                 check_left(&node.left, node);
                 check_right(&node.right, node, red);
             }

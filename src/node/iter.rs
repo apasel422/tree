@@ -14,25 +14,25 @@ pub trait NodeRef {
     fn right(&mut self) -> Option<Self>;
 }
 
-pub struct MarkedNode<'a, K: 'a, V: 'a> {
-    node: &'a Node<K, V>,
+pub struct MarkedNode<'a, K: 'a, V: 'a, B: 'a> {
+    node: &'a Node<K, V, B>,
     seen_l: bool,
     seen_r: bool,
 }
 
-impl<'a, K, V> Clone for MarkedNode<'a, K, V> {
+impl<'a, K, V, B> Clone for MarkedNode<'a, K, V, B> {
     fn clone(&self) -> Self { *self }
 }
 
-impl<'a, K, V> Copy for MarkedNode<'a, K, V> {}
+impl<'a, K, V, B> Copy for MarkedNode<'a, K, V, B> {}
 
-impl<'a, K, V> MarkedNode<'a, K, V> {
-    pub fn new(node: &'a Box<Node<K, V>>) -> Self {
+impl<'a, K, V, B> MarkedNode<'a, K, V, B> {
+    pub fn new(node: &'a Box<Node<K, V, B>>) -> Self {
         MarkedNode { node: node, seen_l: false, seen_r: false }
     }
 }
 
-impl<'a, K, V> NodeRef for MarkedNode<'a, K, V> {
+impl<'a, K, V, B> NodeRef for MarkedNode<'a, K, V, B> {
     type Key = K;
     type Item = (&'a K, &'a V);
     fn key(&self) -> &Self::Key { &self.node.key }
@@ -57,23 +57,23 @@ impl<'a, K, V> NodeRef for MarkedNode<'a, K, V> {
     }
 }
 
-pub struct MutMarkedNode<'a, K: 'a, V: 'a> {
-    node: *mut Node<K, V>,
+pub struct MutMarkedNode<'a, K: 'a, V: 'a, B: 'a> {
+    node: *mut Node<K, V, B>,
     seen_l: bool,
     seen_r: bool,
-    _marker: PhantomData<&'a mut Node<K, V>>,
+    _marker: PhantomData<&'a mut Node<K, V, B>>,
 }
 
-impl<'a, K, V> MutMarkedNode<'a, K, V> {
-    pub fn new(node: &'a mut Box<Node<K, V>>) -> Self {
+impl<'a, K, V, B> MutMarkedNode<'a, K, V, B> {
+    pub fn new(node: &'a mut Box<Node<K, V, B>>) -> Self {
         MutMarkedNode { node: &mut **node, seen_l: false, seen_r: false, _marker: PhantomData }
     }
 }
 
-unsafe impl<'a, K, V> Send for MutMarkedNode<'a, K, V> where K: Send, V: Send {}
-unsafe impl<'a, K, V> Sync for MutMarkedNode<'a, K, V> where K: Sync, V: Sync {}
+unsafe impl<'a, K, V, B> Send for MutMarkedNode<'a, K, V, B> where K: Send, V: Send, B: Send {}
+unsafe impl<'a, K, V, B> Sync for MutMarkedNode<'a, K, V, B> where K: Sync, V: Sync, B: Sync {}
 
-impl<'a, K, V> NodeRef for MutMarkedNode<'a, K, V> {
+impl<'a, K, V, B> NodeRef for MutMarkedNode<'a, K, V, B> {
     type Key = K;
     type Item = (&'a K, &'a mut V);
 
@@ -103,7 +103,7 @@ impl<'a, K, V> NodeRef for MutMarkedNode<'a, K, V> {
     }
 }
 
-impl<K, V> NodeRef for Box<Node<K, V>> {
+impl<K, V, B> NodeRef for Box<Node<K, V, B>> {
     type Key = K;
     type Item = (K, V);
     fn key(&self) -> &Self::Key { &self.key }
