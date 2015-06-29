@@ -1,5 +1,4 @@
 [package]
-
 name = "tree"
 version = "0.2.0"
 authors = ["Andrew Paseltiner <apaseltiner@gmail.com>"]
@@ -12,23 +11,14 @@ keywords = ["collection", "data-structure"]
 description = "An ordered map and set based on a binary search tree."
 
 [features]
-
 default = ["ordered_iter", "quickcheck"]
 range = []
 
 [dependencies]
-
 compare = "*"
-
-[dependencies.quickcheck]
-
-optional = true
-
-[dependencies.ordered_iter]
-
-optional = true
+quickcheck = { optional = true }
+ordered_iter = { optional = true }
 
 [dev-dependencies]
-
 quickcheck = "*"
 rand = "*"
