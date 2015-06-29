@@ -816,7 +816,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// # #![feature(collections)]
+    /// # #![feature(collections_bound)]
     /// # extern crate tree;
     /// # fn main() {
     /// use std::collections::Bound::{Excluded, Unbounded};
@@ -845,7 +845,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// # #![feature(collections)]
+    /// # #![feature(collections_bound)]
     /// # extern crate tree;
     /// # fn main() {
     /// use std::collections::Bound::{Included, Excluded, Unbounded};
@@ -879,7 +879,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     /// # Examples
     ///
     /// ```
-    /// # #![feature(collections)]
+    /// # #![feature(collections_bound)]
     /// # extern crate tree;
     /// # fn main() {
     /// use std::collections::Bound;
