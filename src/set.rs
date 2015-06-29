@@ -539,27 +539,6 @@ impl<T, C> Set<T, C> where C: Compare<T> {
         self.map.succ_entry(item, inclusive).map(OccupiedEntry)
     }
 
-    /// Returns an iterator that consumes the set.
-    ///
-    /// The iterator yields the items in ascending order according to the set's comparator.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut set = tree::Set::new();
-    ///
-    /// set.insert(2);
-    /// set.insert(1);
-    /// set.insert(3);
-    ///
-    /// let mut it = set.into_iter();
-    /// assert_eq!(it.next(), Some(1));
-    /// assert_eq!(it.next(), Some(2));
-    /// assert_eq!(it.next(), Some(3));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    pub fn into_iter(self) -> IntoIter<T> { IntoIter(self.map.into_iter()) }
-
     /// Returns an iterator over the set.
     ///
     /// The iterator yields the items in ascending order according to the set's comparator.
@@ -688,7 +667,27 @@ impl<'a, T, C> IntoIterator for &'a Set<T, C> where C: Compare<T> {
 impl<T, C> IntoIterator for Set<T, C> where C: Compare<T> {
     type Item = T;
     type IntoIter = IntoIter<T>;
-    fn into_iter(self) -> IntoIter<T> { self.into_iter() }
+
+    /// Returns an iterator that consumes the set.
+    ///
+    /// The iterator yields the items in ascending order according to the set's comparator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut set = tree::Set::new();
+    ///
+    /// set.insert(2);
+    /// set.insert(1);
+    /// set.insert(3);
+    ///
+    /// let mut it = set.into_iter();
+    /// assert_eq!(it.next(), Some(1));
+    /// assert_eq!(it.next(), Some(2));
+    /// assert_eq!(it.next(), Some(3));
+    /// assert_eq!(it.next(), None);
+    /// ```
+    fn into_iter(self) -> IntoIter<T> { IntoIter(self.map.into_iter()) }
 }
 
 impl<T, C> PartialEq for Set<T, C> where C: Compare<T> {
@@ -713,8 +712,7 @@ impl<T, C> Ord for Set<T, C> where C: Compare<T> {
 ///
 /// # Examples
 ///
-/// Acquire through [`Set::into_iter`](struct.Set.html#method.into_iter) or the
-/// `IntoIterator` trait:
+/// Acquire through the `IntoIterator` trait:
 ///
 /// ```
 /// let mut set = tree::Set::new();

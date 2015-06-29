@@ -750,29 +750,6 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
             .into_occupied_entry(&mut self.len)
     }
 
-    /// Returns an iterator that consumes the map.
-    ///
-    /// The iterator yields the entries in ascending order according to the map's comparator.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut map = tree::Map::new();
-    ///
-    /// map.insert(2, "b");
-    /// map.insert(1, "a");
-    /// map.insert(3, "c");
-    ///
-    /// let mut it = map.into_iter();
-    /// assert_eq!(it.next(), Some((1, "a")));
-    /// assert_eq!(it.next(), Some((2, "b")));
-    /// assert_eq!(it.next(), Some((3, "c")));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    pub fn into_iter(mut self) -> IntoIter<K, V> {
-        IntoIter(node::Iter::new(self.root.take(), self.len))
-    }
-
     /// Returns an iterator over the map's entries with immutable references to the values.
     ///
     /// The iterator yields the entries in ascending order according to the map's comparator.
@@ -997,7 +974,27 @@ impl<'a, K, V, C> IntoIterator for &'a mut Map<K, V, C> where C: Compare<K> {
 impl<K, V, C> IntoIterator for Map<K, V, C> where C: Compare<K> {
     type Item = (K, V);
     type IntoIter = IntoIter<K, V>;
-    fn into_iter(self) -> IntoIter<K, V> { self.into_iter() }
+
+    /// Returns an iterator that consumes the map.
+    ///
+    /// The iterator yields the entries in ascending order according to the map's comparator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut map = tree::Map::new();
+    ///
+    /// map.insert(2, "b");
+    /// map.insert(1, "a");
+    /// map.insert(3, "c");
+    ///
+    /// let mut it = map.into_iter();
+    /// assert_eq!(it.next(), Some((1, "a")));
+    /// assert_eq!(it.next(), Some((2, "b")));
+    /// assert_eq!(it.next(), Some((3, "c")));
+    /// assert_eq!(it.next(), None);
+    /// ```
+    fn into_iter(self) -> IntoIter<K, V> { IntoIter(node::Iter::new(self.root, self.len)) }
 }
 
 impl<K, V, C> PartialEq for Map<K, V, C> where V: PartialEq, C: Compare<K> {
@@ -1060,8 +1057,7 @@ impl<K, V, C> Ord for Map<K, V, C> where V: Ord, C: Compare<K> {
 ///
 /// # Examples
 ///
-/// Acquire through [`Map::into_iter`](struct.Map.html#method.into_iter) or the
-/// `IntoIterator` trait:
+/// Acquire through the `IntoIterator` trait:
 ///
 /// ```
 /// let mut map = tree::Map::new();
