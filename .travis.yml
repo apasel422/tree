@@ -1,11 +1,19 @@
 language: rust
 sudo: false
+matrix:
+    include:
+        - rust: nightly
+          env:
+              - FEATURES='range'
+branch:
+    only:
+        - master
 script:
-    - cargo build
-    - cargo build --features range
-    - cargo test --features range
-    - cargo doc --no-deps
+    - cargo build --features "$FEATURES"
+    - cargo test --features "$FEATURES"
+    - cargo doc --no-deps --features "$FEATURES"
 after_success: |
     [ $TRAVIS_BRANCH = master ] &&
     [ $TRAVIS_PULL_REQUEST = false ] &&
+    [ $TRAVIS_RUST_VERSION = stable ] &&
     bash deploy-docs.sh
