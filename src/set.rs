@@ -732,13 +732,17 @@ impl<T> Iterator for IntoIter<T> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+    fn count(self) -> usize { self.0.count() }
+    fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
 impl<T> DoubleEndedIterator for IntoIter<T> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
-impl<T> ExactSizeIterator for IntoIter<T> {}
+impl<T> ExactSizeIterator for IntoIter<T> {
+    fn len(&self) -> usize { self.0.len() }
+}
 
 /// An iterator over the set.
 ///
@@ -769,13 +773,17 @@ impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+    fn count(self) -> usize { self.0.count() }
+    fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
 impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> { self.0.next_back().map(|e| e.0) }
 }
 
-impl<'a, T> ExactSizeIterator for Iter<'a, T> {}
+impl<'a, T> ExactSizeIterator for Iter<'a, T> {
+    fn len(&self) -> usize { self.0.len() }
+}
 
 /// An iterator that consumes the set, yielding only those items that lie in a given range.
 ///
@@ -791,6 +799,7 @@ impl<T> Iterator for IntoRange<T> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+    fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
 #[cfg(feature = "range")]
@@ -816,6 +825,7 @@ impl<'a, T> Iterator for Range<'a, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> { self.0.next().map(|e| e.0) }
     fn size_hint(&self) -> (usize, Option<usize>) { self.0.size_hint() }
+    fn last(self) -> Option<Self::Item> { self.0.last().map(|e| e.0) }
 }
 
 #[cfg(feature = "range")]
