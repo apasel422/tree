@@ -64,7 +64,7 @@
 </pre><pre class='rust '>
 <span class='doccomment'>//! An ordered map and set based on a binary search tree.</span>
 
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;range&quot;</span>, <span class='ident'>feature</span>(<span class='ident'>collections</span>))]</span>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;range&quot;</span>, <span class='ident'>feature</span>(<span class='ident'>collections_bound</span>))]</span>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>compare</span>;
 
@@ -116,6 +116,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>
