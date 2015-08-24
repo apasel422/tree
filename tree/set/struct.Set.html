@@ -57,7 +57,7 @@ unsafe code.</p>
 <div class='docblock'><p>Creates an empty set ordered according to the natural order of its items.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -74,7 +74,7 @@ unsafe code.</p>
 <div class='docblock'><p>Creates an empty set ordered according to the given comparator.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
 
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>with_cmp</span>(<span class='ident'>natural</span>().<span class='ident'>rev</span>());
@@ -93,7 +93,7 @@ unsafe code.</p>
 <div class='docblock'><p>Checks if the set is empty.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>is_empty</span>());
 
@@ -104,7 +104,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns the number of items in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>len</span>(), <span class='number'>0</span>);
 
@@ -115,7 +115,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns a reference to the set&#39;s comparator.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>compare</span>::{<span class='ident'>Compare</span>, <span class='ident'>natural</span>};
 
 <span class='kw'>let</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
@@ -128,7 +128,7 @@ unsafe code.</p>
 <div class='docblock'><p>Removes all items from the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -147,7 +147,7 @@ unsafe code.</p>
 <div class='docblock'><p>Inserts an item into the set, returning <code>true</code> if the set did not already contain the item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>));
@@ -158,7 +158,7 @@ unsafe code.</p>
 <div class='docblock'><p>Removes the given item from the set, returning <code>true</code> if the set contained the item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -177,7 +177,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns the set&#39;s entry corresponding to the given item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>tree</span>::<span class='ident'>set</span>::<span class='ident'>Entry</span>;
 
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
@@ -207,7 +207,7 @@ unsafe code.</p>
 <div class='docblock'><p>Checks if the set contains the given item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>set</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>));
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>1</span>);
@@ -217,7 +217,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns a reference to the set&#39;s maximum item, or <code>None</code> if the set is empty.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>max</span>(), <span class='prelude-val'>None</span>);
 
@@ -231,7 +231,7 @@ unsafe code.</p>
 <div class='docblock'><p>Removes and returns the set&#39;s maximum item, or <code>None</code> if the set is empty.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_max</span>(), <span class='prelude-val'>None</span>);
 
@@ -245,7 +245,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns the entry corresponding to the set&#39;s maximum item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>max_entry</span>().<span class='ident'>is_none</span>());
 
@@ -265,7 +265,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns a reference to the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>min</span>(), <span class='prelude-val'>None</span>);
 
@@ -279,7 +279,7 @@ unsafe code.</p>
 <div class='docblock'><p>Removes and returns the set&#39;s minimum item, or <code>None</code> if the set is empty.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>remove_min</span>(), <span class='prelude-val'>None</span>);
 
@@ -293,7 +293,7 @@ unsafe code.</p>
 <div class='docblock'><p>Returns the entry corresponding to the set&#39;s minimum item.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>set</span>.<span class='ident'>min_entry</span>().<span class='ident'>is_none</span>());
 
@@ -320,7 +320,7 @@ than or equal to the given item.</p>
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -350,7 +350,7 @@ less than or equal to the given item.</p>
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -376,7 +376,7 @@ the entry corresponding to the greatest item that is less than or equal to the g
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -408,7 +408,7 @@ greater than or equal to the given item.</p>
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -438,7 +438,7 @@ is greater than or equal to the given item.</p>
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -465,7 +465,7 @@ item.</p>
 <p>The given item need not itself be present in the set.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -492,7 +492,7 @@ item.</p>
 <p>The iterator yields the items in ascending order according to the set&#39;s comparator.</p>
 
 <h1 id="examples" class='section-header'><a
-                           href="#examples">Examples</a></h1><pre id='rust-example-rendered' class='rust '>
+                           href="#examples">Examples</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>set</span> <span class='op'>=</span> <span class='ident'>tree</span>::<span class='ident'>Set</span>::<span class='ident'>new</span>();
 
 <span class='ident'>set</span>.<span class='ident'>insert</span>(<span class='number'>2</span>);
@@ -525,8 +525,8 @@ item.</p>
 <h4 id='method.gt' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html#method.gt' class='fnname'>gt</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <h4 id='method.ge' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html#method.ge' class='fnname'>ge</a>(&amp;self, other: &amp;Rhs) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 </div><h3 class='impl'><code>impl&lt;T, C&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> for <a class='struct' href='../../tree/set/struct.Set.html' title='tree::set::Set'>Set</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;</span></code></h3><div class='impl-items'><h4 id='method.cmp' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html#method.cmp' class='fnname'>cmp</a>(&amp;self, other: &amp;Self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/cmp/enum.Ordering.html' title='core::cmp::Ordering'>Ordering</a></code></h4>
-</div><h3 class='impl'><code>impl&lt;T, C&gt; <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html' title='quickcheck::arbitrary::Arbitrary'>Arbitrary</a> for <a class='struct' href='../../tree/set/struct.Set.html' title='tree::set::Set'>Set</a>&lt;T, C&gt; <span class='where'>where T: <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html' title='quickcheck::arbitrary::Arbitrary'>Arbitrary</a>, C: 'static + <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + Compare&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a></span></code></h3><div class='impl-items'><h4 id='method.arbitrary' class='method'><code>fn <a href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html#method.arbitrary' class='fnname'>arbitrary</a>&lt;G: <a class='trait' href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Gen.html' title='quickcheck::arbitrary::Gen'>Gen</a>&gt;(gen: &amp;mut G) -&gt; Self</code></h4>
-<h4 id='method.shrink' class='method'><code>fn <a href='http://burntsushi.net/rustdoc/quickcheck/quickcheck/arbitrary/trait.Arbitrary.html#method.shrink' class='fnname'>shrink</a>(&amp;self) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a>&lt;Item=Self&gt;&gt;</code></h4>
+</div><h3 class='impl'><code>impl&lt;T, C&gt; Arbitrary for <a class='struct' href='../../tree/set/struct.Set.html' title='tree::set::Set'>Set</a>&lt;T, C&gt; <span class='where'>where T: Arbitrary, C: 'static + <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + Compare&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a></span></code></h3><div class='impl-items'><h4 id='method.arbitrary' class='method'><code>fn <a href='#method.arbitrary' class='fnname'>arbitrary</a>&lt;G: Gen&gt;(gen: &amp;mut G) -&gt; Self</code></h4>
+<h4 id='method.shrink' class='method'><code>fn <a href='#method.shrink' class='fnname'>shrink</a>(&amp;self) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a>&lt;Item=Self&gt;&gt;</code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, C: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../tree/set/struct.Set.html' title='tree::set::Set'>Set</a>&lt;T, C&gt; <span class='where'>where C: Compare&lt;T&gt;, T: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, C: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></span></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../tree/set/struct.Set.html' title='tree::set::Set'>Set</a>&lt;T, C&gt;</code></h4>
 <h4 id='method.clone_from' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
 </div></section>
