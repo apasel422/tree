@@ -892,15 +892,6 @@
 <span id="850">850</span>
 <span id="851">851</span>
 <span id="852">852</span>
-<span id="853">853</span>
-<span id="854">854</span>
-<span id="855">855</span>
-<span id="856">856</span>
-<span id="857">857</span>
-<span id="858">858</span>
-<span id="859">859</span>
-<span id="860">860</span>
-<span id="861">861</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! An ordered set based on a binary search tree.</span>
 
@@ -1527,16 +1518,7 @@
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Set</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>C</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Debug</span>, <span class='ident'>C</span>: <span class='ident'>Compare</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{{&quot;</span>));
-
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>iter</span>();
-
-        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>item</span>) <span class='op'>=</span> <span class='ident'>it</span>.<span class='ident'>next</span>() {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>item</span>));
-            <span class='kw'>for</span> <span class='ident'>item</span> <span class='kw'>in</span> <span class='ident'>it</span> { <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;, {:?}&quot;</span>, <span class='ident'>item</span>)); }
-        }
-
-        <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;}}&quot;</span>)
+        <span class='ident'>f</span>.<span class='ident'>debug_set</span>().<span class='ident'>entries</span>(<span class='self'>self</span>).<span class='ident'>finish</span>()
     }
 }
 
