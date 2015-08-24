@@ -913,16 +913,7 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
 
 impl<K, V, C> Debug for Map<K, V, C> where K: Debug, V: Debug, C: Compare<K> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        try!(write!(f, "{{"));
-
-        let mut it = self.iter();
-
-        if let Some((k, v)) = it.next() {
-            try!(write!(f, "{:?}: {:?}", k, v));
-            for (k, v) in it { try!(write!(f, ", {:?}: {:?}", k, v)); }
-        }
-
-        write!(f, "}}")
+        f.debug_map().entries(self).finish()
     }
 }
 

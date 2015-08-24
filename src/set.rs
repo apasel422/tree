@@ -623,16 +623,7 @@ impl<T, C> Set<T, C> where C: Compare<T> {
 
 impl<T, C> Debug for Set<T, C> where T: Debug, C: Compare<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        try!(write!(f, "{{"));
-
-        let mut it = self.iter();
-
-        if let Some(item) = it.next() {
-            try!(write!(f, "{:?}", item));
-            for item in it { try!(write!(f, ", {:?}", item)); }
-        }
-
-        write!(f, "}}")
+        f.debug_set().entries(self).finish()
     }
 }
 
