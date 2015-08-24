@@ -5,7 +5,7 @@ use std::collections::VecDeque;
 use std::marker::PhantomData;
 use super::Node;
 
-pub trait NodeRef {
+pub trait NodeRef: Sized {
     type Key;
     type Item;
     fn key(&self) -> &Self::Key;
