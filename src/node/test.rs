@@ -1,8 +1,6 @@
 extern crate quickcheck;
-extern crate rand;
 
-use self::quickcheck::{Arbitrary, Gen, TestResult, quickcheck};
-use self::rand::Rng;
+use self::quickcheck::{Arbitrary, Gen, Rng, TestResult, quickcheck};
 use super::{Link, Node};
 use Map;
 

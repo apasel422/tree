@@ -446,10 +446,7 @@ mod iter {
 
 #[cfg(feature = "range")]
 mod range {
-    extern crate rand;
-
     use quickcheck::{Arbitrary, Gen, quickcheck};
-    use self::rand::Rng;
     use std::collections::Bound::*;
     use tree::Map;
 
