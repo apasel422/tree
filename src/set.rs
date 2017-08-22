@@ -224,15 +224,15 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert_eq!(set.max(), None);
+    /// assert_eq!(set.last(), None);
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.max(), Some(&3));
+    /// assert_eq!(set.last(), Some(&3));
     /// ```
-    pub fn max(&self) -> Option<&T> { self.map.max().map(|e| e.0) }
+    pub fn last(&self) -> Option<&T> { self.map.last().map(|e| e.0) }
 
     /// Removes and returns the set's maximum item, or `None` if the set is empty.
     ///
@@ -240,15 +240,15 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert_eq!(set.remove_max(), None);
+    /// assert_eq!(set.remove_last(), None);
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.remove_max(), Some(3));
+    /// assert_eq!(set.remove_last(), Some(3));
     /// ```
-    pub fn remove_max(&mut self) -> Option<T> { self.map.remove_max().map(|e| e.0) }
+    pub fn remove_last(&mut self) -> Option<T> { self.map.remove_last().map(|e| e.0) }
 
     /// Returns the entry corresponding to the set's maximum item.
     ///
@@ -256,22 +256,22 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert!(set.max_entry().is_none());
+    /// assert!(set.last_entry().is_none());
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
     /// {
-    ///     let mut e = set.max_entry().unwrap();
+    ///     let mut e = set.last_entry().unwrap();
     ///     assert_eq!(*e.get(), 3);
     ///     assert_eq!(e.remove(), 3);
     /// }
     ///
     /// assert!(!set.contains(&3));
     /// ```
-    pub fn max_entry(&mut self) -> Option<OccupiedEntry<T>> {
-        self.map.max_entry().map(OccupiedEntry)
+    pub fn last_entry(&mut self) -> Option<OccupiedEntry<T>> {
+        self.map.last_entry().map(OccupiedEntry)
     }
 
     /// Returns a reference to the set's minimum item, or `None` if the set is empty.
@@ -280,15 +280,15 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert_eq!(set.min(), None);
+    /// assert_eq!(set.first(), None);
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.min(), Some(&1));
+    /// assert_eq!(set.first(), Some(&1));
     /// ```
-    pub fn min(&self) -> Option<&T> { self.map.min().map(|e| e.0) }
+    pub fn first(&self) -> Option<&T> { self.map.first().map(|e| e.0) }
 
     /// Removes and returns the set's minimum item, or `None` if the set is empty.
     ///
@@ -296,15 +296,15 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert_eq!(set.remove_min(), None);
+    /// assert_eq!(set.remove_first(), None);
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
-    /// assert_eq!(set.remove_min(), Some(1));
+    /// assert_eq!(set.remove_first(), Some(1));
     /// ```
-    pub fn remove_min(&mut self) -> Option<T> { self.map.remove_min().map(|e| e.0) }
+    pub fn remove_first(&mut self) -> Option<T> { self.map.remove_first().map(|e| e.0) }
 
     /// Returns the entry corresponding to the set's minimum item.
     ///
@@ -312,22 +312,22 @@ impl<T, C> Set<T, C> where C: Compare<T> {
     ///
     /// ```
     /// let mut set = tree::Set::new();
-    /// assert!(set.min_entry().is_none());
+    /// assert!(set.first_entry().is_none());
     ///
     /// set.insert(2);
     /// set.insert(1);
     /// set.insert(3);
     ///
     /// {
-    ///     let mut e = set.min_entry().unwrap();
+    ///     let mut e = set.first_entry().unwrap();
     ///     assert_eq!(*e.get(), 1);
     ///     assert_eq!(e.remove(), 1);
     /// }
     ///
     /// assert!(!set.contains(&1));
     /// ```
-    pub fn min_entry(&mut self) -> Option<OccupiedEntry<T>> {
-        self.map.min_entry().map(OccupiedEntry)
+    pub fn first_entry(&mut self) -> Option<OccupiedEntry<T>> {
+        self.map.first_entry().map(OccupiedEntry)
     }
 
     /// Returns a reference to the predecessor of the given item, or

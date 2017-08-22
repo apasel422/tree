@@ -53,8 +53,8 @@ impl<K> Op<K> where K: Clone + Ord {
                 let key = map.iter().nth(index % map.len()).unwrap().0.clone();
                 map.remove(&key);
             },
-            Op::RemoveMax => { map.remove_max(); }
-            Op::RemoveMin => { map.remove_min(); }
+            Op::RemoveMax => { map.remove_last(); }
+            Op::RemoveMin => { map.remove_first(); }
             Op::EntryInsert(key) => { map.entry(key).or_insert(()); }
             Op::EntryRemove(index) => if !map.is_empty() {
                 use map::Entry;
