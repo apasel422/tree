@@ -267,15 +267,15 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.max(), None);
+    /// assert_eq!(map.last(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.max(), Some((&3, &"c")));
+    /// assert_eq!(map.last(), Some((&3, &"c")));
     /// ```
-    pub fn max(&self) -> Option<(&K, &V)> {
+    pub fn last(&self) -> Option<(&K, &V)> {
         Max::extreme(&self.root, Get::default())
     }
 
@@ -286,21 +286,21 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.max(), None);
+    /// assert_eq!(map.last(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let max = map.max_mut().unwrap();
-    ///     assert_eq!(max, (&3, &mut "c"));
-    ///     *max.1 = "cc";
+    ///     let last = map.last_mut().unwrap();
+    ///     assert_eq!(last, (&3, &mut "c"));
+    ///     *last.1 = "cc";
     /// }
     ///
-    /// assert_eq!(map.max(), Some((&3, &"cc")));
+    /// assert_eq!(map.last(), Some((&3, &"cc")));
     /// ```
-    pub fn max_mut(&mut self) -> Option<(&K, &mut V)> {
+    pub fn last_mut(&mut self) -> Option<(&K, &mut V)> {
         Max::extreme(&mut self.root, GetMut::default())
     }
 
@@ -311,15 +311,15 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.remove_max(), None);
+    /// assert_eq!(map.remove_last(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.remove_max(), Some((3, "c")));
+    /// assert_eq!(map.remove_last(), Some((3, "c")));
     /// ```
-    pub fn remove_max(&mut self) -> Option<(K, V)> {
+    pub fn remove_last(&mut self) -> Option<(K, V)> {
         Max::extreme(&mut self.root, PathBuilder::default()).remove(&mut self.len)
     }
 
@@ -329,21 +329,21 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert!(map.max_entry().is_none());
+    /// assert!(map.last_entry().is_none());
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let mut e = map.max_entry().unwrap();
+    ///     let mut e = map.last_entry().unwrap();
     ///     assert_eq!(*e.key(), 3);
     ///     assert_eq!(e.insert("cc"), "c");
     /// }
     ///
     /// assert_eq!(map[&3], "cc");
     /// ```
-    pub fn max_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+    pub fn last_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
         Max::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 
@@ -354,15 +354,15 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.min(), None);
+    /// assert_eq!(map.first(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.min(), Some((&1, &"a")));
+    /// assert_eq!(map.first(), Some((&1, &"a")));
     /// ```
-    pub fn min(&self) -> Option<(&K, &V)> {
+    pub fn first(&self) -> Option<(&K, &V)> {
         Min::extreme(&self.root, Get::default())
     }
 
@@ -373,21 +373,21 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.min(), None);
+    /// assert_eq!(map.first(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let min = map.min_mut().unwrap();
-    ///     assert_eq!(min, (&1, &mut "a"));
-    ///     *min.1 = "aa";
+    ///     let first = map.first_mut().unwrap();
+    ///     assert_eq!(first, (&1, &mut "a"));
+    ///     *first.1 = "aa";
     /// }
     ///
-    /// assert_eq!(map.min(), Some((&1, &"aa")));
+    /// assert_eq!(map.first(), Some((&1, &"aa")));
     /// ```
-    pub fn min_mut(&mut self) -> Option<(&K, &mut V)> {
+    pub fn first_mut(&mut self) -> Option<(&K, &mut V)> {
         Min::extreme(&mut self.root, GetMut::default())
     }
 
@@ -398,15 +398,15 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert_eq!(map.remove_min(), None);
+    /// assert_eq!(map.remove_first(), None);
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
-    /// assert_eq!(map.remove_min(), Some((1, "a")));
+    /// assert_eq!(map.remove_first(), Some((1, "a")));
     /// ```
-    pub fn remove_min(&mut self) -> Option<(K, V)> {
+    pub fn remove_first(&mut self) -> Option<(K, V)> {
         Min::extreme(&mut self.root, PathBuilder::default()).remove(&mut self.len)
     }
 
@@ -416,21 +416,21 @@ impl<K, V, C> Map<K, V, C> where C: Compare<K> {
     ///
     /// ```
     /// let mut map = tree::Map::new();
-    /// assert!(map.min_entry().is_none());
+    /// assert!(map.first_entry().is_none());
     ///
     /// map.insert(2, "b");
     /// map.insert(1, "a");
     /// map.insert(3, "c");
     ///
     /// {
-    ///     let mut e = map.min_entry().unwrap();
+    ///     let mut e = map.first_entry().unwrap();
     ///     assert_eq!(*e.key(), 1);
     ///     assert_eq!(e.insert("aa"), "a");
     /// }
     ///
     /// assert_eq!(map[&1], "aa");
     /// ```
-    pub fn min_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
+    pub fn first_entry(&mut self) -> Option<OccupiedEntry<K, V>> {
         Min::extreme(&mut self.root, PathBuilder::default()).into_occupied_entry(&mut self.len)
     }
 

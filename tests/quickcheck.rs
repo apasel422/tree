@@ -247,23 +247,23 @@ struct Max;
 impl Arbitrary for Max { fn arbitrary<G: Gen>(_gen: &mut G) -> Self { Max } }
 
 impl<K, C> Remove<K, C> for Max where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_max() }
+    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_last() }
 }
 
 impl<K, C> OccupiedEntry<K, C> for Max where C: Compare<K> {
     fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
-        map.max_entry()
+        map.last_entry()
     }
 }
 
-mod max {
+mod last {
     use quickcheck::quickcheck;
     use tree::Map;
 
     #[test]
     fn agrees_with_iter() {
         fn test(map: Map<u32, u16>) -> bool {
-            map.max() == map.iter().rev().next()
+            map.last() == map.iter().rev().next()
         }
 
         quickcheck(test as fn(Map<u32, u16>) -> bool);
@@ -279,23 +279,23 @@ struct Min;
 impl Arbitrary for Min { fn arbitrary<G: Gen>(_gen: &mut G) -> Self { Min } }
 
 impl<K, C> Remove<K, C> for Min where C: Compare<K> {
-    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_min() }
+    fn remove<V>(&self, map: &mut Map<K, V, C>) -> Option<(K, V)> { map.remove_first() }
 }
 
 impl<K, C> OccupiedEntry<K, C> for Min where C: Compare<K> {
     fn entry<'a, V>(&self, map: &'a mut Map<K, V, C>) -> Option<map::OccupiedEntry<'a, K, V>> {
-        map.min_entry()
+        map.first_entry()
     }
 }
 
-mod min {
+mod first {
     use quickcheck::quickcheck;
     use tree::Map;
 
     #[test]
     fn agrees_with_iter() {
         fn test(map: Map<u32, u16>) -> bool {
-            map.min() == map.iter().next()
+            map.first() == map.iter().next()
         }
 
         quickcheck(test as fn(Map<u32, u16>) -> bool);
